@@ -1,9 +1,10 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerRegDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UpdateUserRequestDto;
-import com.spotbiz.spotbiz_backend_springboot.entity.AuthenticationResponse;
-import com.spotbiz.spotbiz_backend_springboot.entity.Status;
-import com.spotbiz.spotbiz_backend_springboot.entity.User;
+import com.spotbiz.spotbiz_backend_springboot.entity.*;
+import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.JwtService;
 import com.spotbiz.spotbiz_backend_springboot.service.UserService;
@@ -20,17 +21,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
+    private final BusinessRepo businessRepo;
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
 
     @Autowired
-    public UserServiceImpl(UserRepo userRepo, PasswordEncoder encoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder encoder, JwtService jwtService, AuthenticationManager authenticationManager, BusinessRepo businessRepo) {
         this.userRepo = userRepo;
         this.encoder = encoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.businessRepo = businessRepo;
     }
 
 
@@ -54,6 +57,33 @@ public class UserServiceImpl implements UserService {
 
         return user;
     }
+
+    @Override
+    public User registerBusinessOwner(BusinessOwnerRegDto dto) {
+//        if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
+//            throw new RuntimeException("Email already exists");
+//        }
+        User user = new User();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPhoneNo(dto.getPhoneNo());
+        user.setStatus(dto.getStatus());
+        user.setPassword(encoder.encode(dto.getPassword()));
+        user.setRole(dto.getRole());
+
+        user = userRepo.save(user);
+
+
+        String token = jwtService.generateToken(user);
+
+        // save business details
+        Business newBusiness = new Business(dto.getBusinessName(), dto.getBusinessRegNo(), "PENDING", user);
+        newBusiness = businessRepo.save(newBusiness);
+
+        return user;
+    }
+
+
 
 
     @Override
