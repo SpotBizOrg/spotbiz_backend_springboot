@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerCreateDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,22 @@ public class BusinessOwnerController {
         this.userService = userService;
     }
 
+//    @PostMapping("/register")
+//    public ResponseEntity<User> register(@RequestBody User user) {
+//        User registeredUser = userService.register(user);
+//        return ResponseEntity.ok(registeredUser);
+//    }
+
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        User registeredUser = userService.register(user);
-        return ResponseEntity.ok(registeredUser);
+    public ResponseEntity<User> register(@RequestBody BusinessOwnerCreateDto dto) {
+
+        try {
+            User registeredUser = userService.register(dto);
+            return ResponseEntity.ok(registeredUser);
+        }
+        catch (RuntimeException ex) {
+            return ResponseEntity.status(409).body(null);
+        }
+
     }
 }
