@@ -1,12 +1,9 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
-import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerCreateDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UpdateUserRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.AuthenticationResponse;
-import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.Status;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
-import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.JwtService;
 import com.spotbiz.spotbiz_backend_springboot.service.UserService;
@@ -36,14 +33,7 @@ public class UserServiceImpl implements UserService {
         this.authenticationManager = authenticationManager;
     }
 
-//    @Autowired
-//    public UserServiceImpl(UserRepo userRepo, BusinessRepo businessRepo, PasswordEncoder encoder, JwtService jwtService, AuthenticationManager authenticationManager) {
-//        this.userRepo = userRepo;
-//        this.encoder = encoder;
-//        this.jwtService = jwtService;
-//        this.authenticationManager = authenticationManager;
-//        this.businessRepo = businessRepo;
-//    }
+
 
     @Override
     public User register(User request) {
@@ -65,30 +55,6 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Override
-    public User register(BusinessOwnerCreateDto request) {
-        if (userRepo.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Customer already exists");
-        }
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPhoneNo(request.getPhoneNo());
-        user.setStatus(request.getStatus());
-        user.setPassword(encoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
-
-        Business business = new Business();
-        business.setName(request.getBusinessName());
-        business.setBusinessRegNo(request.getBusinessRegNo());
-
-
-        user = userRepo.save(user);
-
-        String token = jwtService.generateToken(user);
-
-        return user;
-    }
 
     @Override
     public User update(UpdateUserRequestDto request) {
