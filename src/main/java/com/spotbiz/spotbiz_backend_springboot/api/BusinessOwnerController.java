@@ -27,10 +27,10 @@ public class BusinessOwnerController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody BusinessOwnerRegDto dto) {
+    public ResponseEntity<?> register(@RequestBody BusinessOwnerRegDto dto) {
         try {
             User registeredUser = userService.registerBusinessOwner(dto);
-            return ResponseEntity.ok(String.valueOf(registeredUser.getUserId()));
+            return ResponseEntity.ok(registeredUser);
         } catch (RuntimeException ex){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         }
