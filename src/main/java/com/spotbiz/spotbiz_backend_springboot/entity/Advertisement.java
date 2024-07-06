@@ -13,7 +13,6 @@ public class Advertisement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ads_id")
     private Integer adsId;
-
     @Column(columnDefinition = "jsonb")
     private String data;
     // sample data : {"date": "2024-07-10", "time": "15:00:00", "image": "image3.jpg", "description": "Buy One Get One Free Offer!"}

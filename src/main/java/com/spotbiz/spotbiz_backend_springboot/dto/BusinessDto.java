@@ -1,6 +1,5 @@
 package com.spotbiz.spotbiz_backend_springboot.dto;
 
-import com.spotbiz.spotbiz_backend_springboot.entity.Category;
 import lombok.Data;
 
 @Data
@@ -16,7 +15,8 @@ public class BusinessDto {
     private String address;
     private String status;
     private Integer userId;
-    private Category category;
+    private Integer categoryId;
+    private String tags;
 
 
 }

@@ -5,12 +5,16 @@ import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Advertisement;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
+import com.spotbiz.spotbiz_backend_springboot.entity.BusinessCategory;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import java.util.List;
+import java.util.Optional;
+
 import com.spotbiz.spotbiz_backend_springboot.mapper.AdvertisementMapper;
 import com.spotbiz.spotbiz_backend_springboot.mapper.BusinessMapper;
 import com.spotbiz.spotbiz_backend_springboot.mapper.UserMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.AdvertisementRepo;
+import com.spotbiz.spotbiz_backend_springboot.repo.BusinessCategoryRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,8 @@ public class BusinessOwnerService {
 
     @Autowired
     private BusinessRepo businessRepo;
+    @Autowired
+    private BusinessCategoryRepo businessCategoryRepo;
     @Autowired
     private AdvertisementRepo advertisementRepo;
     @Autowired
@@ -38,9 +44,16 @@ public class BusinessOwnerService {
         Integer userId = user.getUserId();
 
         Business business = businessRepo.findByUserUserId(userId);
+        Optional<BusinessCategory> businessCategory = businessCategoryRepo.findByBusiness(business);
+
 
         if (business != null) {
-            return businessMapper.toBusinessDto(business);
+            BusinessDto businessDto =  businessMapper.toBusinessDto(business);
+
+            businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
+            businessDto.setTags(businessCategory.get().getTags());
+
+            return businessDto;
         }
         return dto;
     }

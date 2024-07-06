@@ -17,7 +17,7 @@ public class Category {
     @Column(name = "category_name")
     private String categoryName;
 
-    @Column(name = "tags", columnDefinition = "jsonb")
+    @Column(name = "tags")
     private String tags;
 
 }
