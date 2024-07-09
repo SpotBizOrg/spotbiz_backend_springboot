@@ -12,11 +12,14 @@ import com.spotbiz.spotbiz_backend_springboot.repo.BusinessCategoryRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.CategoryRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Service
 public class BusinessService {
@@ -128,4 +131,16 @@ public class BusinessService {
     }
 
 
+    public List<String> getTags(Integer category) {
+        Optional<Category> categoryOptional =  categoryRepo.findById(category);
+        if (categoryOptional.isPresent()) {
+             String jsonArrayString = categoryOptional.get().getTags();
+            JSONArray jsonArray = new JSONArray(jsonArrayString);
+            List<String> list = IntStream.range(0, jsonArray.length())
+                    .mapToObj(jsonArray::getString)
+                    .toList();
+            return list;
+        }
+        throw new RuntimeException("Category does not exist");
+    }
 }
