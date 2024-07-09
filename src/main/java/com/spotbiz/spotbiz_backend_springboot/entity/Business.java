@@ -1,13 +1,17 @@
 package com.spotbiz.spotbiz_backend_springboot.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "business")
 public class Business {
     @Id
@@ -40,6 +44,13 @@ public class Business {
     private User user;
 
 
+
+    public Business(String businessName, String businessRegNo, String status, User user){
+        this.name = businessName;
+        this.businessRegNo=businessRegNo;
+        this.status=status;
+        this.user = user;
+    }
 
 
 }

@@ -3,6 +3,7 @@ package com.spotbiz.spotbiz_backend_springboot.api;
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerRegDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Advertisement;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.service.BusinessOwnerService;
@@ -26,9 +27,14 @@ public class BusinessOwnerController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        User registeredUser = userService.register(user);
-        return ResponseEntity.ok(registeredUser);
+    public ResponseEntity<?> register(@RequestBody BusinessOwnerRegDto dto) {
+        try {
+            User registeredUser = userService.registerBusinessOwner(dto);
+            return ResponseEntity.ok(registeredUser);
+        } catch (RuntimeException ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        }
+
     }
 
     @GetMapping("/details/{email}")
