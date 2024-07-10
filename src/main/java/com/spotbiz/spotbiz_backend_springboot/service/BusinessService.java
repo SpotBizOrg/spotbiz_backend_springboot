@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -25,7 +26,6 @@ import java.util.stream.IntStream;
 public class BusinessService {
     private final UserRepo userRepo;
     private final BusinessRepo businessRepo;
-    private final CategoryRepo CategoryRepo ;
 
 
     @Autowired
@@ -42,7 +42,6 @@ public class BusinessService {
     public BusinessService(UserRepo userRepo, BusinessRepo businessRepo, CategoryRepo categoryRepo) {
         this.userRepo = userRepo;
         this.businessRepo = businessRepo;
-        this.CategoryRepo = categoryRepo;
     }
     public Business addBusiness(BusinessDto businessDto, String email) {
         Optional<User> userOptional = userRepo.findByEmail(email);
@@ -132,15 +131,14 @@ public class BusinessService {
 
 
     public List<String> getTags(Integer category) {
-        Optional<Category> categoryOptional =  categoryRepo.findById(category);
-        if (categoryOptional.isPresent()) {
-             String jsonArrayString = categoryOptional.get().getTags();
+        Optional<Category> categoryOptional = categoryRepo.findById(category);
+        return categoryOptional.map(cat -> {
+            String jsonArrayString = cat.getTags();
             JSONArray jsonArray = new JSONArray(jsonArrayString);
-            List<String> list = IntStream.range(0, jsonArray.length())
+            return IntStream.range(0, jsonArray.length())
                     .mapToObj(jsonArray::getString)
                     .toList();
-            return list;
-        }
-        throw new RuntimeException("Category does not exist");
+        }).orElse(Collections.emptyList()); // Return an empty list if category not found
     }
+
 }
