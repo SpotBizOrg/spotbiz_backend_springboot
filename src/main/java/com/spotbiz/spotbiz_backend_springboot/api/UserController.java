@@ -28,6 +28,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody User user) {
         AuthenticationResponse response = userService.authenticate(user);
+        System.out.println(user.getEmail());
         return ResponseEntity.ok(response);
     }
 
