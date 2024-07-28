@@ -43,10 +43,7 @@ public class Business {
     @NaturalId
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    @NaturalId
-    private Category category;
+
 
     public Business(String businessName, String businessRegNo, String status, User user){
         this.name = businessName;

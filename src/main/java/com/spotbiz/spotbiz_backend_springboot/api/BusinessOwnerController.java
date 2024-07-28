@@ -63,7 +63,7 @@ public class BusinessOwnerController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve user: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve business: " + ex.getMessage());
         }
     }
 

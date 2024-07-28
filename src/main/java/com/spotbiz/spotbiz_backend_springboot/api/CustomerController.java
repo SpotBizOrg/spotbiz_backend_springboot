@@ -32,6 +32,7 @@ public class CustomerController {
     public ResponseEntity<String> register(@RequestBody User user) {
         User managedUser;
         try {
+            System.out.println(user.getEmail() + "" + user.getStatus());
             managedUser = userService.register(user);
             VerificationToken token = tokenService.createVerificationToken(managedUser);
             String subject = "Email Verification";
