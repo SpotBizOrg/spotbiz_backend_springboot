@@ -50,12 +50,13 @@ public class BusinessOwnerService {
         if (business != null) {
             BusinessDto businessDto =  businessMapper.toBusinessDto(business);
 
-            if(businessCategory.isPresent()) {
-                businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
-                businessDto.setTags(businessCategory.get().getTags());
-
-                return businessDto;
-            }
+//            if(businessCategory.isPresent()) {
+//                businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
+//                businessDto.setTags(businessCategory.get().getTags());
+//
+//                return businessDto;
+//            }
+            return businessDto;
 
         }
         return dto;
