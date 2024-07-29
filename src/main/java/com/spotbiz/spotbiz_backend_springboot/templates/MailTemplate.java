@@ -40,7 +40,7 @@ public class MailTemplate {
     }
 
     public static String getBusinessVerificationEmail(String recipientName, String businessName) {
-        String redirectLink = "http://localhost:8080/api/v1/admin/verify/" + businessName;
+        String redirectLink = "http://localhost:5173/login/";
         return "<html>" +
                 "<head>" +
                 "<style>" +
@@ -62,7 +62,7 @@ public class MailTemplate {
                 "<p>Dear " + recipientName + ",</p>" +
                 "<p>Congratulations! Your business, " + businessName + ", has been verified by the admin panel.</p>" +
                 "<p>Thank you for registering. Please click the button below to Login to your account:</p>" +
-                "<a href='" + redirectLink + "' class='button'>Verify Email</a>" +
+                "<a href='" + redirectLink + "' class='button'>Click Here to Continue</a>" +
                 "<p>If the button above does not work, you can also verify your email by clicking the link below:</p>" +
                 "<a href='" + redirectLink + "'>" + redirectLink + "</a>" +
                 "<br/><br/>" +
