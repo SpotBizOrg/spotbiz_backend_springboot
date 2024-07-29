@@ -44,6 +44,7 @@ public class BusinessOwnerService {
         Integer userId = user.getUserId();
 
         Business business = businessRepo.findByUserUserId(userId);
+        System.out.println("hi"+business.getBusinessId());
         Optional<BusinessCategory> businessCategory = businessCategoryRepo.findByBusiness(business);
 
 
@@ -56,6 +57,7 @@ public class BusinessOwnerService {
 //
 //                return businessDto;
 //            }
+
             return businessDto;
 
         }
