@@ -44,18 +44,21 @@ public class BusinessOwnerService {
         Integer userId = user.getUserId();
 
         Business business = businessRepo.findByUserUserId(userId);
+        System.out.println("hi"+business.getBusinessId());
         Optional<BusinessCategory> businessCategory = businessCategoryRepo.findByBusiness(business);
 
 
         if (business != null) {
             BusinessDto businessDto =  businessMapper.toBusinessDto(business);
 
-            if(businessCategory.isPresent()) {
-                businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
-                businessDto.setTags(businessCategory.get().getTags());
+//            if(businessCategory.isPresent()) {
+//                businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
+//                businessDto.setTags(businessCategory.get().getTags());
+//
+//                return businessDto;
+//            }
 
-                return businessDto;
-            }
+            return businessDto;
 
         }
         return dto;
