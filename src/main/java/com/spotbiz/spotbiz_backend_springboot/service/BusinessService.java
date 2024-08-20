@@ -34,12 +34,9 @@ public class BusinessService {
     private BusinessCategoryRepo businessCategoryRepo;
     @Autowired
     private CategoryRepo categoryRepo;
-    @Autowired
-    private CategoryMapper categoryMapper;
-
 
     @Autowired
-    public BusinessService(UserRepo userRepo, BusinessRepo businessRepo, CategoryRepo categoryRepo) {
+    public BusinessService(UserRepo userRepo, BusinessRepo businessRepo) {
         this.userRepo = userRepo;
         this.businessRepo = businessRepo;
     }
@@ -104,10 +101,7 @@ public class BusinessService {
                         Category newCategory = newCategoryOptional.get();
 
                         if (!existingCategory.getCategory().equals(newCategory)) {
-                            // Delete the old BusinessCategory
                             businessCategoryRepo.delete(existingCategory);
-
-                            // Create and save the new BusinessCategory
                             BusinessCategory newBusinessCategory = new BusinessCategory();
                             newBusinessCategory.setBusiness(existingBusiness);
                             newBusinessCategory.setCategory(newCategory);
@@ -120,6 +114,20 @@ public class BusinessService {
                     } else {
                         throw new RuntimeException("Category does not exist");
                     }
+                } else {
+                    Optional<Category> newCategoryOptional = categoryRepo.findById(updatedBusinessDto.getCategoryId());
+
+                    if (newCategoryOptional.isPresent()) {
+                        Category newCategory = newCategoryOptional.get();
+
+                        BusinessCategory newBusinessCategory = new BusinessCategory();
+                        newBusinessCategory.setBusiness(existingBusiness);
+                        newBusinessCategory.setCategory(newCategory);
+                        newBusinessCategory.setTags(updatedBusinessDto.getTags());
+                        businessCategoryRepo.save(newBusinessCategory);
+                    } else {
+                        throw new RuntimeException("Category does not exist");
+                    }
                 }
 
                 return existingBusiness;
@@ -129,7 +137,6 @@ public class BusinessService {
         }
     }
 
-
     public List<String> getTags(Integer category) {
         Optional<Category> categoryOptional = categoryRepo.findById(category);
         return categoryOptional.map(cat -> {
@@ -138,7 +145,7 @@ public class BusinessService {
             return IntStream.range(0, jsonArray.length())
                     .mapToObj(jsonArray::getString)
                     .toList();
-        }).orElse(Collections.emptyList()); // Return an empty list if category not found
+        }).orElse(Collections.emptyList());
     }
 
 }
