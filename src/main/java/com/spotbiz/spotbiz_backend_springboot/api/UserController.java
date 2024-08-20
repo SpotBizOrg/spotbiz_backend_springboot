@@ -4,6 +4,7 @@ import com.spotbiz.spotbiz_backend_springboot.dto.UpdateUserRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.AuthenticationResponse;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,9 @@ public class UserController {
 
     private final UserService userService;
 
+    @Value("${base.url}")
+    private String baseUrl;
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -24,6 +28,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody User user) {
         AuthenticationResponse response = userService.authenticate(user);
+        System.out.println(user.getEmail());
         return ResponseEntity.ok(response);
     }
 

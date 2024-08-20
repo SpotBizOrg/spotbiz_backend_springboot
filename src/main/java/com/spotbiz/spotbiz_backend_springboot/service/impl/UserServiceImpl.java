@@ -60,9 +60,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerBusinessOwner(BusinessOwnerRegDto dto) {
-//        if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
-//            throw new RuntimeException("Email already exists");
-//        }
+        if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
