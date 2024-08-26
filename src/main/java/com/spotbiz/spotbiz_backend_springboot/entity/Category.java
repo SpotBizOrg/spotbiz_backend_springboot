@@ -1,8 +1,10 @@
 package com.spotbiz.spotbiz_backend_springboot.entity;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 @Getter
 @Setter
@@ -17,7 +19,8 @@ public class Category {
     @Column(name = "category_name")
     private String categoryName;
 
-    @Column(name = "tags")
+    @Type(JsonBinaryType.class)
+    @Column(columnDefinition = "jsonb")
     private String tags;
 
 }
