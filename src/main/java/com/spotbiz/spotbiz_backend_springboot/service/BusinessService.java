@@ -6,21 +6,16 @@ import com.spotbiz.spotbiz_backend_springboot.entity.BusinessCategory;
 import com.spotbiz.spotbiz_backend_springboot.entity.Category;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.mapper.BusinessMapper;
-
-import com.spotbiz.spotbiz_backend_springboot.mapper.CategoryMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessCategoryRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.CategoryRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
-import org.json.JSONArray;
+import org.json.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
+
 
 @Service
 public class BusinessService {
@@ -74,10 +69,9 @@ public class BusinessService {
         }
     }
 
-
-
     public Business updateBusiness(BusinessDto updatedBusinessDto, String email) {
         Optional<User> userOptional = userRepo.findByEmail(email);
+
 
         if (userOptional.isEmpty()) {
             throw new RuntimeException("Business owner does not exist");
@@ -138,15 +132,14 @@ public class BusinessService {
         }
     }
 
-    public List<String> getTags(Integer category) {
-        Optional<Category> categoryOptional = categoryRepo.findById(category);
-        return categoryOptional.map(cat -> {
-            String jsonArrayString = cat.getTags();
-            JSONArray jsonArray = new JSONArray(jsonArrayString);
-            return IntStream.range(0, jsonArray.length())
-                    .mapToObj(jsonArray::getString)
-                    .toList();
-        }).orElse(Collections.emptyList());
-    }
+    public String getTags(Integer categoryId) {
+        Optional<Category> categoryOptional = categoryRepo.findById(categoryId);
 
+        if (categoryOptional.isPresent()) {
+            Category category = categoryOptional.get();
+            return category.getTags();
+        } else {
+            throw new RuntimeException("Category does not exist");
+        }
+    }
 }

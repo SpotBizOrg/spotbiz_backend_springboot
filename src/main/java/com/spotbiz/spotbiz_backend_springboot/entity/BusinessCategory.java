@@ -1,9 +1,11 @@
 package com.spotbiz.spotbiz_backend_springboot.entity;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Type;
 
 import java.util.Optional;
 
@@ -25,6 +27,8 @@ public class BusinessCategory {
     @JoinColumn(name = "business_id")
     private Business business;
 
+    @Type(JsonBinaryType.class)
+    @Column(columnDefinition = "jsonb")
     private String tags;
 
     public BusinessCategory( Category category, String tags, Business business) {

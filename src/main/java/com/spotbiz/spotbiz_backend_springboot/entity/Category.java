@@ -1,16 +1,15 @@
 package com.spotbiz.spotbiz_backend_springboot.entity;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
+import org.hibernate.annotations.Type;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "category")
-
 public class Category {
    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +19,8 @@ public class Category {
     @Column(name = "category_name")
     private String categoryName;
 
-//    @ElementCollection
-//    @Column(name = "tags")
-//    private List<String> tags; // updating this to a list
-
-      @Column(name = "tags")
-      private  String tags;
-
-//    @Convert(converter = JsonConverter.class)
-//    private List<String> tags;
+    @Type(JsonBinaryType.class)
+    @Column(columnDefinition = "jsonb")
+    private String tags;
 
 }
