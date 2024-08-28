@@ -4,10 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "category")
+
 public class Category {
    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +20,14 @@ public class Category {
     @Column(name = "category_name")
     private String categoryName;
 
-    @Column(name = "tags")
-    private String tags;
+//    @ElementCollection
+//    @Column(name = "tags")
+//    private List<String> tags; // updating this to a list
+
+      @Column(name = "tags")
+      private  String tags;
+
+//    @Convert(converter = JsonConverter.class)
+//    private List<String> tags;
 
 }

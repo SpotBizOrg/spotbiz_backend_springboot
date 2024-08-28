@@ -103,6 +103,7 @@ public class BusinessService {
                         if (!existingCategory.getCategory().equals(newCategory)) {
                             businessCategoryRepo.delete(existingCategory);
                             BusinessCategory newBusinessCategory = new BusinessCategory();
+                            System.out.println("new category"+newCategory.getTags());
                             newBusinessCategory.setBusiness(existingBusiness);
                             newBusinessCategory.setCategory(newCategory);
                             newBusinessCategory.setTags(updatedBusinessDto.getTags());

@@ -1,13 +1,12 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
-import com.spotbiz.spotbiz_backend_springboot.service.SearchService;
+import com.spotbiz.spotbiz_backend_springboot.entity.Business;
+import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.impl.SearchServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,14 +15,32 @@ import java.util.List;
 public class SearchController {
 
 
+    private final BusinessRepo businessRepo;
+    private final SearchServiceImpl searchService;
+
+    public SearchController(BusinessRepo businessRepo, SearchServiceImpl searchService) {
+        this.businessRepo = businessRepo;
+        this.searchService = searchService;
+    }
+
+
     @GetMapping("{searchText}")
-    public ResponseEntity<?> searchBusinesses(@PathVariable String searchText) {
+    public ResponseEntity<?> searchBusinesses(@PathVariable String searchText, @RequestParam int page, @RequestParam int size) {
        try{
            System.out.println("searchText"+searchText);
-           SearchServiceImpl searchService = new SearchServiceImpl();
 
            List<String> list =  searchService.getKeywords(searchText);
-           return ResponseEntity.ok(list);
+
+           List<Business> results = null;
+
+           for (String keyword : list) {
+//               System.out.println("keyword"+keyword);
+               results.addAll(searchService.searchBusinesses(keyword, page, size));
+
+           }
+
+           return ResponseEntity.ok(results);
+
        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve businesses: " + ex.getMessage());
         }

@@ -17,14 +17,12 @@ public class BusinessCategory {
     @Column(name = "id")
     private Integer businessCategoryId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id")
-    @NaturalId
     private Category category;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "business_id")
-    @NaturalId
     private Business business;
 
     private String tags;
