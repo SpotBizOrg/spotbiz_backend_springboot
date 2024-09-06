@@ -16,7 +16,21 @@ public interface BusinessRepo extends JpaRepository<Business, Integer> {
 
     List<Business> findByStatus(String status);
 
-    @Query("SELECT c.business FROM BusinessCategory c WHERE c.tags LIKE %:keyword%")
-    List<Business> findByTagsContaining(@Param("keyword") String keyword);
+//    @Query("SELECT c.business FROM BusinessCategory c WHERE c.tags LIKE %:keyword%")
+//    List<Business> findByAnyTag(@Param("keyword") String keyword);
+
+//    @Query(value = "SELECT c.business FROM BusinessCategory c WHERE c.tags @> array[:tags]")
+//    List<Business> findByTags(@Param("tags") List<String> tags);
+
+//    @Query(value = "SELECT * FROM BusinessCategory c WHERE c.tags ?| array[:tags]", nativeQuery = true)
+//    List<Business> findByAnyTag(@Param("tags") List<String> tags);
+
+//    @Query(value = "SELECT * FROM business_category c WHERE c.tags ?| :tags", nativeQuery = true)
+//    List<Business> findByAnyTag(@Param("tags") List<String> tags);
+
+    @Query("SELECT b FROM BusinessCategory b WHERE b.tags IN :tags")
+    List<Business> findByAnyTag(@Param("tags") List<String> tags);
+
+
 
 }

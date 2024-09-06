@@ -8,5 +8,5 @@ public interface SearchService {
 
     List<String> getKeywords(String searchText);
 
-    List<Business> searchBusinesses(String keyword, int page, int size);
+    List<Business> searchBusinesses(List<String> keywords, int page, int size);
 }

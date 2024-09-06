@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -37,6 +38,9 @@ public class BusinessController {
     @PutMapping("update/{email}")
     public ResponseEntity<?> updateBusiness(@RequestBody BusinessDto updatedBusiness, @PathVariable String email) {
         try {
+            System.out.println(updatedBusiness.getTags());
+            System.out.println(updatedBusiness.getUserId());
+            System.out.println(updatedBusiness.getBusinessId());
             Business updatedDto = businessService.updateBusiness(updatedBusiness, email);
             return ResponseEntity.ok(updatedDto);
         } catch (RuntimeException ex) {
@@ -47,7 +51,7 @@ public class BusinessController {
     @GetMapping("/tags/{category}")
     public ResponseEntity<?> getTagsByCategory(@PathVariable Integer category) {
         try {
-                String tags =  businessService.getTags(category);
+            String tags =  businessService.getTags(category);
                 return ResponseEntity.ok(tags);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve tags: " + ex.getMessage());

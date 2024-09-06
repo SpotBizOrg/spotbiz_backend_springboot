@@ -33,11 +33,13 @@ public class SearchController {
 
            List<Business> results = null;
 
-           for (String keyword : list) {
-//               System.out.println("keyword"+keyword);
-               results.addAll(searchService.searchBusinesses(keyword, page, size));
+           results = searchService.searchBusinesses(list, page, size);
 
-           }
+//           for (String keyword : list) {
+////               System.out.println("keyword"+keyword);
+//               results.addAll(searchService.searchBusinesses(keyword, page, size));
+//
+//           }
 
            return ResponseEntity.ok(results);
 
