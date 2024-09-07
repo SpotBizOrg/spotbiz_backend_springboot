@@ -8,11 +8,19 @@ import com.spotbiz.spotbiz_backend_springboot.repo.ReviewRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.ReviewService;
 import com.spotbiz.spotbiz_backend_springboot.service.UserService;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -29,6 +37,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Autowired
     private UserService userService;
+
+    private static final String SENTIMENT_GET_API_URL = "http://localhost:8000/sentiment";
 
     @Override
     public Review saveReview(ReviewRequestDto reviewDto) {
@@ -60,10 +70,32 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     public ReviewRequestDto setData(ReviewRequestDto review, String email) {
-        review.setRating(5);
+//        review.setRating(5);
+        try {
+            review.setRating(generateRating(review));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate rating", e);
+        }
         Integer userId = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found")).getUserId();
         review.setUserId(userId);
         return review;
+    }
+
+    public int generateRating(ReviewRequestDto review) {
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(SENTIMENT_GET_API_URL);
+            httpPost.setHeader("Content-Type", "application/json");
+            StringEntity entity = new StringEntity(review.getDescription());
+            httpPost.setEntity(entity);
+
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                String responseBody = EntityUtils.toString(response.getEntity());
+                JSONObject jsonResponse = new JSONObject(responseBody);
+                return jsonResponse.getInt("score");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
