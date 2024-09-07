@@ -1,6 +1,8 @@
 package com.spotbiz.spotbiz_backend_springboot.repo;
 
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -38,5 +40,6 @@ public interface BusinessRepo extends JpaRepository<Business, Integer> {
             "    SELECT 1 FROM jsonb_array_elements_text(bc.tags->'keywords') tag " +
             "    WHERE tag = ANY (cast(:tags as text[])) " +
             ")", nativeQuery = true)
-    List<Business> findByAnyTag(@Param("tags") String[] tags);
+//    List<Business> findByAnyTag(@Param("tags") String[] tags);
+    Page<Business> findByAnyTag(@Param("tags") String[] tags, Pageable pageable);
 }

@@ -5,6 +5,9 @@ import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.impl.SearchServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +37,11 @@ public class SearchController {
 
            String[] list = searchService.getKeywords(searchText).toArray(new String[0]);
 
-           List<Business> results = null;
+           // Use Page instead of List for paginated results
+           Pageable pageable = PageRequest.of(page, size);
+           Page<Business> results = searchService.searchBusinesses(list, pageable);
 
-           results = searchService.searchBusinesses(list, page, size);
-
+           // Return the Page object directly, which includes pagination metadata
            return ResponseEntity.ok(results);
 
        } catch (Exception ex) {

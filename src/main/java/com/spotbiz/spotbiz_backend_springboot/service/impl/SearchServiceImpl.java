@@ -11,6 +11,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -67,9 +69,9 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<Business> searchBusinesses(String[] keywords, int page, int size) {
+    public Page<Business> searchBusinesses(String[] keywords, Pageable pageable) {
         try {
-            List<Business> list = businessRepo.findByAnyTag(keywords);
+            Page<Business> list = businessRepo.findByAnyTag(keywords, pageable);
             return list;
         } catch (Exception e) {
             throw new RuntimeException("Failed to do search businesses: " + e.getMessage());
