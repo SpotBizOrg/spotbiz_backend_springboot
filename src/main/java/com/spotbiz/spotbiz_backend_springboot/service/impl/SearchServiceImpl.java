@@ -67,7 +67,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<Business> searchBusinesses(List<String> keywords, int page, int size) {
+    public List<Business> searchBusinesses(String[] keywords, int page, int size) {
         try {
             List<Business> list = businessRepo.findByAnyTag(keywords);
             return list;

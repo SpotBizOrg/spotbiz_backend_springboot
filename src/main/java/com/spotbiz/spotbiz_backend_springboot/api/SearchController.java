@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.impl.SearchServiceImpl;
@@ -8,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/search/")
@@ -29,17 +32,11 @@ public class SearchController {
        try{
            System.out.println("searchText"+searchText);
 
-           List<String> list =  searchService.getKeywords(searchText);
+           String[] list = searchService.getKeywords(searchText).toArray(new String[0]);
 
            List<Business> results = null;
 
            results = searchService.searchBusinesses(list, page, size);
-
-//           for (String keyword : list) {
-////               System.out.println("keyword"+keyword);
-//               results.addAll(searchService.searchBusinesses(keyword, page, size));
-//
-//           }
 
            return ResponseEntity.ok(results);
 
