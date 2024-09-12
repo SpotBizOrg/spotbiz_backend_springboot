@@ -86,7 +86,11 @@ public class ReviewServiceImpl implements ReviewService {
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(SENTIMENT_GET_API_URL);
             httpPost.setHeader("Content-Type", "application/json");
-            StringEntity entity = new StringEntity(review.getDescription());
+            // Construct the JSON body
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("text", review.getDescription()); // Add the description with the keyword "text"
+
+            StringEntity entity = new StringEntity(jsonBody.toString());
             httpPost.setEntity(entity);
 
             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
