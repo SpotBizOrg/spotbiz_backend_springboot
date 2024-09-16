@@ -2,6 +2,9 @@ package com.spotbiz.spotbiz_backend_springboot.dto;
 
 import lombok.Data;
 
+import java.util.List;
+import java.util.Map;
+
 @Data
 public class BusinessDto {
     private Integer businessId;
@@ -16,7 +19,7 @@ public class BusinessDto {
     private String status;
     private Integer userId;
     private Integer categoryId;
-    private String tags;
+    private List<String> tags;
 
 
 }
