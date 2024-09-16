@@ -11,5 +11,4 @@ public class GameDto {
     private String developer;
     private String gameUrl;
     private String imageUrl;
-    private byte[] imageData;
 }

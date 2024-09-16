@@ -34,6 +34,9 @@ public class Game {
     @Column(name="game_url")
     private String gameUrl;
 
+    @Column(name="image_url")
+    private String imageUrl;
+
     @Column(name="flag")
     private Boolean flag = false;
 }

@@ -22,66 +22,24 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    @PostMapping(value = "/insert_game", consumes = "multipart/form-data")
-    public ResponseEntity<?> insertGame(
-            @RequestParam("gameName") String gameName,
-            @RequestParam("gameType") GameType gameType,
-            @RequestParam("developer") String developer,
-            @RequestParam("description") String description,
-            @RequestParam("gameUrl") String gameUrl,
-            @RequestParam("gameImg") MultipartFile gameImg) {
-
+    @PostMapping(value = "/insert_game", consumes = "application/json")
+    public ResponseEntity<?> insertGame(@RequestBody GameDto gameDto) {
         try {
-            GameDto gameDto = new GameDto();
-            gameDto.setGameName(gameName);
-            gameDto.setGameType(gameType);
-            gameDto.setDeveloper(developer);
-            gameDto.setDescription(description);
-            gameDto.setGameUrl(gameUrl);
-
+            System.out.println(gameDto.getImageUrl() + " " + gameDto.getGameType());
             int gameId = gameService.insertGame(gameDto);
 
-            if (gameId > 0 && !gameImg.isEmpty()) {
-                String projectDir = System.getProperty("user.dir");
-                String uploadDir = projectDir + File.separator + "uploads" + File.separator + "game_banners";
-
-                File dir = new File(uploadDir);
-                if (!dir.exists()) {
-                    boolean dirCreated = dir.mkdirs();
-                    if (!dirCreated) {
-                        throw new RuntimeException("Failed to create directory: " + dir.getAbsolutePath());
-                    }
-                }
-
-                String fileExtension = getFileExtension(gameImg.getOriginalFilename());
-                String filename = "game_" + gameId + "." + fileExtension;
-                File dest = new File(dir, filename);
-                System.out.println(dest.getAbsolutePath());
-
-                try {
-                    gameImg.transferTo(dest);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("Error saving the image file", e);
-                }
+            if (gameId > 0) {
+                return ResponseEntity.ok(gameId);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to insert game");
             }
-
-            return ResponseEntity.ok(gameId);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         }
     }
 
-    private String getFileExtension(String filename) {
-        if (filename == null) {
-            return "";
-        }
-        int dotIndex = filename.lastIndexOf('.');
-        return (dotIndex == -1) ? "" : filename.substring(dotIndex + 1);
-    }
-
     @GetMapping("/all_games/{gameType}")
-    public ResponseEntity<?> getNormalGame(@PathVariable GameType gameType) {
+    public ResponseEntity<?> getAllGames(@PathVariable GameType gameType) {
         try {
             List<GameDto> allGames = gameService.getAllGames(gameType);
             return ResponseEntity.ok(allGames);
