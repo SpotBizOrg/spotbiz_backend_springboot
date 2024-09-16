@@ -14,6 +14,7 @@ import lombok.Setter;
 @Table(name = "game")
 public class Game {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="game_id")
     private int gameId;
 
@@ -32,9 +33,6 @@ public class Game {
 
     @Column(name="game_url")
     private String gameUrl;
-
-    @Column(name="game_img")
-    private String gameImg;
 
     @Column(name="flag")
     private Boolean flag = false;

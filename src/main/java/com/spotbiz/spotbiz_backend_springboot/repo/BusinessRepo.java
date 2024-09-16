@@ -13,5 +13,5 @@ public interface BusinessRepo extends JpaRepository<Business, Integer> {
     Business findByUserUserId(Integer userId);
 
     List<Business> findByStatus(String status);
-
+    Business findByBusinessId(int businessId);
 }
