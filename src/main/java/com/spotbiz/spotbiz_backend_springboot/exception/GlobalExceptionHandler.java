@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         String message = ex.getMessage();
@@ -25,6 +26,8 @@ public class GlobalExceptionHandler {
         }
     }
 
+
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
         String message = ex.getMessage();
@@ -38,6 +41,33 @@ public class GlobalExceptionHandler {
             return new ResponseEntity<>(new ErrorResponse("An error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @ExceptionHandler(DuplicateReviewException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateReviewException(DuplicateReviewException ex) {
+        String message = ex.getMessage();
+        ErrorResponse errorResponse = new ErrorResponse(message);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AdvertisementException.JsonConversionException.class)
+    public ResponseEntity<ErrorResponse> handleJsonConversionException(AdvertisementException.JsonConversionException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AdvertisementException.BusinessNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessNotFoundException(AdvertisementException.BusinessNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AdvertisementException.AdvertisementSaveException.class)
+    public ResponseEntity<ErrorResponse> handleAdvertisementSaveException(AdvertisementException.AdvertisementSaveException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
