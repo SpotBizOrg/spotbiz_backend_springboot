@@ -17,6 +17,7 @@ public interface BusinessRepo extends JpaRepository<Business, Integer> {
     Business findByUserUserId(Integer userId);
 
     List<Business> findByStatus(String status);
+    Business findByBusinessId(int businessId);
 
 //    @Query("SELECT c.business FROM BusinessCategory c WHERE c.tags LIKE %:keyword%")
 //    List<Business> findByAnyTag(@Param("keyword") String keyword);

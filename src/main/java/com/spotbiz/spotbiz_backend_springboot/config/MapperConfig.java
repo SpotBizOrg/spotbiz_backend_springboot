@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.config;
 
+import com.spotbiz.spotbiz_backend_springboot.mapper.CouponMapper;
 import com.spotbiz.spotbiz_backend_springboot.mapper.GameMapper;
 import com.spotbiz.spotbiz_backend_springboot.mapper.PlayedGameMapper;
 import org.mapstruct.factory.Mappers;
@@ -31,6 +32,11 @@ public class MapperConfig {
     @Bean
     public GameMapper gameMapper() {
         return Mappers.getMapper(GameMapper.class);
+    }
+
+    @Bean
+    public CouponMapper couponMapper() {
+        return Mappers.getMapper(CouponMapper.class);
     }
 
 }

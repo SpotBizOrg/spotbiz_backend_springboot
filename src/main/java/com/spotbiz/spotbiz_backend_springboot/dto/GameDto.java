@@ -10,5 +10,5 @@ public class GameDto {
     private String description;
     private String developer;
     private String gameUrl;
-    private String gameImg;
+    private String imageUrl;
 }
