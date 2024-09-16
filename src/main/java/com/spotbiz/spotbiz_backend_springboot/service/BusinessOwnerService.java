@@ -16,7 +16,10 @@ import com.spotbiz.spotbiz_backend_springboot.mapper.UserMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.AdvertisementRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessCategoryRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
+import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,6 +37,8 @@ public class BusinessOwnerService {
     private BusinessMapper businessMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserRepo userRepo;
 
     public BusinessOwnerDto getDetails(User user) {
         return userMapper.toBusinessOwnerDto(user);
@@ -44,24 +49,19 @@ public class BusinessOwnerService {
         Integer userId = user.getUserId();
 
         Business business = businessRepo.findByUserUserId(userId);
-        System.out.println("hi"+business.getBusinessId());
         Optional<BusinessCategory> businessCategory = businessCategoryRepo.findByBusiness(business);
 
+        BusinessDto businessDto = businessMapper.toBusinessDto(business);
 
-        if (business != null) {
-            BusinessDto businessDto =  businessMapper.toBusinessDto(business);
-
-//            if(businessCategory.isPresent()) {
-//                businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
-//                businessDto.setTags(businessCategory.get().getTags());
-//
-//                return businessDto;
-//            }
+        if(businessCategory.isPresent()) {
+            businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
+            businessDto.setTags(businessCategory.get().getTags());
 
             return businessDto;
-
         }
-        return dto;
+
+        return businessDto;
+
     }
 
     public List<AdvertisementDto> getAdvertisements(User user){
@@ -87,5 +87,17 @@ public class BusinessOwnerService {
 //        return null;
 //    }
 
+    public ResponseEntity<?> updateOwner(User user, BusinessOwnerDto dto) {
+        try {
+            user.setName(dto.getName());
+            user.setEmail(dto.getEmail());
+            user.setPhoneNo(dto.getPhoneNo());
+            userRepo.save(user);
+            return ResponseEntity.ok(user);
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
+
+    }
 }
 
