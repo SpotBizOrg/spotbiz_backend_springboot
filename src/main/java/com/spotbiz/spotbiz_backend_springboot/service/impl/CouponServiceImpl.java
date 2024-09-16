@@ -125,6 +125,11 @@ public class CouponServiceImpl implements CouponService {
             throw new RuntimeException("coupon not found");
         }
 
+        if(couponDto.getDiscount() == coupon.getDiscount() && Objects.equals(couponDto.getDescription(), coupon.getDescription()))
+        {
+            throw new RuntimeException("Nothing Changed");
+        }
+
         if(couponDto.getDescription() != null && !couponDto.getDescription().equals(coupon.getDescription())){
             coupon.setDescription(couponDto.getDescription());
         }
@@ -135,11 +140,6 @@ public class CouponServiceImpl implements CouponService {
 
         if(coupon.getDescription() == null && couponDto.getDiscount() <= 0){
             throw new RuntimeException("Description and discount both are null");
-        }
-
-        if(couponDto.getDiscount() == coupon.getDiscount() && Objects.equals(couponDto.getDescription(), coupon.getDescription()))
-        {
-            throw new RuntimeException("Nothing Changed");
         }
 
         coupon = couponRepo.save(coupon);
