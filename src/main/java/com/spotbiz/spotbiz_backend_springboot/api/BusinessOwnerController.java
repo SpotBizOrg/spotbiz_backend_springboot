@@ -69,7 +69,6 @@ public class BusinessOwnerController {
 
     @GetMapping("/advertisements/{email}")
     public ResponseEntity<?> getAdvertisementsByEmail(@PathVariable String email) {
-        try {
             User user = userService.getUserByEmail(email);
             if (user != null) {
                 List<AdvertisementDto> ads = businessOwnerService.getAdvertisements(user);
@@ -77,8 +76,15 @@ public class BusinessOwnerController {
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve user: " + ex.getMessage());
+    }
+
+    @PutMapping("/update/{email}")
+    public ResponseEntity<?> updateOwner(@RequestBody BusinessOwnerDto dto, @PathVariable String email) {
+        User user = userService.getUserByEmail(email);
+        if (user != null) {
+            return businessOwnerService.updateOwner(user, dto);
         }
+        return ResponseEntity.notFound().build();
+
     }
 }
