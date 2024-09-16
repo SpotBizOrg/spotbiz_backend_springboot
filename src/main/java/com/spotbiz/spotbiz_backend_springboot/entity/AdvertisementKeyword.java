@@ -4,23 +4,24 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
-
-import java.util.List;
-import java.util.Map;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "category")
-public class Category {
-   @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
-    private Integer categoryId;
 
-    @Column(name = "category_name")
-    private String categoryName;
+@Table(name = "advertiesment_keyword")
+public class AdvertisementKeyword {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer Id;
+
+    @OneToOne
+    @JoinColumn(name = "advertisement_id" , referencedColumnName = "ads_Id")
+    private Advertisement Advertisement;
 
     @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")

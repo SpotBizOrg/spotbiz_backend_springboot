@@ -7,6 +7,6 @@ import lombok.Data;
 public class AdvertisementDto {
     private Integer adsId;
     private String data;
-
+    private Boolean status;
 }
 
