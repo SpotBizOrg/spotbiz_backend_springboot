@@ -6,6 +6,8 @@ import com.spotbiz.spotbiz_backend_springboot.service.ReccomondationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ReccomondationServiceImpl implements ReccomondationService {
 
@@ -25,5 +27,20 @@ public class ReccomondationServiceImpl implements ReccomondationService {
             return null;
         }
         return newSearch;
+    }
+
+    @Override
+    public List<String> getReccomondation(Integer userId) {
+
+        try {
+            List<String> list = searchHistoryRepo.findGeneratedKeywordsByUserIdOrderByUpdatedAtDesc(userId);
+            if (!list.isEmpty()) {
+                return list;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

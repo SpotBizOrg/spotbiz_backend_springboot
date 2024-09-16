@@ -76,5 +76,16 @@ public class BusinessOwnerService {
         return null;
     }
 
+//    public List<AdvertisementDto> getAdvertisementsByTags(Integer userId, String tags){
+//
+//        Business business = businessRepo.findByUserUserId(userId);
+//        if (business != null) {
+//            List<Advertisement> ads = advertisementRepo.findByBusinessBusinessIdAndTagsContaining(business.getBusinessId(), tags);
+//            return advertisementMapper.mapToAdvertisementDtos(ads);
+//        }
+//
+//        return null;
+//    }
 
 }
+
