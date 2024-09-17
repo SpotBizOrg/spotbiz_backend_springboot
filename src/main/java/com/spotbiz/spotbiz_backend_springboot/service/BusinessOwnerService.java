@@ -1,5 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerDto;
@@ -8,6 +10,7 @@ import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.BusinessCategory;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.spotbiz.spotbiz_backend_springboot.mapper.AdvertisementMapper;
@@ -55,7 +58,8 @@ public class BusinessOwnerService {
 
         if(businessCategory.isPresent()) {
             businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
-            businessDto.setTags(businessCategory.get().getTags());
+            List<String> tags = parseJsonString(businessCategory.get().getTags());
+            businessDto.setTags(tags);
 
             return businessDto;
         }
@@ -98,6 +102,21 @@ public class BusinessOwnerService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
 
+    }
+
+    public List<String> parseJsonString(String jsonString) {
+        try {
+            // Use ObjectMapper to parse the JSON string into a map
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, List<String>> keywordMap = objectMapper.readValue(jsonString, new TypeReference<Map<String, List<String>>>(){});
+
+            // Extract and return the list of keywords
+            return keywordMap.get("keywords");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 

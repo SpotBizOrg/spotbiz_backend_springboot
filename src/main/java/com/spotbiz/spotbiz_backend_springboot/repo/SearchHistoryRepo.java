@@ -12,5 +12,5 @@ import java.util.List;
 public interface SearchHistoryRepo extends JpaRepository<SearchHistory, Integer> {
 
     @Query("SELECT u.generatedKeywords FROM SearchHistory u WHERE u.userId = :userId ORDER BY u.updatedAt DESC")
-    List<String> findGeneratedKeywordsByUserIdOrderByUpdatedAtDesc(@Param("userId") Integer userId);
+    String [] findGeneratedKeywordsByUserIdOrderByUpdatedAtDesc(@Param("userId") Integer userId);
 }
