@@ -8,4 +8,5 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface GameMapper {
     Game toGame(GameDto gamesDto);
+    GameDto toGameDto(Game game);
 }
