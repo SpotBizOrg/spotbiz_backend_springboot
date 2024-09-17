@@ -48,9 +48,7 @@ public class GameServiceImpl implements GameService {
         List<GameDto> gameDtos = new ArrayList<>();
 
         for (Game game : games) {
-            GameDto gameDto = gameMapper.toGame();
-
-
+            GameDto gameDto = gameMapper.toGameDto(game);
             gameDtos.add(gameDto);
         }
 

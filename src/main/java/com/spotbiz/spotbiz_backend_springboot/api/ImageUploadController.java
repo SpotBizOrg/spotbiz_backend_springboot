@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class ImageUploadController {
 
-    @PostMapping("/api/upload_image")
+    @PostMapping("/api/v1/upload_image")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
             RestTemplate restTemplate = new RestTemplate();
