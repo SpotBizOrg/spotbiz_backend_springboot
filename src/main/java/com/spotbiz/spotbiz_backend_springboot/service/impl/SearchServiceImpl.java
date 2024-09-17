@@ -1,7 +1,9 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
+import com.spotbiz.spotbiz_backend_springboot.entity.SearchHistory;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
+import com.spotbiz.spotbiz_backend_springboot.repo.SearchHistoryRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.SearchService;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,9 +27,12 @@ public class SearchServiceImpl implements SearchService {
 
     private final BusinessRepo businessRepo;
 
+    private final SearchHistoryRepo searchHistoryRepo;
+
     @Autowired
-    public SearchServiceImpl(BusinessRepo businessRepo) {
+    public SearchServiceImpl(BusinessRepo businessRepo, SearchHistoryRepo searchHistoryRepo) {
         this.businessRepo = businessRepo;
+        this.searchHistoryRepo = searchHistoryRepo;
     }
 
 //    private static final String SEARCH_API_URL = "https://b76b32e1-e608-48ec-9d90-6c4f3b188f37.mock.pstmn.io/search/";
@@ -48,6 +53,14 @@ public class SearchServiceImpl implements SearchService {
                 // Convert the response body to JSON format
                 JSONObject jsonResponse = new JSONObject(responseBody);
                 System.out.println(jsonResponse);
+
+                SearchHistory newSearch = new SearchHistory(16, jsonResponse.toString());
+                ReccomondationServiceImpl searchHistory = new ReccomondationServiceImpl(searchHistoryRepo);
+                SearchHistory history = searchHistory.saveReccomondation(newSearch);
+
+                if (history == null) {
+                    throw new RuntimeException("Failed to save search history");
+                }
 
                 // Extract the array from the JSON response
                 JSONArray jsonArray = jsonResponse.getJSONArray("keywords");

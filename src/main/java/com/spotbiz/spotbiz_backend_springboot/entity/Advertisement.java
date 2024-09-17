@@ -1,13 +1,12 @@
 package com.spotbiz.spotbiz_backend_springboot.entity;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementRecommendationDto;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-
-
 
 @Getter
 @Setter

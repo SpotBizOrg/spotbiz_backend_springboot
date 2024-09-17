@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
@@ -232,4 +233,20 @@ public class BusinessService {
             return null;
         }
     }
+
+    public List<String> parseJsonString(String jsonString) {
+        try {
+            // Use ObjectMapper to parse the JSON string into a map
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, List<String>> keywordMap = objectMapper.readValue(jsonString, new TypeReference<Map<String, List<String>>>(){});
+
+            // Extract and return the list of keywords
+            return keywordMap.get("keywords");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

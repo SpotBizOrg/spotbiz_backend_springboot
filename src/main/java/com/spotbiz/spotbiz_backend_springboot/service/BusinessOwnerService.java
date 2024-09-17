@@ -60,6 +60,7 @@ public class BusinessOwnerService {
             businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
             List<String> tags = parseJsonString(businessCategory.get().getTags());
             businessDto.setTags(tags);
+
             return businessDto;
         }
 
@@ -79,6 +80,16 @@ public class BusinessOwnerService {
         return null;
     }
 
+//    public List<AdvertisementDto> getAdvertisementsByTags(Integer userId, String tags){
+//
+//        Business business = businessRepo.findByUserUserId(userId);
+//        if (business != null) {
+//            List<Advertisement> ads = advertisementRepo.findByBusinessBusinessIdAndTagsContaining(business.getBusinessId(), tags);
+//            return advertisementMapper.mapToAdvertisementDtos(ads);
+//        }
+//
+//        return null;
+//    }
 
     public ResponseEntity<?> updateOwner(User user, BusinessOwnerDto dto) {
         try {
@@ -108,3 +119,4 @@ public class BusinessOwnerService {
         }
     }
 }
+
