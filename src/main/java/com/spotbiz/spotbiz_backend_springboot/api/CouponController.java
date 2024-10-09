@@ -1,11 +1,14 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.CouponDto;
+import com.spotbiz.spotbiz_backend_springboot.entity.Coupon;
 import com.spotbiz.spotbiz_backend_springboot.entity.CouponStatus;
 import com.spotbiz.spotbiz_backend_springboot.service.CouponService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/coupon")
@@ -24,6 +27,15 @@ public class CouponController {
             return ResponseEntity.ok().body(insertedCoupon);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insert coupon failed");
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllCoupons() {
+        List<Coupon> couponList = couponService.getAllCouponDetails();
+        if(couponList != null) {
+            return ResponseEntity.ok().body(couponList);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Check coupon failed");
     }
 
     @GetMapping("/check/{coupon_id}")

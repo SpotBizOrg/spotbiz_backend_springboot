@@ -1,7 +1,10 @@
 package com.spotbiz.spotbiz_backend_springboot.service;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.CouponDto;
+import com.spotbiz.spotbiz_backend_springboot.entity.Coupon;
 import com.spotbiz.spotbiz_backend_springboot.entity.CouponStatus;
+
+import java.util.List;
 
 public interface CouponService {
     int insertCoupon(CouponDto couponDto);
@@ -10,4 +13,5 @@ public interface CouponService {
     int updateCoupon(CouponDto couponDto, int couponId);
     CouponStatus checkCoupon(int couponId);
     int deleteCoupon(int couponId);
+    List<Coupon> getAllCouponDetails();
 }

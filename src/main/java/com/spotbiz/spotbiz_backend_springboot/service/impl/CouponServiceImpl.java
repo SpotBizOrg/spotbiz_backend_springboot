@@ -9,7 +9,7 @@ import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -167,5 +167,10 @@ public class CouponServiceImpl implements CouponService {
             return couponRepo.save(coupon).getCouponId();
         }
         return 0;
+    }
+
+    @Override
+    public List<Coupon> getAllCouponDetails() {
+        return couponRepo.findAllByOrderByCouponIdAsc();
     }
 }
