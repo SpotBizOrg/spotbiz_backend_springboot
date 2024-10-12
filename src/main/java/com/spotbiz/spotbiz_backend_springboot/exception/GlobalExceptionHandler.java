@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
         } else if ("User not found".equals(message)) {
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(new ErrorResponse("An error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

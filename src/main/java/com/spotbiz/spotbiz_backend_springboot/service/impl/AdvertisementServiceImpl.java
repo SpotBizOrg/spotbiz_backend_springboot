@@ -1,21 +1,27 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementRecommendationDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Advertisement;
 import com.spotbiz.spotbiz_backend_springboot.entity.AdvertisementKeyword;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.exception.AdvertisementException;
+import com.spotbiz.spotbiz_backend_springboot.mapper.AdvertisementMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.AdvertisementKeywordRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.AdvertisementRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.AdvertisementService;
+import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -34,6 +40,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Autowired
     private AdvertisementKeywordRepo advertiesmentKeywordRepo;
+
+    @Autowired
+    private AdvertisementMapper advertisementMapper;
 
 
 
@@ -96,6 +105,44 @@ System.out.println(advertisementRequestDto);
 
     }
 
+    @Override
+    public List<AdvertisementRecommendationDto> getAdvertisementRecommeondation(String tags) {
+
+        String [] keywords = extractKeywords(tags);
+
+        List<Object[]> recommendations = advertisementRepository.findByKeywords(keywords);
+        if (recommendations.isEmpty()) {
+            return null;
+        }
+
+        List<AdvertisementRecommendationDto> dtos = new ArrayList<>();
+        for (Object[] row : recommendations) {
+            AdvertisementRecommendationDto dto = getAdvertisementRecommendationDto(row);
+            dtos.add(dto);
+        }
+
+
+
+        return dtos;
+
+    }
+
+    private static AdvertisementRecommendationDto getAdvertisementRecommendationDto(Object[] row) {
+        Integer adsId = (Integer) row[0];              // Assuming the first column is ads_id
+        Boolean status = (Boolean) row[1];         // Assuming the second column is status
+        String data = (String) row[2];           // Assuming the third column is data
+        Integer businessId = (Integer) row[3];         // Assuming the fourth column is business_id
+        String tagss = (String) row[4];           // Assuming the fifth column is tags (in JSON format)
+
+        AdvertisementRecommendationDto dto = new AdvertisementRecommendationDto();
+        dto.setAdsId(adsId);
+        dto.setStatus(status);
+        dto.setData(data);
+        dto.setBusinessId(businessId);
+        dto.setTags(tagss);
+        return dto;
+    }
+
     public void saveImage(String base64Image, String filePath) throws IOException {
         String[] parts = base64Image.split(",");
         String imageString = parts[1];
@@ -138,6 +185,29 @@ System.out.println(advertisementRequestDto);
             return objectMapper.writeValueAsString(dataMap);
         } catch (Exception e) {
             throw new RuntimeException("Error converting data to JSON", e);
+        }
+    }
+
+
+    public String[] extractKeywords(String jsonString) {
+        try {
+            // Initialize ObjectMapper to parse the JSON string
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Read the JSON string into a JsonNode
+            JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+            // Extract the array of keywords from the JsonNode
+            JsonNode keywordsNode = jsonNode.get("keywords");
+
+            // Convert the JsonNode to a String array
+            String[] keywordsArray = objectMapper.convertValue(keywordsNode, String[].class);
+
+            return keywordsArray;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

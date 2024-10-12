@@ -1,11 +1,14 @@
 package com.spotbiz.spotbiz_backend_springboot.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.spotbiz.spotbiz_backend_springboot.mapper.AdvertisementMapper;
@@ -52,7 +55,8 @@ public class BusinessOwnerService {
 
         if(businessCategory.isPresent()) {
             businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
-            businessDto.setTags(businessCategory.get().getTags());
+            List<String> tags = parseJsonString(businessCategory.get().getTags());
+            businessDto.setTags(tags);
 
             return businessDto;
         }
@@ -73,6 +77,16 @@ public class BusinessOwnerService {
         return null;
     }
 
+//    public List<AdvertisementDto> getAdvertisementsByTags(Integer userId, String tags){
+//
+//        Business business = businessRepo.findByUserUserId(userId);
+//        if (business != null) {
+//            List<Advertisement> ads = advertisementRepo.findByBusinessBusinessIdAndTagsContaining(business.getBusinessId(), tags);
+//            return advertisementMapper.mapToAdvertisementDtos(ads);
+//        }
+//
+//        return null;
+//    }
 
     public ResponseEntity<?> updateOwner(User user, BusinessOwnerDto dto) {
         try {
@@ -105,6 +119,21 @@ public class BusinessOwnerService {
             return categoryRepo.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Error fetching all categories", e);
+
+    public List<String> parseJsonString(String jsonString) {
+        try {
+            // Use ObjectMapper to parse the JSON string into a map
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, List<String>> keywordMap = objectMapper.readValue(jsonString, new TypeReference<Map<String, List<String>>>(){});
+
+            // Extract and return the list of keywords
+            return keywordMap.get("keywords");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
         }
     }
 }
+
