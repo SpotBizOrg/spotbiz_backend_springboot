@@ -1,10 +1,14 @@
 package com.spotbiz.spotbiz_backend_springboot.entity;
 
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Type;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Getter
@@ -17,16 +21,17 @@ public class BusinessCategory {
     @Column(name = "id")
     private Integer businessCategoryId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id")
-    @NaturalId
     private Category category;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "business_id")
-    @NaturalId
     private Business business;
 
+    @Type(JsonBinaryType.class)
+    @Column(columnDefinition = "jsonb")
+//    private String tags;
     private String tags;
 
     public BusinessCategory( Category category, String tags, Business business) {

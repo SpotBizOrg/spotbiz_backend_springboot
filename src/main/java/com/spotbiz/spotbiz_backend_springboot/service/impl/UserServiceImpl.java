@@ -58,6 +58,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerBusinessOwner(BusinessOwnerRegDto dto) {
+        if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
@@ -134,7 +137,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String token = jwtService.generateToken(user);
-        return new AuthenticationResponse(token, user.getName(), user.getUsername(), user.getRole(), user.getStatus());
+        return new AuthenticationResponse(token, user.getUserId(), user.getName(), user.getUsername(), user.getRole(), user.getStatus());
     }
 
     @Override
