@@ -9,6 +9,8 @@ import com.spotbiz.spotbiz_backend_springboot.templates.MailTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/admin")
 public class AdminController {
@@ -38,6 +40,12 @@ public class AdminController {
         } catch (Exception ex) {
             return ResponseEntity.status(500).body("Failed to retrieve unverified businesses: " + ex.getMessage());
         }
+    }
+
+    @GetMapping("/customers")
+    public ResponseEntity<List<User>> getAllCustomers() {
+        List<User> customers = userService.getAllCustomers();
+        return ResponseEntity.ok(customers);
     }
 
     @GetMapping("/verify/{businessId}")

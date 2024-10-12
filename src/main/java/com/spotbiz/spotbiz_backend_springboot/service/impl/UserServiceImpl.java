@@ -1,6 +1,5 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
-import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerRegDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UpdateUserRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.*;
@@ -18,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
@@ -25,7 +26,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
 
     @Autowired
     public UserServiceImpl(UserRepo userRepo, PasswordEncoder encoder, JwtService jwtService, AuthenticationManager authenticationManager, BusinessRepo businessRepo) {
@@ -35,8 +35,6 @@ public class UserServiceImpl implements UserService {
         this.authenticationManager = authenticationManager;
         this.businessRepo = businessRepo;
     }
-
-
 
     @Override
     public User register(User request) {
@@ -73,18 +71,14 @@ public class UserServiceImpl implements UserService {
 
         user = userRepo.save(user);
 
-
         String token = jwtService.generateToken(user);
 
-        // save business details
+        // Save business details
         Business newBusiness = new Business(dto.getBusinessName(), dto.getBusinessRegNo(), "PENDING", user);
         newBusiness = businessRepo.save(newBusiness);
 
         return user;
     }
-
-
-
 
     @Override
     public User update(UpdateUserRequestDto request) {
@@ -155,5 +149,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepo.findAll(pageable);
+    }
+
+    // New method to get all customers
+    public List<User> getAllCustomers() {
+        return userRepo.findAllByRole(Role.CUSTOMER);
     }
 }
