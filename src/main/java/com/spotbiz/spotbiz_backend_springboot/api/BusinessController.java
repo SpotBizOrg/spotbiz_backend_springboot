@@ -25,7 +25,6 @@ public class BusinessController {
     @PostMapping("register/{email}")
     public ResponseEntity<?> addBusiness(@RequestBody BusinessDto business, @PathVariable String email) {
         try{
-            System.out.println("address"+business.toString());
             Business verifiedBusiness = businessService.updateBusiness(business, email);
             return ResponseEntity.ok(verifiedBusiness);
         }
