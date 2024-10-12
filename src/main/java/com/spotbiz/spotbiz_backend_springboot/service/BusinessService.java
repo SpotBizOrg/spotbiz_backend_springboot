@@ -184,10 +184,10 @@ public class BusinessService {
             BusinessCategory newBusinessCategory = new BusinessCategory();
             newBusinessCategory.setBusiness(existingBusiness);
             newBusinessCategory.setCategory(newCategory);
-            newBusinessCategory.setTags(updatedBusinessDto.getTags());
+            newBusinessCategory.setTags(updatedBusinessDto.getTags().toString());
             businessCategoryRepo.save(newBusinessCategory);
         } else {
-            existingCategory.setTags(updatedBusinessDto.getTags());
+            existingCategory.setTags(updatedBusinessDto.getTags().toString());
             businessCategoryRepo.save(existingCategory);
         }
     }
