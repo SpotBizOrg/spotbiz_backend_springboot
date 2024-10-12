@@ -70,66 +70,47 @@ public class BusinessService {
     }
 
     public Business updateBusiness(BusinessDto updatedBusinessDto, String email) {
-        Optional<User> userOptional = userRepo.findByEmail(email);
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Business owner does not exist"));
 
+        Business existingBusiness = businessRepo.findByUserUserId(user.getUserId());
+        if (existingBusiness == null) {
+            throw new RuntimeException("Business does not exist");
+        }
 
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("Business owner does not exist");
-        } else {
-            try {
-                Business existingBusiness = businessRepo.findByUserUserId(userOptional.get().getUserId());
-                if (existingBusiness.getBusinessId() == null) {
-                    throw new RuntimeException("Business does not exist");
-                }
+        businessMapper.updateBusinessFromDto(updatedBusinessDto, existingBusiness);
+        businessRepo.save(existingBusiness);
 
-                businessMapper.updateBusinessFromDto(updatedBusinessDto, existingBusiness);
-                existingBusiness = businessRepo.save(existingBusiness);
+        updateBusinessCategory(existingBusiness, updatedBusinessDto);
 
-                Optional<BusinessCategory> existingCategoryOptional = businessCategoryRepo.findByBusiness(existingBusiness);
+        return existingBusiness;
+    }
 
-                if (existingCategoryOptional.isPresent()) {
-                    BusinessCategory existingCategory = existingCategoryOptional.get();
-                    Optional<Category> newCategoryOptional = categoryRepo.findById(updatedBusinessDto.getCategoryId());
+    private void updateBusinessCategory(Business existingBusiness, BusinessDto updatedBusinessDto) {
+        Integer newCategoryId = updatedBusinessDto.getCategoryId();
+        if (newCategoryId == null) {
+            return;
+        }
 
-                    if (newCategoryOptional.isPresent()) {
-                        Category newCategory = newCategoryOptional.get();
+        BusinessCategory existingCategory = businessCategoryRepo.findByBusiness(existingBusiness).orElse(null);
+        Category newCategory = categoryRepo.findById(newCategoryId)
+                .orElseThrow(() -> new RuntimeException("Category does not exist"));
 
-                        if (!existingCategory.getCategory().equals(newCategory)) {
-                            businessCategoryRepo.delete(existingCategory);
-                            BusinessCategory newBusinessCategory = new BusinessCategory();
-                            newBusinessCategory.setBusiness(existingBusiness);
-                            newBusinessCategory.setCategory(newCategory);
-                            newBusinessCategory.setTags(updatedBusinessDto.getTags());
-                            businessCategoryRepo.save(newBusinessCategory);
-                        } else {
-                            existingCategory.setTags(updatedBusinessDto.getTags());
-                            businessCategoryRepo.save(existingCategory);
-                        }
-                    } else {
-                        throw new RuntimeException("Category does not exist");
-                    }
-                } else {
-                    Optional<Category> newCategoryOptional = categoryRepo.findById(updatedBusinessDto.getCategoryId());
-
-                    if (newCategoryOptional.isPresent()) {
-                        Category newCategory = newCategoryOptional.get();
-
-                        BusinessCategory newBusinessCategory = new BusinessCategory();
-                        newBusinessCategory.setBusiness(existingBusiness);
-                        newBusinessCategory.setCategory(newCategory);
-                        newBusinessCategory.setTags(updatedBusinessDto.getTags());
-                        businessCategoryRepo.save(newBusinessCategory);
-                    } else {
-                        throw new RuntimeException("Category does not exist");
-                    }
-                }
-
-                return existingBusiness;
-            } catch (Exception e) {
-                throw new RuntimeException("Error updating business: " + e.getMessage());
+        if (existingCategory == null || !existingCategory.getCategory().equals(newCategory)) {
+            if (existingCategory != null) {
+                businessCategoryRepo.delete(existingCategory);
             }
+            BusinessCategory newBusinessCategory = new BusinessCategory();
+            newBusinessCategory.setBusiness(existingBusiness);
+            newBusinessCategory.setCategory(newCategory);
+            newBusinessCategory.setTags(updatedBusinessDto.getTags());
+            businessCategoryRepo.save(newBusinessCategory);
+        } else {
+            existingCategory.setTags(updatedBusinessDto.getTags());
+            businessCategoryRepo.save(existingCategory);
         }
     }
+
 
     public String getTags(Integer categoryId) {
         Optional<Category> categoryOptional = categoryRepo.findById(categoryId);
