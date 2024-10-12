@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerDto;
-import com.spotbiz.spotbiz_backend_springboot.entity.Advertisement;
-import com.spotbiz.spotbiz_backend_springboot.entity.Business;
-import com.spotbiz.spotbiz_backend_springboot.entity.BusinessCategory;
-import com.spotbiz.spotbiz_backend_springboot.entity.User;
+import com.spotbiz.spotbiz_backend_springboot.entity.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,10 +14,7 @@ import java.util.Optional;
 import com.spotbiz.spotbiz_backend_springboot.mapper.AdvertisementMapper;
 import com.spotbiz.spotbiz_backend_springboot.mapper.BusinessMapper;
 import com.spotbiz.spotbiz_backend_springboot.mapper.UserMapper;
-import com.spotbiz.spotbiz_backend_springboot.repo.AdvertisementRepo;
-import com.spotbiz.spotbiz_backend_springboot.repo.BusinessCategoryRepo;
-import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
-import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
+import com.spotbiz.spotbiz_backend_springboot.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +37,8 @@ public class BusinessOwnerService {
     private UserMapper userMapper;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private CategoryRepo categoryRepo;
 
     public BusinessOwnerDto getDetails(User user) {
         return userMapper.toBusinessOwnerDto(user);
@@ -104,6 +101,25 @@ public class BusinessOwnerService {
 
     }
 
+    public Category getCategoryName(Integer categoryId) {
+        try {
+            Optional<Category> optionalCategory = categoryRepo.findById(categoryId);
+            if (optionalCategory.isPresent()) {
+                return optionalCategory.get();
+            } else {
+                throw new RuntimeException("Category does not exist");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching category name", e);
+        }
+    }
+
+    public List<Category> getAllCategories() {
+        try {
+            return categoryRepo.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching all categories", e);
+
     public List<String> parseJsonString(String jsonString) {
         try {
             // Use ObjectMapper to parse the JSON string into a map
@@ -116,6 +132,7 @@ public class BusinessOwnerService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+
         }
     }
 }

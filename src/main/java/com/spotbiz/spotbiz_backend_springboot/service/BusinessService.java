@@ -151,58 +151,44 @@ public class BusinessService {
 //    }
 
     public Business updateBusiness(BusinessDto updatedBusinessDto, String email) {
-        Optional<User> userOptional = userRepo.findByEmail(email);
-        System.out.println("user"+userOptional.get().getUserId());
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Business owner does not exist"));
 
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("Business owner does not exist");
+        Business existingBusiness = businessRepo.findByUserUserId(user.getUserId());
+        if (existingBusiness == null) {
+            throw new RuntimeException("Business does not exist");
         }
 
-        try {
-            // Find existing business associated with the user
-            Business existingBusiness = businessRepo.findByUserUserId(userOptional.get().getUserId());
+        businessMapper.updateBusinessFromDto(updatedBusinessDto, existingBusiness);
+        businessRepo.save(existingBusiness);
 
-            if (existingBusiness == null || existingBusiness.getBusinessId() == null) {
-                throw new RuntimeException("Business does not exist");
+        updateBusinessCategory(existingBusiness, updatedBusinessDto);
+
+        return existingBusiness;
+    }
+
+    private void updateBusinessCategory(Business existingBusiness, BusinessDto updatedBusinessDto) {
+        Integer newCategoryId = updatedBusinessDto.getCategoryId();
+        if (newCategoryId == null) {
+            return;
+        }
+
+        BusinessCategory existingCategory = businessCategoryRepo.findByBusiness(existingBusiness).orElse(null);
+        Category newCategory = categoryRepo.findById(newCategoryId)
+                .orElseThrow(() -> new RuntimeException("Category does not exist"));
+
+        if (existingCategory == null || !existingCategory.getCategory().equals(newCategory)) {
+            if (existingCategory != null) {
+                businessCategoryRepo.delete(existingCategory);
             }
-
-            // Update business details from DTO
-            businessMapper.updateBusinessFromDto(updatedBusinessDto, existingBusiness);
-            existingBusiness = businessRepo.save(existingBusiness);
-
-            // Retrieve existing BusinessCategory
-            Optional<BusinessCategory> existingCategoryOptional = businessCategoryRepo.findByBusiness(existingBusiness);
-
-            Category newCategory = categoryRepo.findById(updatedBusinessDto.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Category does not exist"));
-
-            if (existingCategoryOptional.isPresent()) {
-                BusinessCategory existingCategory = existingCategoryOptional.get();
-
-                // If category or tags have changed, update them
-                if (existingCategory.getTags()==null || !existingCategory.getCategory().equals(newCategory) || !existingCategory.getTags().equals(updatedBusinessDto.getTags())) {
-                    existingCategory.setCategory(newCategory);
-
-                    List<String> tags  = updatedBusinessDto.getTags();
-                    String tagsString = createJsonString(tags);
-                    existingCategory.setTags(tagsString);
-                    businessCategoryRepo.save(existingCategory);
-                }
-            } else {
-                // Create new BusinessCategory if it doesn't exist
-                BusinessCategory newBusinessCategory = new BusinessCategory();
-                newBusinessCategory.setBusiness(existingBusiness);
-                newBusinessCategory.setCategory(newCategory);
-                List<String> tags  = updatedBusinessDto.getTags();
-                String tagsString = createJsonString(tags);
-                newBusinessCategory.setTags(tagsString);
-                System.out.println("new category"+newBusinessCategory.getTags());
-                businessCategoryRepo.save(newBusinessCategory);
-            }
-
-            return existingBusiness;
-        } catch (Exception e) {
-            throw new RuntimeException("Error updating business: " + e.getMessage());
+            BusinessCategory newBusinessCategory = new BusinessCategory();
+            newBusinessCategory.setBusiness(existingBusiness);
+            newBusinessCategory.setCategory(newCategory);
+            newBusinessCategory.setTags(updatedBusinessDto.getTags());
+            businessCategoryRepo.save(newBusinessCategory);
+        } else {
+            existingCategory.setTags(updatedBusinessDto.getTags());
+            businessCategoryRepo.save(existingCategory);
         }
     }
 
