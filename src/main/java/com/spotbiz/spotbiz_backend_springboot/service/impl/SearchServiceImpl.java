@@ -112,6 +112,7 @@ public class SearchServiceImpl implements SearchService {
         dto.setDescription(business.getDescription());
         dto.setStatus("open now");
         dto.setAvgRating(getAvgRatings(business.getBusinessId()));
+        dto.setCategoryId(getBusinessCategory(business.getBusinessId()));
 
 
         return dto;
@@ -124,6 +125,14 @@ public class SearchServiceImpl implements SearchService {
 //            return ratings.stream().mapToInt(Integer::intValue).sum() / ratings.size();
         } catch (Exception e) {
             throw new RuntimeException("Failed to get average ratings: " + e.getMessage());
+        }
+    }
+
+    private int getBusinessCategory(Integer businessId) {
+        try {
+            return businessRepo.getBusinessCategory(businessId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get category name: " + e.getMessage());
         }
     }
 }

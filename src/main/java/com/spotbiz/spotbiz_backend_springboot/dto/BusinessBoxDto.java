@@ -18,4 +18,5 @@ public class BusinessBoxDto {
 //    private List<String> badges;
     private Double avgRating;
     private String status;
+    private int categoryId;
 }
