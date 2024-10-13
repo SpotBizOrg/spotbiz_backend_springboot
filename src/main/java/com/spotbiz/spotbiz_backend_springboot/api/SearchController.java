@@ -49,4 +49,16 @@ public class SearchController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve businesses: " + ex.getMessage());
         }
     }
+
+    @GetMapping("category/{categoryId}")
+    public ResponseEntity<?> searchBusinessByCategory(@PathVariable String categoryId, @RequestParam int page, @RequestParam int size) {
+        try {
+            Integer categoryIdInt = Integer.parseInt(categoryId);
+            Pageable pageable = PageRequest.of(page, size);
+            Page<BusinessBoxDto> results = searchService.searchBusinessesByCategory(categoryIdInt, pageable);
+            return ResponseEntity.ok(results);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve businesses: " + ex.getMessage());
+        }
+    }
 }

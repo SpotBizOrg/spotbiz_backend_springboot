@@ -12,4 +12,6 @@ public interface SearchService {
     List<String> getKeywords(String searchText);
 
     Page<BusinessBoxDto> searchBusinesses(String[] keywords, Pageable pageable);
+
+    Page<BusinessBoxDto> searchBusinessesByCategory(Integer categoryId, Pageable pageable);
 }

@@ -48,4 +48,7 @@ public interface BusinessRepo extends JpaRepository<Business, Integer> {
 
     @Query(value ="SELECT category_id  FROM business_category WHERE business_id = :businessId", nativeQuery = true)
     int getBusinessCategory(@Param("businessId") Integer businessId);
+
+    @Query(value = "SELECT b.business_id, b.business_reg_no, b.name, b.address, b.contact_no, b.description, b.location_url, b.logo, b.profile_cover, b.status, b.user_id  FROM business b, business_category bc WHERE b.business_id = bc.business_id AND bc.category_id = :categoryId AND b.status = 'APPROVED'", nativeQuery = true)
+    Page<Business> findByCategory(@Param("categoryId") Integer categoryId, Pageable pageable);
 }

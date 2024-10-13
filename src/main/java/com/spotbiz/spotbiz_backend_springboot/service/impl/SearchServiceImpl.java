@@ -102,6 +102,17 @@ public class SearchServiceImpl implements SearchService {
         }
     }
 
+    @Override
+    public Page<BusinessBoxDto> searchBusinessesByCategory(Integer categoryId, Pageable pageable) {
+        try{
+            Page<Business> list = businessRepo.findByCategory(categoryId, pageable);
+            Page<BusinessBoxDto> newList = list.map(this::convertToBusinessBoxDto);
+            return newList;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to do get the businesses: " + e.getMessage());
+        }
+    }
+
 
     private BusinessBoxDto convertToBusinessBoxDto(Business business) {
         BusinessBoxDto dto = new BusinessBoxDto();
