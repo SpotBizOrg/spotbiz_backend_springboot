@@ -1,5 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessBoxDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.SearchHistory;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SearchServiceImpl implements SearchService {
@@ -123,7 +126,8 @@ public class SearchServiceImpl implements SearchService {
         dto.setDescription(business.getDescription());
         dto.setStatus("open now");
         dto.setAvgRating(getAvgRatings(business.getBusinessId()));
-        dto.setCategoryId(getBusinessCategory(business.getBusinessId()));
+//        dto.setCategoryId(getBusinessCategory(business.getBusinessId()));
+        dto.setTags(getBusinessCategory(business.getBusinessId()));
 
 
         return dto;
@@ -139,9 +143,19 @@ public class SearchServiceImpl implements SearchService {
         }
     }
 
-    private int getBusinessCategory(Integer businessId) {
+    // this function is used to extract the category list from the keywords json string
+    private List<String> getBusinessCategory(Integer businessId) {
         try {
-            return businessRepo.getBusinessCategory(businessId);
+            String res =  businessRepo.getBusinessCategory(businessId);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, List<String>> keywordMap = objectMapper.readValue(res, new TypeReference<Map<String, List<String>>>() {
+            });
+
+            // Extract and return the list of keywords
+            return keywordMap.get("keywords");
+
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to get category name: " + e.getMessage());
         }

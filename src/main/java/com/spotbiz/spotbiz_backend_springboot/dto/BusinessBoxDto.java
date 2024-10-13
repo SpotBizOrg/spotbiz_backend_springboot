@@ -2,6 +2,8 @@ package com.spotbiz.spotbiz_backend_springboot.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Getter
 @Setter
@@ -18,5 +20,6 @@ public class BusinessBoxDto {
 //    private List<String> badges;
     private Double avgRating;
     private String status;
-    private int categoryId;
+//    private int categoryId;
+    private List<String> tags;
 }
