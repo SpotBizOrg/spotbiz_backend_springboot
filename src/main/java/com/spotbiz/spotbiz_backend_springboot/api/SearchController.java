@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessBoxDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.impl.SearchServiceImpl;
@@ -39,7 +40,7 @@ public class SearchController {
 
            // Use Page instead of List for paginated results
            Pageable pageable = PageRequest.of(page, size);
-           Page<Business> results = searchService.searchBusinesses(list, pageable);
+           Page<BusinessBoxDto> results = searchService.searchBusinesses(list, pageable);
 
            // Return the Page object directly, which includes pagination metadata
            return ResponseEntity.ok(results);
