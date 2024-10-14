@@ -1,5 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.templates;
 
+import java.nio.charset.StandardCharsets;
+
 public class MailTemplate {
 
     public static String getVerificationEmail(String recipientName, String verificationCode) {
@@ -76,4 +78,56 @@ public class MailTemplate {
                 "</body>" +
                 "</html>";
     }
+
+    public static String getCouponEmail(String recipientName, String couponCode, float discountPercentage) {
+        try{
+            String apiUrl = "https://quickchart.io/qr";
+            String parameters = String.format(
+                    "ecLevel=H&size=200&text=%s",
+                    java.net.URLEncoder.encode(String.valueOf(couponCode), StandardCharsets.UTF_8));
+            String qrCodeUrl = apiUrl + "?" + parameters;
+
+            return "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    "body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; }" +
+                    ".container { background-color: #ffffff; margin: 50px auto; padding: 20px; max-width: 600px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }" +
+                    ".header { text-align: center; padding: 10px 0; }" +
+                    ".content { font-size: 16px; line-height: 1.6; }" +
+                    ".button { display: inline-block; padding: 10px 20px; margin: 20px 0; font-size: 16px; color: #ffffff; background-color: #007bff; text-decoration: none; border-radius: 5px; }" +
+                    ".footer { text-align: center; font-size: 12px; color: #888888; margin-top: 20px; }" +
+                    ".qr-code { text-align: center; margin: 20px 0; }" +
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div class='container'>" +
+                    "<div class='header'>" +
+                    "<h1>SpotBiz</h1>" +
+                    "</div>" +
+                    "<div class='content'>" +
+                    "<p>Dear " + recipientName + ",</p>" +
+                    "<p>Congratulations! 🎉 You have won a discount coupon worth <strong>" + discountPercentage + "% off</strong> your next purchase!</p>" +
+                    "<p>Use the coupon code below at checkout:</p>" +
+                    "<h2 style='text-align: center; color: #007bff;'>" + couponCode + "</h2>" +
+                    "<div class='qr-code'>" +
+                    "<p>Or simply scan the QR code below to redeem your discount:</p>" +
+                    "<img src='" + qrCodeUrl + "' alt='Coupon QR Code' style='max-width: 100%; height: auto;' />" +
+                    "</div>" +
+                    "<p>Don't miss out on this amazing opportunity. Happy shopping!</p>" +
+                    "<p>Best regards,</p>" +
+                    "<p>Team SpotBiz</p>" +
+                    "</div>" +
+                    "<div class='footer'>" +
+                    "<p>&copy; " + java.time.Year.now().getValue() + " SpotBiz. All rights reserved.</p>" +
+                    "</div>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    }
+
 }

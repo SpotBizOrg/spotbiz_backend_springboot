@@ -173,4 +173,9 @@ public class CouponServiceImpl implements CouponService {
     public List<Coupon> getAllCouponDetails() {
         return couponRepo.findAllByOrderByCouponIdAsc();
     }
+
+    @Override
+    public Coupon findByCouponId(int couponId) {
+        return couponRepo.findByCouponId(couponId);
+    }
 }
