@@ -1,6 +1,5 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
-import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerRegDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UpdateUserRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.*;
@@ -17,7 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.spotbiz.spotbiz_backend_springboot.entity.Role;
 
 import java.util.List;
 
@@ -75,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
         String token = jwtService.generateToken(user);
 
-        // save business details
+        // Save business details
         Business newBusiness = new Business(dto.getBusinessName(), dto.getBusinessRegNo(), "PENDING", user);
         newBusiness = businessRepo.save(newBusiness);
 
@@ -139,7 +137,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String token = jwtService.generateToken(user);
-        return new AuthenticationResponse(token, user.getName(), user.getUsername(), user.getRole(), user.getStatus());
+        return new AuthenticationResponse(token, user.getUserId(), user.getName(), user.getUsername(), user.getRole(), user.getStatus());
     }
 
     @Override
@@ -153,17 +151,8 @@ public class UserServiceImpl implements UserService {
         return userRepo.findAll(pageable);
     }
 
-    // New method to find all customers
-//    @Override
-//    public List<User> findAllCustomers() {
-//        List<User> users = userRepo.findByRole("CUSTOMER");
-//        System.out.println(users);
-//        return users; // Assuming "customer" is the role name for customers
-//    }
-
-    @Override
-    public List<User> findAllBusinessOwners() {
-        return userRepo.findByRole(Role.BUSINESS_OWNER);
+    // New method to get all customers
+    public List<User> getAllCustomers() {
+        return userRepo.findAllByRole(Role.CUSTOMER);
     }
-
 }

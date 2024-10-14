@@ -19,7 +19,5 @@ public interface UserService {
     User getUserByEmail(String email);
     Page<User> getAllUsers(Pageable pageable);
 
-    // New method to get all users with the role "customer"
-    List<User> findAllBusinessOwners();
+    List<User> getAllCustomers();
 }
-
