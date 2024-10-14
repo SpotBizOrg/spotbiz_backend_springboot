@@ -6,8 +6,11 @@ import com.spotbiz.spotbiz_backend_springboot.service.BusinessVerifyService;
 import com.spotbiz.spotbiz_backend_springboot.service.MailService;
 import com.spotbiz.spotbiz_backend_springboot.service.UserService;
 import com.spotbiz.spotbiz_backend_springboot.templates.MailTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List; // Import List
 
 @RestController
 @RequestMapping("api/v1/admin")
@@ -56,5 +59,16 @@ public class AdminController {
         } catch (Exception ex) {
             return ResponseEntity.status(500).body("Failed to verify business: " + ex.getMessage());
         }
+    }
+
+
+    // New endpoint to get all business owners
+    @GetMapping("/users/business-owners")
+    public ResponseEntity<List<User>> getAllBusinessOwners() {
+        List<User> businessOwners = userService.findAllBusinessOwners();
+        for (User users: businessOwners) {
+            System.out.println(users);
+        }
+        return ResponseEntity.ok(businessOwners);
     }
 }

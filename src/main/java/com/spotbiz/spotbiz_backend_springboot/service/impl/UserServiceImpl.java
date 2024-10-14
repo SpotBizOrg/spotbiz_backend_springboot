@@ -17,6 +17,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.spotbiz.spotbiz_backend_springboot.entity.Role;
+
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,7 +29,6 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-
     @Autowired
     public UserServiceImpl(UserRepo userRepo, PasswordEncoder encoder, JwtService jwtService, AuthenticationManager authenticationManager, BusinessRepo businessRepo) {
         this.userRepo = userRepo;
@@ -35,8 +37,6 @@ public class UserServiceImpl implements UserService {
         this.authenticationManager = authenticationManager;
         this.businessRepo = businessRepo;
     }
-
-
 
     @Override
     public User register(User request) {
@@ -73,7 +73,6 @@ public class UserServiceImpl implements UserService {
 
         user = userRepo.save(user);
 
-
         String token = jwtService.generateToken(user);
 
         // save business details
@@ -82,9 +81,6 @@ public class UserServiceImpl implements UserService {
 
         return user;
     }
-
-
-
 
     @Override
     public User update(UpdateUserRequestDto request) {
@@ -156,4 +152,18 @@ public class UserServiceImpl implements UserService {
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepo.findAll(pageable);
     }
+
+    // New method to find all customers
+//    @Override
+//    public List<User> findAllCustomers() {
+//        List<User> users = userRepo.findByRole("CUSTOMER");
+//        System.out.println(users);
+//        return users; // Assuming "customer" is the role name for customers
+//    }
+
+    @Override
+    public List<User> findAllBusinessOwners() {
+        return userRepo.findByRole(Role.BUSINESS_OWNER);
+    }
+
 }
