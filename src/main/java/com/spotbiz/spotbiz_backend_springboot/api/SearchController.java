@@ -54,6 +54,7 @@ public class SearchController {
     public ResponseEntity<?> searchBusinessByCategory(@PathVariable String categoryId, @RequestParam int page, @RequestParam int size) {
         try {
             Integer categoryIdInt = Integer.parseInt(categoryId);
+//            System.out.println(categoryId);
             Pageable pageable = PageRequest.of(page, size);
             Page<BusinessBoxDto> results = searchService.searchBusinessesByCategory(categoryIdInt, pageable);
             return ResponseEntity.ok(results);
