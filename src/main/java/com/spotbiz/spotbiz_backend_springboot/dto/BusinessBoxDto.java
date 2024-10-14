@@ -15,11 +15,10 @@ public class BusinessBoxDto {
     private String name;
     private String logo;
     private String description;
-//    private String locationUrl;
     private String address;
-//    private List<String> badges;
     private Double avgRating;
     private String status;
 //    private int categoryId;
     private List<String> tags;
+    private WeeklyScheduleDto weeklySchedule;
 }

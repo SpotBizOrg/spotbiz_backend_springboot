@@ -3,12 +3,12 @@ package com.spotbiz.spotbiz_backend_springboot.service.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessBoxDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.WeeklyScheduleDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.SearchHistory;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.ReviewRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.SearchHistoryRepo;
-import com.spotbiz.spotbiz_backend_springboot.service.ReviewService;
 import com.spotbiz.spotbiz_backend_springboot.service.SearchService;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -39,12 +39,15 @@ public class SearchServiceImpl implements SearchService {
 
     private final ReviewServiceImpl reviewServiceImpl;
 
+    private final OpeningHoursServiceImpl openingHoursServiceImpl;
+
     @Autowired
-    public SearchServiceImpl(BusinessRepo businessRepo, SearchHistoryRepo searchHistoryRepo, ReviewRepo reviewRepo, ReviewServiceImpl reviewServiceImpl) {
+    public SearchServiceImpl(BusinessRepo businessRepo, SearchHistoryRepo searchHistoryRepo, ReviewRepo reviewRepo, ReviewServiceImpl reviewServiceImpl, OpeningHoursServiceImpl openingHoursServiceImpl) {
         this.businessRepo = businessRepo;
         this.searchHistoryRepo = searchHistoryRepo;
         this.reviewRepo = reviewRepo;
         this.reviewServiceImpl = reviewServiceImpl;
+        this.openingHoursServiceImpl = openingHoursServiceImpl;
     }
 
 //    private static final String SEARCH_API_URL = "https://b76b32e1-e608-48ec-9d90-6c4f3b188f37.mock.pstmn.io/search/";
@@ -128,16 +131,16 @@ public class SearchServiceImpl implements SearchService {
         dto.setAvgRating(getAvgRatings(business.getBusinessId()));
 //        dto.setCategoryId(getBusinessCategory(business.getBusinessId()));
         dto.setTags(getBusinessCategory(business.getBusinessId()));
-
+        dto.setWeeklySchedule(getOpeningHours(business.getUser().getEmail()));
 
         return dto;
     }
 
     private Double getAvgRatings(Integer businessId) {
         try {
-//            ReviewServiceImpl reviewService = new ReviewServiceImpl();
+
             return reviewServiceImpl.getAverageRating(businessId);
-//            return ratings.stream().mapToInt(Integer::intValue).sum() / ratings.size();
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to get average ratings: " + e.getMessage());
         }
@@ -158,6 +161,14 @@ public class SearchServiceImpl implements SearchService {
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to get category name: " + e.getMessage());
+        }
+    }
+
+    private WeeklyScheduleDto getOpeningHours(String email){
+        try {
+            return openingHoursServiceImpl.getOpeningHours(email);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get opening hours: " + e.getMessage());
         }
     }
 }
