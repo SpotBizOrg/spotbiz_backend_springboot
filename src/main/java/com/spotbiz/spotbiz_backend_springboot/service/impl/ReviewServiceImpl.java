@@ -124,4 +124,12 @@ public class ReviewServiceImpl implements ReviewService {
             throw new RuntimeException("Failed to get business review count", e);
         }
     }
+
+    public Review findLatestBusinessReview(Integer businessId) {
+        try {
+            return reviewRepo.findLatestBusinessReview(businessId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get latest business review", e);
+        }
+    }
 }

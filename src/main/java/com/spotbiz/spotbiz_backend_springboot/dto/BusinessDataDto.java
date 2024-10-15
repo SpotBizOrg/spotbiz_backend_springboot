@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.dto;
 
+import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import lombok.*;
 
 import java.util.List;
@@ -22,4 +23,5 @@ public class BusinessDataDto {
     private String phone;
     private List<String> tags;
     private WeeklyScheduleDto weeklySchedule;
+    private ReviewRequestDto latestReview;
 }

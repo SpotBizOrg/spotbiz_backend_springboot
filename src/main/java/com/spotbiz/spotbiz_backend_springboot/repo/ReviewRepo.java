@@ -23,4 +23,7 @@ public interface ReviewRepo extends JpaRepository<Review, Integer> {
 
     @Query(value = "SELECT COALESCE((SELECT COUNT(r.review_id) FROM review r WHERE r.business_id = :businessId GROUP BY business_id), 0) AS review_count", nativeQuery = true)
     int countByBusiness(@Param("businessId") Integer businessId);
+
+    @Query(value = "SELECT * FROM review r WHERE r.business_id = :businessId ORDER BY r.date DESC LIMIT 1", nativeQuery = true)
+    Review findLatestBusinessReview(@Param("businessId") Integer businessId);
 }

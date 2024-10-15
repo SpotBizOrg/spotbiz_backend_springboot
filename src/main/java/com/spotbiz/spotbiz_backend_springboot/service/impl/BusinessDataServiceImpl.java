@@ -3,8 +3,10 @@ package com.spotbiz.spotbiz_backend_springboot.service.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDataDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.WeeklyScheduleDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
+import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.BusinessDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,7 @@ public class BusinessDataServiceImpl implements BusinessDataService {
         businessDataDto.setTags(getBusinessCategory(business.getBusinessId()));
         businessDataDto.setWeeklySchedule(getOpeningHours(business.getUser().getEmail()));
         businessDataDto.setReviewCount(reviewCount(business.getBusinessId()));
+        businessDataDto.setLatestReview(getLatestReview(business.getBusinessId()));
 
         return businessDataDto;
     }
@@ -95,6 +98,23 @@ public class BusinessDataServiceImpl implements BusinessDataService {
             return reviewServiceImpl.businessReviewCount(businessId);
         } catch (Exception e) {
             throw new RuntimeException("Failed to get review count: " + e.getMessage());
+        }
+    }
+
+    private ReviewRequestDto getLatestReview(Integer businessId) {
+        try {
+            Review review =  reviewServiceImpl.findLatestBusinessReview(businessId);
+
+            ReviewRequestDto reviewRequestDto = new ReviewRequestDto();
+            reviewRequestDto.setDescription(review.getDescription());
+            reviewRequestDto.setRating(review.getRating());
+            reviewRequestDto.setTitle(review.getUser().getName()); // set reviewer's name instead of title
+            reviewRequestDto.setBusinessId(review.getBusiness().getBusinessId());
+            reviewRequestDto.setUserId(review.getUser().getUserId());
+            reviewRequestDto.setDate(review.getDate());
+            return reviewRequestDto;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get latest review: " + e.getMessage());
         }
     }
 }
