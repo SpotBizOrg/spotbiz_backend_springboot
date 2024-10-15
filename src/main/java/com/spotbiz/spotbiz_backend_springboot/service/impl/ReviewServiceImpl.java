@@ -116,4 +116,12 @@ public class ReviewServiceImpl implements ReviewService {
             throw new RuntimeException("Failed to get average rating", e);
         }
     }
+
+    public int businessReviewCount(Integer businessId) {
+        try {
+            return reviewRepo.countByBusiness(businessId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get business review count", e);
+        }
+    }
 }

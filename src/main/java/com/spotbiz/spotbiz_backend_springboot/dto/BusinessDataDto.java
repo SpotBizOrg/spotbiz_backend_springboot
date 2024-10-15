@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BusinessBoxDto {
+public class BusinessDataDto {
 
     private Integer businessId;
     private String name;
@@ -17,7 +17,9 @@ public class BusinessBoxDto {
     private String description;
     private String address;
     private Double avgRating;
-    private String status;
+    private int reviewCount;
+    private String email;
+    private String phone;
     private List<String> tags;
     private WeeklyScheduleDto weeklySchedule;
 }
