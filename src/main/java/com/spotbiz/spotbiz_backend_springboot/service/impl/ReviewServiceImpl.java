@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -100,6 +102,18 @@ public class ReviewServiceImpl implements ReviewService {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public double getAverageRating(Integer businessId) {
+        try {
+
+            //            System.out.println("Average rating: " + averageRating);
+            return reviewRepo.getAverageRatingByBusiness(businessId);
+//            return reviewRepo.getAverageRatingByBusiness(businessId);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            throw new RuntimeException("Failed to get average rating", e);
         }
     }
 }

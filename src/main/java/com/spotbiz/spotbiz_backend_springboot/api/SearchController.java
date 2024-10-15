@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessBoxDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.impl.SearchServiceImpl;
@@ -39,12 +40,25 @@ public class SearchController {
 
            // Use Page instead of List for paginated results
            Pageable pageable = PageRequest.of(page, size);
-           Page<Business> results = searchService.searchBusinesses(list, pageable);
+           Page<BusinessBoxDto> results = searchService.searchBusinesses(list, pageable);
 
            // Return the Page object directly, which includes pagination metadata
            return ResponseEntity.ok(results);
 
        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve businesses: " + ex.getMessage());
+        }
+    }
+
+    @GetMapping("category/{categoryId}")
+    public ResponseEntity<?> searchBusinessByCategory(@PathVariable String categoryId, @RequestParam int page, @RequestParam int size) {
+        try {
+            Integer categoryIdInt = Integer.parseInt(categoryId);
+//            System.out.println(categoryId);
+            Pageable pageable = PageRequest.of(page, size);
+            Page<BusinessBoxDto> results = searchService.searchBusinessesByCategory(categoryIdInt, pageable);
+            return ResponseEntity.ok(results);
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve businesses: " + ex.getMessage());
         }
     }

@@ -122,7 +122,8 @@ public class BusinessOwnerService {
         }
     }
 
-    public List<String> parseJsonString (String jsonString){
+    // this function is used to extract the category list from the keywords json string
+    private List<String> parseJsonString (String jsonString){
         try {
             // Use ObjectMapper to parse the JSON string into a map
             ObjectMapper objectMapper = new ObjectMapper();
