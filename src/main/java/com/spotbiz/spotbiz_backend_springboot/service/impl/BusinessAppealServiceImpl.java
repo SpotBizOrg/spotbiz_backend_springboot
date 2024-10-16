@@ -50,7 +50,12 @@ public class BusinessAppealServiceImpl implements BusinessAppealService {
 
     @Override
     public List<BusinessAppeal> getAllBusinessAppeal() {
-        return null;
+        try{
+            return businessAppealRepo.findBusinessAppealsByStatus("PENDING");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get all business appeals: " + e.getMessage(), e);
+
+        }
     }
 
     @Override
