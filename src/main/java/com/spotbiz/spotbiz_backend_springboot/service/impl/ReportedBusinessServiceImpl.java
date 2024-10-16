@@ -7,7 +7,9 @@ import com.spotbiz.spotbiz_backend_springboot.entity.Role;
 import com.spotbiz.spotbiz_backend_springboot.mapper.ReportedBusinessMappr;
 import com.spotbiz.spotbiz_backend_springboot.repo.ReportedBusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.BusinessService;
+import com.spotbiz.spotbiz_backend_springboot.service.MailService;
 import com.spotbiz.spotbiz_backend_springboot.service.ReportedBusinessService;
+import com.spotbiz.spotbiz_backend_springboot.templates.MailTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +20,16 @@ public class ReportedBusinessServiceImpl implements ReportedBusinessService {
 
     private final ReportedBusinessMappr reportedBusinessMappr;
     private final ReportedBusinessRepo reportedBusinessRepo;
-
     private final BusinessService businessService;
 
+    private final MailService mailService;
+
     @Autowired
-    public ReportedBusinessServiceImpl(ReportedBusinessMappr reportedBusinessMappr, ReportedBusinessRepo reportedBusinessRepo, BusinessService businessService) {
+    public ReportedBusinessServiceImpl(ReportedBusinessMappr reportedBusinessMappr, ReportedBusinessRepo reportedBusinessRepo, BusinessService businessService, MailService mailService) {
         this.reportedBusinessMappr = reportedBusinessMappr;
         this.reportedBusinessRepo = reportedBusinessRepo;
         this.businessService = businessService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -63,6 +67,8 @@ public class ReportedBusinessServiceImpl implements ReportedBusinessService {
                 Business updatedBusiness = businessService.updateBusinessStatus(reportedBusiness.getBusiness().getBusinessId(), "BANNED");
 
                 if (updatedBusiness.getStatus().equals("BANNED")) {
+                    String mail = MailTemplate.banBusinessTemplate(updatedBusiness.getUser().getName(), updatedReportRequest.getReason());
+                    mailService.sendHtmlMail(updatedBusiness.getUser().getEmail(), "Business Banned", mail);
                     return updatedReportRequest;
                 } else {
                     throw new RuntimeException("Failed to ban reported business");
