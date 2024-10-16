@@ -130,8 +130,8 @@ public class MailTemplate {
         }
     }
 
-    public static String banBusinessTemplate(String recipientName, String reason) {
-        String redirectLink = "http://localhost:5173/login/";
+    public static String banBusinessTemplate(String recipientName, String reason, Integer businessId) {
+        String redirectLink = "http://localhost:5173/login/"; // attach the business id to the link
         return "<html>" +
                 "<head>" +
                 "<style>" +
