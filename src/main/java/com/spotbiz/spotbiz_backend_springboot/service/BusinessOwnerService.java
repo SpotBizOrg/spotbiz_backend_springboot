@@ -119,7 +119,7 @@ public class BusinessOwnerService {
             return categoryRepo.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Error fetching all categories", e);
-
+        }}
     public List<String> parseJsonString(String jsonString) {
         try {
             // Use ObjectMapper to parse the JSON string into a map
