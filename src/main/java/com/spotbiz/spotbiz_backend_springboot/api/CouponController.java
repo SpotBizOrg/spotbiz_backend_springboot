@@ -3,11 +3,17 @@ package com.spotbiz.spotbiz_backend_springboot.api;
 import com.spotbiz.spotbiz_backend_springboot.dto.CouponDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Coupon;
 import com.spotbiz.spotbiz_backend_springboot.entity.CouponStatus;
+import com.spotbiz.spotbiz_backend_springboot.entity.NotificationType;
+import com.spotbiz.spotbiz_backend_springboot.entity.User;
+import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.CouponService;
+import com.spotbiz.spotbiz_backend_springboot.service.MailService;
+import com.spotbiz.spotbiz_backend_springboot.service.NotificationService;
+import com.spotbiz.spotbiz_backend_springboot.templates.MailTemplate;
+import com.spotbiz.spotbiz_backend_springboot.util.EncryptionUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
-
 import java.util.List;
 
 @RestController
@@ -15,9 +21,15 @@ import java.util.List;
 public class CouponController {
 
     private final CouponService couponService;
+    private final NotificationService notificationService;
+    private final MailService mailService;
+    private final UserRepo userRepo;
 
-    public CouponController(CouponService couponService) {
+    public CouponController(CouponService couponService, NotificationService notificationService, MailService mailService, UserRepo userRepo) {
         this.couponService = couponService;
+        this.notificationService = notificationService;
+        this.mailService = mailService;
+        this.userRepo = userRepo;
     }
 
     @PostMapping("/insert")
@@ -49,11 +61,26 @@ public class CouponController {
 
     @PutMapping("/issue/{user_id}/{coupon_id}")
     public ResponseEntity<?> issueCoupon(@PathVariable int user_id, @PathVariable int coupon_id) {
-        int issueCoupon = couponService.issueCoupon(user_id, coupon_id);
-        if(issueCoupon > 0) {
-            return ResponseEntity.ok().body(issueCoupon);
+        try{
+            int issueCoupon = couponService.issueCoupon(user_id, coupon_id);
+            if(issueCoupon > 0) {
+                String title = "Congrats!🥳";
+                String body = "You've earned a discount! Check your email!";
+                notificationService.sendNotification(title, body, NotificationType.COUPON, user_id);
+
+                User user = userRepo.findByUserId(user_id);
+                Coupon coupon = couponService.findByCouponId(coupon_id);
+                String encryptedCouponId = EncryptionUtil.encodeCouponId(String.valueOf(coupon.getCouponId()));
+                String subject = "Discount Coupon!";
+                String htmlContent = MailTemplate.getCouponEmail(user.getName(), encryptedCouponId, coupon.getDiscount());
+                mailService.sendHtmlMail(user.getEmail(), subject, htmlContent);
+                return ResponseEntity.ok().body(issueCoupon);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Issue coupon failed");
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Issue coupon failed");
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve user: " + e.getMessage());
+        }
     }
 
     @PutMapping("/use/{business_id}/{coupon_id}")
