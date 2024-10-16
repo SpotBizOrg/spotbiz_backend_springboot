@@ -95,7 +95,7 @@ public class BusinessOwnerService {
             user.setPhoneNo(dto.getPhoneNo());
             userRepo.save(user);
             return ResponseEntity.ok(user);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
 
@@ -119,11 +119,18 @@ public class BusinessOwnerService {
             return categoryRepo.findAll();
         } catch (Exception e) {
             throw new RuntimeException("Error fetching all categories", e);
-        }}
-    public List<String> parseJsonString(String jsonString) {
+        }
+    }
+
+    // this function is used to extract the category list from the keywords json string
+    private List<String> parseJsonString (String jsonString){
         try {
+            // Use ObjectMapper to parse the JSON string into a map
             ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, List<String>> keywordMap = objectMapper.readValue(jsonString, new TypeReference<Map<String, List<String>>>(){});
+            Map<String, List<String>> keywordMap = objectMapper.readValue(jsonString, new TypeReference<Map<String, List<String>>>() {
+            });
+
+            // Extract and return the list of keywords
             return keywordMap.get("keywords");
 
         } catch (Exception e) {
@@ -133,4 +140,3 @@ public class BusinessOwnerService {
         }
     }
 }
-

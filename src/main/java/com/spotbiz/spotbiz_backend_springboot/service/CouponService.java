@@ -14,4 +14,5 @@ public interface CouponService {
     CouponStatus checkCoupon(int couponId);
     int deleteCoupon(int couponId);
     List<Coupon> getAllCouponDetails();
+    Coupon findByCouponId(int couponId);
 }
