@@ -21,45 +21,59 @@ import java.util.Map;
 @RequestMapping("api/v1/search/")
 public class SearchController {
 
+  private final BusinessRepo businessRepo;
+  private final SearchServiceImpl searchService;
 
-    private final BusinessRepo businessRepo;
-    private final SearchServiceImpl searchService;
-
-    public SearchController(BusinessRepo businessRepo, SearchServiceImpl searchService) {
-        this.businessRepo = businessRepo;
-        this.searchService = searchService;
-    }
+  public SearchController(BusinessRepo businessRepo, SearchServiceImpl searchService) {
+      this.businessRepo = businessRepo;
+      this.searchService = searchService;
+  }
 
 
-    @GetMapping("{searchText}")
-    public ResponseEntity<?> searchBusinesses(@PathVariable String searchText, @RequestParam int page, @RequestParam int size) {
-       try{
-           System.out.println("searchText"+searchText);
+  @GetMapping("{searchText}")
+  public ResponseEntity<?> searchBusinesses(@PathVariable String searchText, @RequestParam int page, @RequestParam int size) {
+     try{
+         System.out.println("searchText"+searchText);
 
-           String[] list = searchService.getKeywords(searchText).toArray(new String[0]);
+         String[] list = searchService.getKeywords(searchText).toArray(new String[0]);
 
-           // Use Page instead of List for paginated results
-           Pageable pageable = PageRequest.of(page, size);
-           Page<BusinessBoxDto> results = searchService.searchBusinesses(list, pageable);
+         // Use Page instead of List for paginated results
+         Pageable pageable = PageRequest.of(page, size);
+         Page<BusinessBoxDto> results = searchService.searchBusinesses(list, pageable);
 
-           // Return the Page object directly, which includes pagination metadata
-           return ResponseEntity.ok(results);
+         // Return the Page object directly, which includes pagination metadata
+         return ResponseEntity.ok(results);
 
-       } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve businesses: " + ex.getMessage());
-        }
-    }
+     } catch (Exception ex) {
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve businesses: " + ex.getMessage());
+      }
+  }
 
-    @GetMapping("category/{categoryId}")
-    public ResponseEntity<?> searchBusinessByCategory(@PathVariable String categoryId, @RequestParam int page, @RequestParam int size) {
-        try {
-            Integer categoryIdInt = Integer.parseInt(categoryId);
+  @GetMapping("category/{categoryId}")
+  public ResponseEntity<?> searchBusinessByCategory(@PathVariable String categoryId, @RequestParam int page, @RequestParam int size) {
+      try {
+          Integer categoryIdInt = Integer.parseInt(categoryId);
 //            System.out.println(categoryId);
-            Pageable pageable = PageRequest.of(page, size);
-            Page<BusinessBoxDto> results = searchService.searchBusinessesByCategory(categoryIdInt, pageable);
-            return ResponseEntity.ok(results);
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve businesses: " + ex.getMessage());
-        }
-    }
+          Pageable pageable = PageRequest.of(page, size);
+          Page<BusinessBoxDto> results = searchService.searchBusinessesByCategory(categoryIdInt, pageable);
+          return ResponseEntity.ok(results);
+      } catch (Exception ex) {
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve businesses: " + ex.getMessage());
+      }
+  }
+  
+  @PostMapping("/post")
+  public ResponseEntity<List<Business>> searchBusinessesByPost(
+          @RequestBody String searchText,
+          @RequestParam(defaultValue = "0") int page,
+          @RequestParam(defaultValue = "10") int size) {
+      try {
+          String[] keywords = searchService.getKeywords(searchText).toArray(new String[0]);
+          Pageable pageable = PageRequest.of(page, size);
+          Page<Business> results = businessRepo.findByAnyTag(keywords, pageable);
+          return new ResponseEntity<>(results.getContent(), HttpStatus.OK);
+      } catch (Exception ex) {
+          return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
 }
