@@ -36,18 +36,20 @@ public class ReportedBusinessController {
     }
 
     @PutMapping("/ban")
-    public ResponseEntity<?> BanReportedBusiness(@RequestParam Integer reportId) {
+    public ResponseEntity<?> BanReportedBusiness(@RequestParam String reportId) {
         try {
-            return ResponseEntity.ok(reportedBusinessService.BanReportedBusiness(reportId));
+            Integer reportIdInt = Integer.parseInt(reportId);
+            return ResponseEntity.ok(reportedBusinessService.BanReportedBusiness(reportIdInt));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to ban reported business: " + e.getMessage());
         }
     }
 
     @PutMapping("/delete")
-    public ResponseEntity<?> RemoveReportRequest(@RequestParam Integer reportId) {
+    public ResponseEntity<?> RemoveReportRequest(@RequestParam String reportId) {
         try {
-            return ResponseEntity.ok(reportedBusinessService.RemoveReportRequest(reportId));
+            Integer reportIdInt = Integer.parseInt(reportId);
+            return ResponseEntity.ok(reportedBusinessService.RemoveReportRequest(reportIdInt));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to remove report request: " + e.getMessage());
         }
