@@ -153,4 +153,24 @@ public class ReviewServiceImpl implements ReviewService {
             throw new RuntimeException("Failed to get latest business review", e);
         }
     }
+
+    public Review markAction(Integer reviewId, String action) {
+        try {
+            Review review = reviewRepo.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found for reviewId: " + reviewId));
+
+            if (action.equals("DELETE")) {
+                reviewRepo.delete(review);
+                return review;
+            } else if (action.equals("KEEP")) {
+                review.setStatus(null);
+                review = reviewRepo.save(review);
+                return review;
+            } else {
+                throw new IllegalArgumentException("Invalid action: " + action);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to mark review as reported", e);
+        }
+    }
 }

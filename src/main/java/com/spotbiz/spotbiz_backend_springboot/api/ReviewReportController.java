@@ -31,4 +31,13 @@ public class ReviewReportController {
             return ResponseEntity.status(500).body("Failed to get reported reviews: " + e.getMessage());
         }
     }
+
+    @PutMapping("/action/{reviewId}")
+    public ResponseEntity<?> markAction(@PathVariable Integer reviewId, @RequestParam String action) {
+        try {
+            return ResponseEntity.ok(reviewService.markAction(reviewId, action));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to mark review as reported: " + e.getMessage());
+        }
+    }
 }
