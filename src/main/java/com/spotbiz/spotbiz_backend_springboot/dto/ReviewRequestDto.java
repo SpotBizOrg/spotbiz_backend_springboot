@@ -18,6 +18,7 @@ public class ReviewRequestDto {
     private Integer userId;
     private Integer businessId;
     private Integer rating;
+    private String status;
 
 
     @Override
@@ -29,6 +30,7 @@ public class ReviewRequestDto {
                 ", userId=" + userId +
                 ", businessId=" + businessId +
                 ", rating=" + rating +
+                ", status=" + status +
                 '}';
     }
 

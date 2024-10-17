@@ -117,6 +117,27 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
+    @Override
+    public Review markReported(Integer reviewId) {
+        try {
+            Review review = reviewRepo.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found for reviewId: " + reviewId));
+            review.setStatus("REPORTED");
+            return reviewRepo.save(review);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to mark review as reported", e);
+        }
+    }
+
+    @Override
+    public List<Review> getReportedReviews() {
+        try {
+            return reviewRepo.findReviewsByStatus("REPORTED");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get reported reviews", e);
+        }
+    }
+
     public int businessReviewCount(Integer businessId) {
         try {
             return reviewRepo.countByBusiness(businessId);

@@ -9,7 +9,6 @@ import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.BusinessDataService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,14 +17,21 @@ import java.util.Map;
 @Service
 public class BusinessDataServiceImpl implements BusinessDataService {
 
-    @Autowired
-    private BusinessRepo businessRepository;
 
-    @Autowired
-    private ReviewServiceImpl reviewServiceImpl;
+    private final BusinessRepo businessRepository;
 
-    @Autowired
-    private OpeningHoursServiceImpl openingHoursServiceImpl;
+
+    private final ReviewServiceImpl reviewServiceImpl;
+
+
+    private final OpeningHoursServiceImpl openingHoursServiceImpl;
+
+    public BusinessDataServiceImpl(BusinessRepo businessRepository, ReviewServiceImpl reviewServiceImpl, OpeningHoursServiceImpl openingHoursServiceImpl) {
+        this.businessRepository = businessRepository;
+        this.reviewServiceImpl = reviewServiceImpl;
+        this.openingHoursServiceImpl = openingHoursServiceImpl;
+    }
+
 
     @Override
     public BusinessDataDto getBusinessData(Integer businessId) {

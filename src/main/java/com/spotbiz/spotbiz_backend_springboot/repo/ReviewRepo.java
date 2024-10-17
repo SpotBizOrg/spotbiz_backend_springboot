@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -26,4 +27,6 @@ public interface ReviewRepo extends JpaRepository<Review, Integer> {
 
     @Query(value = "SELECT * FROM review r WHERE r.business_id = :businessId ORDER BY r.date DESC LIMIT 1", nativeQuery = true)
     Review findLatestBusinessReview(@Param("businessId") Integer businessId);
+
+    List<Review> findReviewsByStatus(String status);
 }
