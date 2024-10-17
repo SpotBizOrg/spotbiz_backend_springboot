@@ -30,4 +30,13 @@ public class BusinessAppealController {
             return ResponseEntity.status(500).body("Failed to get all business appeals: " + e.getMessage());
         }
     }
+
+    @PutMapping("/update/{appealId}")
+    public ResponseEntity<?> updateBusinessAppealStatus(@PathVariable Integer appealId, @RequestParam String status) {
+        try {
+            return ResponseEntity.ok(businessAppealService.updateBusinessAppealStatus(appealId, status));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update business appeal status: " + e.getMessage());
+        }
+    }
 }

@@ -68,7 +68,7 @@ public class ReportedBusinessServiceImpl implements ReportedBusinessService {
 
                 if (updatedBusiness.getStatus().equals("BANNED")) {
                     String mail = MailTemplate.banBusinessTemplate(updatedBusiness.getUser().getName(), updatedReportRequest.getReason(), updatedBusiness.getBusinessId());
-                    mailService.sendHtmlMail(updatedBusiness.getUser().getEmail(), "Business Banned", mail);
+                    mailService.sendHtmlMail(updatedBusiness.getUser().getEmail(), "Important: Your Account Has Been Banned", mail);
                     return updatedReportRequest;
                 } else {
                     throw new RuntimeException("Failed to ban reported business");
