@@ -235,4 +235,14 @@ public class BusinessService {
         }
     }
 
+    public Business updateBusinessStatus(Integer businessId, String status){
+        try {
+            Business business = businessRepo.findById(businessId).orElseThrow(() -> new RuntimeException("Business not found"));
+            business.setStatus(status);
+            return businessRepo.save(business);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update business status: " + e.getMessage());
+        }
+    }
+
 }
