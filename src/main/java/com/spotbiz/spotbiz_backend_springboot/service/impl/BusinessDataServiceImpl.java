@@ -111,6 +111,10 @@ public class BusinessDataServiceImpl implements BusinessDataService {
         try {
             Review review =  reviewServiceImpl.findLatestBusinessReview(businessId);
 
+            if (review == null) {
+                return null;
+            }
+
             ReviewRequestDto reviewRequestDto = new ReviewRequestDto();
             reviewRequestDto.setDescription(review.getDescription());
             reviewRequestDto.setRating(review.getRating());

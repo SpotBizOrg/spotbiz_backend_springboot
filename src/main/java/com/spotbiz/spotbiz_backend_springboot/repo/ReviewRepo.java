@@ -26,7 +26,7 @@ public interface ReviewRepo extends JpaRepository<Review, Integer> {
     int countByBusiness(@Param("businessId") Integer businessId);
 
     @Query(value = "SELECT * FROM review r WHERE r.business_id = :businessId ORDER BY r.date DESC LIMIT 1", nativeQuery = true)
-    Review findLatestBusinessReview(@Param("businessId") Integer businessId);
+    Optional<Review> findLatestBusinessReview(@Param("businessId") Integer businessId);
 
     List<Review> findReviewsByStatus(String status);
 }
