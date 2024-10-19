@@ -15,7 +15,7 @@ public class FirebaseInitializer {
     @PostConstruct
     public void initialize() {
         try {
-            ClassPathResource resource = new ClassPathResource("spotbiz-f3f10-firebase-adminsdk-8xcpc-89f62d8a9a.json");
+            ClassPathResource resource = new ClassPathResource("spotbiz-f3f10-firebase-adminsdk-8xcpc-d61b4011f6.json");
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))
                     .build();

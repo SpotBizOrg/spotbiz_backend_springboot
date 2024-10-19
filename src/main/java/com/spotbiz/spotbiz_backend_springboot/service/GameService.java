@@ -9,4 +9,6 @@ import java.util.List;
 public interface GameService {
     int insertGame(GameDto gameDto);
     List<GameDto> getAllGames(GameType gameType);
+    GameDto updateGame(int gameId, GameDto gameDto);
+    int deleteGame(int gameId);
 }

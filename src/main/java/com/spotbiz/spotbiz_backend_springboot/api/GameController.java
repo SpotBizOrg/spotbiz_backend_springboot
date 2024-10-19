@@ -1,15 +1,12 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.GameDto;
-import com.spotbiz.spotbiz_backend_springboot.entity.Game;
 import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
 import com.spotbiz.spotbiz_backend_springboot.service.GameService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -34,7 +31,7 @@ public class GameController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to insert game");
             }
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 
@@ -42,11 +39,42 @@ public class GameController {
     public ResponseEntity<?> getAllGames(@PathVariable GameType gameType) {
         try {
             List<GameDto> allGames = gameService.getAllGames(gameType);
+            if(allGames.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No games found");
+            }
             return ResponseEntity.ok(allGames);
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 
+    @PutMapping("/update_game")
+    public ResponseEntity<?> updateGame(@RequestBody GameDto gameDto) {
+        try {
+            int gameId = gameDto.getGameId();
+            GameDto updatedGame = gameService.updateGame(gameId, gameDto);
+            return ResponseEntity.ok(updatedGame);
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game not found: " + ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + ex.getMessage());
+        }
+    }
+
+
+    @DeleteMapping("/delete_game/{gameId}")
+    public ResponseEntity<?> deleteGame(@PathVariable int gameId) {
+        try {
+            int deletedGame = gameService.deleteGame(gameId);
+            if (deletedGame > 0) {
+                return ResponseEntity.ok(deletedGame);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(deletedGame);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 
 }
