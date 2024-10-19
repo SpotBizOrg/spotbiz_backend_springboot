@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.repo;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.GameDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Game;
 import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,5 @@ import java.util.List;
 @EnableJpaRepositories
 public interface GameRepo extends JpaRepository<Game, Integer> {
     List<Game> findByGameType(GameType gameType);
+    Game findByGameId(int gameId);
 }
