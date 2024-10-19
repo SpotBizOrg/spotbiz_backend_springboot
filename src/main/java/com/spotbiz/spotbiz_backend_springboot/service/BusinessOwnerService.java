@@ -53,7 +53,7 @@ public class BusinessOwnerService {
 
         BusinessDto businessDto = businessMapper.toBusinessDto(business);
 
-        if (businessCategory.isPresent()) {
+        if(businessCategory.isPresent()) {
             businessDto.setCategoryId(businessCategory.get().getCategory().getCategoryId());
             List<String> tags = parseJsonString(businessCategory.get().getTags());
             businessDto.setTags(tags);
@@ -65,7 +65,7 @@ public class BusinessOwnerService {
 
     }
 
-    public List<AdvertisementDto> getAdvertisements(User user) {
+    public List<AdvertisementDto> getAdvertisements(User user){
 
         Integer userId = user.getUserId();
         Business business = businessRepo.findByUserUserId(userId);
