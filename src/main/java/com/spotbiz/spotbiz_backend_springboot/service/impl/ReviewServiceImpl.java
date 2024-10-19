@@ -148,8 +148,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     public Review findLatestBusinessReview(Integer businessId) {
         try {
-            return reviewRepo.findLatestBusinessReview(businessId);
+            Optional<Review> latestReviewOpt = reviewRepo.findLatestBusinessReview(businessId);
+            return latestReviewOpt.orElse(null); // Or throw a custom exception if needed
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
             throw new RuntimeException("Failed to get latest business review", e);
         }
     }
