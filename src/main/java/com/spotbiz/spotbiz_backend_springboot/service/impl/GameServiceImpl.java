@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.GameDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.UserPointDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Game;
 import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
 import com.spotbiz.spotbiz_backend_springboot.entity.Status;
@@ -9,12 +10,15 @@ import com.spotbiz.spotbiz_backend_springboot.mapper.GameMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.GameRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -96,5 +100,12 @@ public class GameServiceImpl implements GameService {
             return 0;
         }
         return 1;
+    }
+
+    @Override
+    public List<UserPointDto> getTopCustomers() {
+        LocalDateTime startDate = LocalDateTime.now().minusDays(30);
+        Pageable topTen = PageRequest.of(0, 10);
+        return gameRepo.findTopUsersByPointsWithin30Days(startDate, topTen);
     }
 }
