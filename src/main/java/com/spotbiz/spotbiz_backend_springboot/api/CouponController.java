@@ -74,6 +74,7 @@ public class CouponController {
                 String subject = "Discount Coupon!";
                 String htmlContent = MailTemplate.getCouponEmail(user.getName(), encryptedCouponId, coupon.getDiscount());
                 mailService.sendHtmlMail(user.getEmail(), subject, htmlContent);
+                System.out.println(issueCoupon);
                 return ResponseEntity.ok().body(issueCoupon);
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Issue coupon failed");

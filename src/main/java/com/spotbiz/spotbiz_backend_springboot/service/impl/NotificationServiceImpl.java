@@ -1,14 +1,13 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
-import com.spotbiz.spotbiz_backend_springboot.entity.Business;
-import com.spotbiz.spotbiz_backend_springboot.entity.Notification;
-import com.spotbiz.spotbiz_backend_springboot.entity.NotificationType;
-import com.spotbiz.spotbiz_backend_springboot.entity.User;
+import com.spotbiz.spotbiz_backend_springboot.dto.SubscribeDto;
+import com.spotbiz.spotbiz_backend_springboot.entity.*;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.NotificationRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.NotificationService;
 import com.spotbiz.spotbiz_backend_springboot.service.NotificationTokenService;
+import com.spotbiz.spotbiz_backend_springboot.service.SubscribeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -22,13 +21,15 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserRepo userRepo;
     private final BusinessRepo businessRepo;
     private final NotificationTokenService notificationTokenService;
+    private final SubscribeService subscribeService;
 
     @Autowired
-    public NotificationServiceImpl(NotificationRepo notificationRepo, UserRepo userRepo, BusinessRepo businessRepo, NotificationTokenService notificationTokenService) {
+    public NotificationServiceImpl(NotificationRepo notificationRepo, UserRepo userRepo, BusinessRepo businessRepo, NotificationTokenService notificationTokenService, SubscribeService subscribeService) {
         this.notificationRepo = notificationRepo;
         this.userRepo = userRepo;
         this.businessRepo = businessRepo;
         this.notificationTokenService = notificationTokenService;
+        this.subscribeService = subscribeService;
     }
 
     @Override
@@ -45,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public int sendNotification(String title, String body, NotificationType type, int id){
+    public void sendNotification(String title, String body, NotificationType type, int id){
         try{
             Notification notificationObject = new Notification();
             notificationObject.setType(type);
@@ -57,15 +58,15 @@ public class NotificationServiceImpl implements NotificationService {
                 User user = userRepo.findByUserId(id);
                 if (user == null) {
                     System.out.println("User not found for ID: " + id);
-                    throw new RuntimeException("Error!");
+                    throw new RuntimeException("User not found!");
                 }
                 notificationObject.setUser(user);
             }
             else if(type == NotificationType.PROMOTION){
                 Business business = businessRepo.findByBusinessId(id);
                 if (business == null) {
-                    System.out.println("business not found for ID: " + id);
-                    throw new RuntimeException("Error!");
+                    System.out.println("Business not found for ID: " + id);
+                    throw new RuntimeException("Business not found!");
                 }
                 notificationObject.setBusiness(business);
             }
@@ -78,16 +79,15 @@ public class NotificationServiceImpl implements NotificationService {
                 fcmService.sendNotificationToDevice(token, title, body);
             }
             else if(type == NotificationType.PROMOTION){
-                List<Integer> ids = Arrays.asList(1, 2, 3, 4);
-                for (Integer userId : ids) {
-                    String token = notificationTokenService.getTokenByUserId(userId);
+                List<SubscribeDto> subscribedList = subscribeService.getSubscribers(id);
+                for (SubscribeDto subscribe : subscribedList) {
+                    String token = notificationTokenService.getTokenByUserId(subscribe.getUserId());
                     fcmService.sendNotificationToDevice(token, title, body);
                 }
             }
         }
         catch(Exception e){
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-       return 0;
     }
 }

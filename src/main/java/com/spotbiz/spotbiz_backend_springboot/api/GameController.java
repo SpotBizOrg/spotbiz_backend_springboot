@@ -1,7 +1,9 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.GameDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.UserPointDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
+import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.service.GameService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -63,7 +65,6 @@ public class GameController {
         }
     }
 
-
     @DeleteMapping("/delete_game/{gameId}")
     public ResponseEntity<?> deleteGame(@PathVariable int gameId) {
         try {
@@ -75,6 +76,12 @@ public class GameController {
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
+    }
+
+    @GetMapping("/leaderboard")
+    public ResponseEntity<List<UserPointDto>> getLeaderBoard() {
+        List<UserPointDto> users = gameService.getTopCustomers();
+        return ResponseEntity.ok(users);
     }
 
 }
