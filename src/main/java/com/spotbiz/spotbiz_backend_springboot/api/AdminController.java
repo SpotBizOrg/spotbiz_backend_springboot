@@ -2,6 +2,7 @@ package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
+import com.spotbiz.spotbiz_backend_springboot.service.BusinessService;
 import com.spotbiz.spotbiz_backend_springboot.service.BusinessVerifyService;
 import com.spotbiz.spotbiz_backend_springboot.service.MailService;
 import com.spotbiz.spotbiz_backend_springboot.service.UserService;
@@ -19,12 +20,15 @@ public class AdminController {
 
     private final BusinessVerifyService businessVerifyService;
 
+    private final BusinessService businessService;
+
     private final MailService mailService;
 
-    public AdminController(UserService userService, BusinessVerifyService businessVerifyService, MailService mailService) {
+    public AdminController(UserService userService, BusinessVerifyService businessVerifyService, MailService mailService, BusinessService businessService) {
         this.userService = userService;
         this.businessVerifyService = businessVerifyService;
         this.mailService = mailService;
+        this.businessService = businessService;
     }
 
     @PostMapping("/register")
@@ -45,8 +49,17 @@ public class AdminController {
     @GetMapping("/customers")
     public ResponseEntity<List<User>> getAllCustomers() {
         List<User> customers = userService.getAllCustomers();
+
         return ResponseEntity.ok(customers);
     }
+
+    @GetMapping("/business")
+    public ResponseEntity<?>getAllBusinesses() {
+        List<Business> businesses = businessService.getAllBusinesses();
+
+        return ResponseEntity.ok(businesses);
+    }
+
 
     @GetMapping("/verify/{businessId}")
     public ResponseEntity<?> verifyBusiness(@PathVariable String businessId) {
