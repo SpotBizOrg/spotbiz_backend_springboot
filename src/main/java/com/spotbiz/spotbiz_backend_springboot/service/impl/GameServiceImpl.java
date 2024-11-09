@@ -40,6 +40,8 @@ public class GameServiceImpl implements GameService {
 
         try {
             Game game = gameMapper.toGame(gameDto);
+            System.out.println(game.getGameId());
+            System.out.println(game.getGameName());
             game = gameRepo.save(game);
             return game.getGameId();
         } catch (Exception e) {
