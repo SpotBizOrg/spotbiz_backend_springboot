@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -20,4 +21,12 @@ public interface ReviewRepo extends JpaRepository<Review, Integer> {
 
     @Query(value = "SELECT COALESCE((SELECT AVG(r.rating) FROM review r WHERE r.business_id = :businessId), 0.0) AS avg_rating", nativeQuery = true)
     double getAverageRatingByBusiness(@Param("businessId") Integer businessId);
+
+    @Query(value = "SELECT COALESCE((SELECT COUNT(r.review_id) FROM review r WHERE r.business_id = :businessId GROUP BY business_id), 0) AS review_count", nativeQuery = true)
+    int countByBusiness(@Param("businessId") Integer businessId);
+
+    @Query(value = "SELECT * FROM review r WHERE r.business_id = :businessId ORDER BY r.date DESC LIMIT 1", nativeQuery = true)
+    Optional<Review> findLatestBusinessReview(@Param("businessId") Integer businessId);
+
+    List<Review> findReviewsByStatus(String status);
 }

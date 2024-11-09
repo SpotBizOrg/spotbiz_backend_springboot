@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.dto;
 
+import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import lombok.*;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BusinessBoxDto {
+public class BusinessDataDto {
 
     private Integer businessId;
     private String name;
@@ -17,7 +18,10 @@ public class BusinessBoxDto {
     private String description;
     private String address;
     private Double avgRating;
-    private String status;
+    private int reviewCount;
+    private String email;
+    private String phone;
     private List<String> tags;
     private WeeklyScheduleDto weeklySchedule;
+    private ReviewRequestDto latestReview;
 }
