@@ -20,6 +20,7 @@ public class BusinessDto {
     private Integer userId;
     private Integer categoryId;
     private List<String> tags;
+    private Integer packageId;
 
 
 }

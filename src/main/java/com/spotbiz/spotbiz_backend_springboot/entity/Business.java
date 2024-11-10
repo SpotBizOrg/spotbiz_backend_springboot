@@ -43,7 +43,9 @@ public class Business {
     @NaturalId
     private User user;
 
-
+    @ManyToOne
+    @JoinColumn(name = "package_id")
+    private Package pkg;
 
     public Business(String businessName, String businessRegNo, String status, User user){
         this.name = businessName;
