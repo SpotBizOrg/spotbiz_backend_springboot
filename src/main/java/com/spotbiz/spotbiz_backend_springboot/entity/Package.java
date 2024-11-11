@@ -17,13 +17,13 @@ public class Package {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int packageId;
+    private Integer packageId;
 
     @Column(name = "feature", nullable = false)
     private String feature;
 
     @Column(name = "ads_per_week")
-    private int adsPerWeek;
+    private Integer adsPerWeek;
 
     @Column(name = "analytics")
     private Boolean analytics;

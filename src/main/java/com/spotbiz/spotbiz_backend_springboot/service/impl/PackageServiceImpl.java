@@ -1,12 +1,15 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.PackageDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Package;
+import com.spotbiz.spotbiz_backend_springboot.mapper.PackageMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.PackageRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.PackageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,9 +19,28 @@ public class PackageServiceImpl implements  PackageService {
     @Autowired
     private  PackageRepo packageRepository;
 
+    @Autowired
+    private PackageMapper packageMapper;
+
     @Override
-    public List<Package> getAllPackages() {
-        return packageRepository.findAll();
+    public List<PackageDto> getAllPackages() {
+        try {
+            // sort the result set based on the packageId
+            List<Package> allPackages =  packageRepository.findAllOrderedByPackageIdAsc();
+
+            // removing business for the efficiency
+            List<PackageDto> optimizedPkgs = new ArrayList<>();
+            for (Package pkg : allPackages) {
+                PackageDto optimizedPkg = new PackageDto();
+                optimizedPkg = packageMapper.toPackageDto(pkg);
+                optimizedPkgs.add(optimizedPkg);
+            }
+            return optimizedPkgs;
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while fetching all packages");
+        }
+
+
     }
 
     @Override
