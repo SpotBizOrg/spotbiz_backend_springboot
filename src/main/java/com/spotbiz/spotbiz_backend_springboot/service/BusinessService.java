@@ -232,16 +232,18 @@ public class BusinessService {
         }
     }
 
-    public List<Business> getAllBusinesses(){
-        List<Business> business =  businessRepo.findAll();
+    public List<Business> getAllBusinesses() {
+        List<Business> business = businessRepo.findAll();
         List<Business> newBusinesses = new ArrayList<>();
 
         for (Business businesss : business) {
-            if(businesss.getName() != null){
+            if (businesss.getName() != null) {
                 newBusinesses.add(businesss);
             }
         }
         return newBusinesses;
+
+    }
 
     public Business updateBusinessStatus(Integer businessId, String status){
         try {
