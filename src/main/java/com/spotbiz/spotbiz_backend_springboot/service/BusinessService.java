@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -234,6 +231,17 @@ public class BusinessService {
             return null;
         }
     }
+
+    public List<Business> getAllBusinesses(){
+        List<Business> business =  businessRepo.findAll();
+        List<Business> newBusinesses = new ArrayList<>();
+
+        for (Business businesss : business) {
+            if(businesss.getName() != null){
+                newBusinesses.add(businesss);
+            }
+        }
+        return newBusinesses;
 
     public Business updateBusinessStatus(Integer businessId, String status){
         try {
