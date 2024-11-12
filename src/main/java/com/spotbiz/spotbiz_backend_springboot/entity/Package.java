@@ -46,7 +46,5 @@ public class Package {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @OneToMany(mappedBy = "pkg")
-    private List<Business> businesses;
 
 }
