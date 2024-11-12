@@ -32,9 +32,15 @@ public class SubscriptionBillingController {
     }
 
     @GetMapping("/subscription-billing")
-    public ResponseEntity<List<SubscriptionBillingDto>> getAllSubscriptionBillings() {
+    public ResponseEntity<?> getAllSubscriptionBillings() {
         List<SubscriptionBillingDto> subscriptionBillings = subscriptionBillingService.getAllSubscriptionBillings();
         return ResponseEntity.ok(subscriptionBillings);
+    }
+
+    @GetMapping("/subscription-billing/{subscriptionBillingId}")
+    public ResponseEntity<?> getSubscriptionBillingById(@PathVariable int subscriptionBillingId) {
+        SubscriptionBillingDto subscriptionBilling = subscriptionBillingService.getSubscriptionBillingById(subscriptionBillingId);
+        return ResponseEntity.ok(subscriptionBilling);
     }
 
     @PutMapping("/subscription-billing/{subscriptionBillingId}")

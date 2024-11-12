@@ -7,6 +7,7 @@ import com.spotbiz.spotbiz_backend_springboot.repo.SubscriptionBillingRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.SubscriptionBillingService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -37,7 +38,18 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
 
     @Override
     public List<SubscriptionBillingDto> getAllSubscriptionBillings() {
-        return null;
+        try{
+            List<SubscriptionBilling> allSubscriptionBillings = subscritionBillingRepo.findAll();
+            List<SubscriptionBillingDto> optimizedSubscriptionBillings = new ArrayList<>();
+            for (SubscriptionBilling subscriptionBilling : allSubscriptionBillings) {
+                SubscriptionBillingDto optimizedSubscriptionBilling = subscriptionBillingMapper.toSubscriptionBillingDto(subscriptionBilling);
+                optimizedSubscriptionBillings.add(optimizedSubscriptionBilling);
+
+            }
+            return optimizedSubscriptionBillings;
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while fetching all subscription billings");
+        }
     }
 
     @Override
@@ -48,5 +60,18 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
     @Override
     public int deleteSubscriptionBilling(int subscriptionBillingId) {
         return 0;
+    }
+
+    @Override
+    public SubscriptionBillingDto getSubscriptionBillingById(int subscriptionBillingId) {
+        try {
+            SubscriptionBilling subscriptionBilling = subscritionBillingRepo.findById(subscriptionBillingId).orElse(null);
+            if (subscriptionBilling == null) {
+                throw new RuntimeException("Subscription billing not found");
+            }
+            return subscriptionBillingMapper.toSubscriptionBillingDto(subscriptionBilling);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while fetching subscription billing");
+        }
     }
 }
