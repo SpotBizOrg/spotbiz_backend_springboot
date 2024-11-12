@@ -8,15 +8,14 @@ import java.util.List;
 public interface SubscriptionBillingService {
 
     SubscriptionBilling insertSubscriptionBilling(SubscriptionBillingDto subscriptionBillingDto);
+
     List<SubscriptionBillingDto> getAllSubscriptionBillings();
+
     SubscriptionBillingDto updateSubscriptionBilling(int subscriptionBillingId, SubscriptionBillingDto subscriptionBillingDto);
+
     int deleteSubscriptionBilling(int subscriptionBillingId);
+
     SubscriptionBillingDto markDeleteSubscriptionBilling(int subscriptionBillingId);
 
     SubscriptionBillingDto getSubscriptionBillingById(int subscriptionBillingId);
-//    List<SubscriptionBillingDto> getSubscriptionBillingByBusinessId(int businessId);
-//    List<SubscriptionBillingDto> getSubscriptionBillingBySubscriptionId(int subscriptionId);
-//    List<SubscriptionBillingDto> getSubscriptionBillingByBillingDate(String billingDate);
-//    List<SubscriptionBillingDto> getSubscriptionBillingByBillingStatus(LocalDateTime billingStatus);
-//    List<SubscriptionBillingDto> getSubscriptionBillingByAmount(Double amount);
 }
