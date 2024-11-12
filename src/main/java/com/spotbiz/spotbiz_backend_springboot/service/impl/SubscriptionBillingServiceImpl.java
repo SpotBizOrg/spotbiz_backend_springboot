@@ -32,7 +32,7 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
             }
             return savedBilling;
         } catch (Exception e) {
-            throw new RuntimeException("Error occurred while inserting subscription billing");
+            throw new RuntimeException("Error occurred while inserting subscription billing", e);
         }
     }
 
@@ -48,18 +48,56 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
             }
             return optimizedSubscriptionBillings;
         } catch (Exception e) {
-            throw new RuntimeException("Error occurred while fetching all subscription billings");
+            throw new RuntimeException("Error occurred while fetching all subscription billings", e);
         }
     }
 
     @Override
     public SubscriptionBillingDto updateSubscriptionBilling(int subscriptionBillingId, SubscriptionBillingDto subscriptionBillingDto) {
-        return null;
+        try {
+            SubscriptionBilling subscriptionBilling = subscritionBillingRepo.findById(subscriptionBillingId).orElse(null);
+            if (subscriptionBilling == null) {
+                throw new RuntimeException("Subscription billing not found");
+            }
+            SubscriptionBilling updatedSubscriptionBilling = subscriptionBillingMapper.toSubscriptionBilling(subscriptionBillingDto);
+            updatedSubscriptionBilling.setSubscriptionBillingId(subscriptionBillingId);
+            SubscriptionBilling savedBilling =  subscritionBillingRepo.save(updatedSubscriptionBilling);
+            return subscriptionBillingMapper.toSubscriptionBillingDto(savedBilling);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while updating subscription billing", e);
+        }
     }
 
     @Override
     public int deleteSubscriptionBilling(int subscriptionBillingId) {
-        return 0;
+        try {
+            SubscriptionBilling subscriptionBilling = subscritionBillingRepo.findById(subscriptionBillingId).orElse(null);
+            assert subscriptionBilling != null;
+            if (subscriptionBilling.getBillingStatus().equals("CLEARED")) {
+
+                throw new RuntimeException("Subscription billing cannot be deleted");
+
+            }
+            subscritionBillingRepo.deleteById(subscriptionBillingId);
+            return subscriptionBillingId;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error occurred while deleting subscription billing", e);
+        }
+    }
+
+    @Override
+    public SubscriptionBillingDto markDeleteSubscriptionBilling(int subscriptionBillingId) {
+        try {
+            SubscriptionBilling subscriptionBilling = subscritionBillingRepo.findById(subscriptionBillingId).orElse(null);
+            if (subscriptionBilling == null) {
+                throw new RuntimeException("Subscription billing not found");
+            }
+            subscriptionBilling.setBillingStatus("DELETED");
+            SubscriptionBilling savedBilling =  subscritionBillingRepo.save(subscriptionBilling);
+            return subscriptionBillingMapper.toSubscriptionBillingDto(savedBilling);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while marking subscription billing as deleted", e);
+        }
     }
 
     @Override

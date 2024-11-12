@@ -11,6 +11,7 @@ public interface SubscriptionBillingService {
     List<SubscriptionBillingDto> getAllSubscriptionBillings();
     SubscriptionBillingDto updateSubscriptionBilling(int subscriptionBillingId, SubscriptionBillingDto subscriptionBillingDto);
     int deleteSubscriptionBilling(int subscriptionBillingId);
+    SubscriptionBillingDto markDeleteSubscriptionBilling(int subscriptionBillingId);
 
     SubscriptionBillingDto getSubscriptionBillingById(int subscriptionBillingId);
 //    List<SubscriptionBillingDto> getSubscriptionBillingByBusinessId(int businessId);

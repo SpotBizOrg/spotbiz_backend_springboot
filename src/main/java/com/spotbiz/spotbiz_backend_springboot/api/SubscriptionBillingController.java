@@ -49,6 +49,12 @@ public class SubscriptionBillingController {
         return ResponseEntity.ok(subscriptionBilling);
     }
 
+    @PutMapping("/subscription-billing/delete/{subscriptionBillingId}")
+    public ResponseEntity<SubscriptionBillingDto> markDeleteSubscriptionBilling(@PathVariable int subscriptionBillingId) {
+        SubscriptionBillingDto subscriptionBilling = subscriptionBillingService.markDeleteSubscriptionBilling(subscriptionBillingId);
+        return ResponseEntity.ok(subscriptionBilling);
+    }
+
     @DeleteMapping("/subscription-billing/{subscriptionBillingId}")
     public ResponseEntity<Integer> deleteSubscriptionBilling(@PathVariable int subscriptionBillingId) {
         int subscriptionBilling = subscriptionBillingService.deleteSubscriptionBilling(subscriptionBillingId);
