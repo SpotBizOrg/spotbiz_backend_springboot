@@ -24,6 +24,7 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
     @Override
     public SubscriptionBilling insertSubscriptionBilling(SubscriptionBillingDto subscriptionBillingDto) {
         try {
+            System.out.println(subscriptionBillingDto.getSubscriptionId());
             SubscriptionBilling subscriptionBilling = subscriptionBillingMapper.toSubscriptionBilling(subscriptionBillingDto);
             SubscriptionBilling savedBilling =  subscritionBillingRepo.save(subscriptionBilling);
 
@@ -73,7 +74,7 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
         try {
             SubscriptionBilling subscriptionBilling = subscritionBillingRepo.findById(subscriptionBillingId).orElse(null);
             assert subscriptionBilling != null;
-            if (subscriptionBilling.getBillingStatus().equals("CLEARED")) {
+            if (subscriptionBilling.getBillingStatus().equals("PAID")) {
 
                 throw new RuntimeException("Subscription billing cannot be deleted");
 

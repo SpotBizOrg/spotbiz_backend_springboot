@@ -24,8 +24,8 @@ public class SubscriptionBillingController {
     public ResponseEntity<?> insertSubscriptionBilling(@RequestBody SubscriptionBillingDto subscriptionBillingDto) {
         try {
             SubscriptionBilling newSubscriptionBilling = subscriptionBillingService.insertSubscriptionBilling(subscriptionBillingDto);
-            Business updatedBusiness = businessService.updateBusinessSubscription(newSubscriptionBilling);
-            return ResponseEntity.ok("New new subscription billing added" + newSubscriptionBilling.getSubscriptionBillingId());
+//            Business updatedBusiness = businessService.updateBusinessSubscription(newSubscriptionBilling);
+            return ResponseEntity.ok(newSubscriptionBilling);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error occurred while inserting subscription billing");
         }
@@ -37,25 +37,25 @@ public class SubscriptionBillingController {
         return ResponseEntity.ok(subscriptionBillings);
     }
 
-    @GetMapping("/subscription-billing/{subscriptionBillingId}")
+    @GetMapping("/{subscriptionBillingId}")
     public ResponseEntity<?> getSubscriptionBillingById(@PathVariable int subscriptionBillingId) {
         SubscriptionBillingDto subscriptionBilling = subscriptionBillingService.getSubscriptionBillingById(subscriptionBillingId);
         return ResponseEntity.ok(subscriptionBilling);
     }
 
-    @PutMapping("/subscription-billing/{subscriptionBillingId}")
+    @PutMapping("/{subscriptionBillingId}")
     public ResponseEntity<SubscriptionBillingDto> updateSubscriptionBilling(@PathVariable int subscriptionBillingId, @RequestBody SubscriptionBillingDto subscriptionBillingDto) {
         SubscriptionBillingDto subscriptionBilling = subscriptionBillingService.updateSubscriptionBilling(subscriptionBillingId, subscriptionBillingDto);
         return ResponseEntity.ok(subscriptionBilling);
     }
 
-    @PutMapping("/subscription-billing/delete/{subscriptionBillingId}")
+    @PutMapping("/delete/{subscriptionBillingId}")
     public ResponseEntity<SubscriptionBillingDto> markDeleteSubscriptionBilling(@PathVariable int subscriptionBillingId) {
         SubscriptionBillingDto subscriptionBilling = subscriptionBillingService.markDeleteSubscriptionBilling(subscriptionBillingId);
         return ResponseEntity.ok(subscriptionBilling);
     }
 
-    @DeleteMapping("/subscription-billing/{subscriptionBillingId}")
+    @DeleteMapping("/{subscriptionBillingId}")
     public ResponseEntity<Integer> deleteSubscriptionBilling(@PathVariable int subscriptionBillingId) {
         int subscriptionBilling = subscriptionBillingService.deleteSubscriptionBilling(subscriptionBillingId);
         return ResponseEntity.ok(subscriptionBilling);
