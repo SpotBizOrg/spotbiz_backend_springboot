@@ -37,4 +37,6 @@ public class SubscriptionBilling {
     private String billingStatus;
 
     private Double amount;
+
+    private Boolean isActive;
 }

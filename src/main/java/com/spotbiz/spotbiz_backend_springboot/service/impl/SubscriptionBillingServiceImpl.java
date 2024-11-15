@@ -95,6 +95,7 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
                 throw new RuntimeException("Subscription billing not found");
             }
             subscriptionBilling.setBillingStatus("DELETED");
+            subscriptionBilling.setIsActive(false);
             SubscriptionBilling savedBilling =  subscritionBillingRepo.save(subscriptionBilling);
             return subscriptionBillingMapper.toSubscriptionBillingDto(savedBilling);
         } catch (Exception e) {

@@ -17,4 +17,5 @@ public class SubscriptionBillingDto {
     private LocalDateTime billingDate;
     private String billingStatus;
     private Double amount;
+    private Boolean isActive;
 }
