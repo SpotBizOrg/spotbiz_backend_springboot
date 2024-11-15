@@ -22,16 +22,17 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
     }
 
     @Override
-    public SubscriptionBilling insertSubscriptionBilling(SubscriptionBillingDto subscriptionBillingDto) {
+    public SubscriptionBillingDto insertSubscriptionBilling(SubscriptionBillingDto subscriptionBillingDto) {
         try {
             System.out.println(subscriptionBillingDto.getSubscriptionId());
             SubscriptionBilling subscriptionBilling = subscriptionBillingMapper.toSubscriptionBilling(subscriptionBillingDto);
             SubscriptionBilling savedBilling =  subscritionBillingRepo.save(subscriptionBilling);
+            SubscriptionBillingDto optimized = subscriptionBillingMapper.toSubscriptionBillingDto(savedBilling);
 
             if (savedBilling == null) {
                 throw new RuntimeException("Error occurred while inserting subscription billing");
             }
-            return savedBilling;
+            return optimized;
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while inserting subscription billing", e);
         }

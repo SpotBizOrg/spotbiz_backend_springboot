@@ -23,7 +23,7 @@ public class SubscriptionBillingController {
     @PostMapping("/subscription-billing")
     public ResponseEntity<?> insertSubscriptionBilling(@RequestBody SubscriptionBillingDto subscriptionBillingDto) {
         try {
-            SubscriptionBilling newSubscriptionBilling = subscriptionBillingService.insertSubscriptionBilling(subscriptionBillingDto);
+            SubscriptionBillingDto newSubscriptionBilling = subscriptionBillingService.insertSubscriptionBilling(subscriptionBillingDto);
 //            Business updatedBusiness = businessService.updateBusinessSubscription(newSubscriptionBilling);
             return ResponseEntity.ok(newSubscriptionBilling);
         } catch (Exception e) {

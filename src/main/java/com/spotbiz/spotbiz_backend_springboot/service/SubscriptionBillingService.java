@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SubscriptionBillingService {
 
-    SubscriptionBilling insertSubscriptionBilling(SubscriptionBillingDto subscriptionBillingDto);
+    SubscriptionBillingDto insertSubscriptionBilling(SubscriptionBillingDto subscriptionBillingDto);
 
     List<SubscriptionBillingDto> getAllSubscriptionBillings();
 

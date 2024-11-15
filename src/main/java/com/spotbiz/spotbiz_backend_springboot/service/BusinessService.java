@@ -256,14 +256,14 @@ public class BusinessService {
         }
     }
 
-    public Business updateBusinessSubscription(SubscriptionBilling subscriptionBilling){
-        try {
-            Business business = businessRepo.findById(subscriptionBilling.getBusiness().getBusinessId()).orElseThrow(() -> new RuntimeException("Business not found"));
-            business.setSubscriptionBilling(subscriptionBilling);
-            return businessRepo.save(business);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to update business subscription: " + e.getMessage());
-        }
-    }
+//    public Business updateBusinessSubscription(SubscriptionBilling subscriptionBilling){
+//        try {
+//            Business business = businessRepo.findById(subscriptionBilling.getBusiness().getBusinessId()).orElseThrow(() -> new RuntimeException("Business not found"));
+//            business.setSubscriptionBilling(subscriptionBilling);
+//            return businessRepo.save(business);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to update business subscription: " + e.getMessage());
+//        }
+//    }
 
 }

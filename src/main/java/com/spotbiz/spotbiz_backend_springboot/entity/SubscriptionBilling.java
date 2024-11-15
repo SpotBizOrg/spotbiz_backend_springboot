@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -25,7 +26,7 @@ public class SubscriptionBilling {
     @JoinColumn(name = "id")
     private Package pkg;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "business_id")
     private Business business;
 
