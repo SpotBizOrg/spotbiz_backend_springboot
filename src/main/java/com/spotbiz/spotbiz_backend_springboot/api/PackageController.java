@@ -29,8 +29,9 @@ public class PackageController {
             Package savedPackage = packageService.savePackage(pkg);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPackage);
         } catch (Exception e) {
-            System.err.println("Error creating package: " + e.getMessage()); // Log error
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            System.err.println("Error creating package: " + e.getMessage()); // Log error message
+            e.printStackTrace();  // Log full stack trace for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);  // Return null body for clarity
         }
     }
 
@@ -42,15 +43,22 @@ public class PackageController {
             return ResponseEntity.ok(packages);
         } catch (Exception e) {
             System.err.println("Error fetching packages: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            e.printStackTrace();  // Log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
     // Get a package by ID
     @GetMapping("/get/{packageId}")
     public ResponseEntity<Package> getPackageById(@PathVariable int packageId) {
-        Package pkg = packageService.getPackageById(packageId);
-        return pkg != null ? ResponseEntity.ok(pkg) : ResponseEntity.notFound().build();
+        try {
+            Package pkg = packageService.getPackageById(packageId);
+            return pkg != null ? ResponseEntity.ok(pkg) : ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.err.println("Error fetching package by ID: " + e.getMessage());
+            e.printStackTrace();  // Log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // Update package
@@ -61,7 +69,8 @@ public class PackageController {
             return updatedPackage != null ? ResponseEntity.ok(updatedPackage) : ResponseEntity.notFound().build();
         } catch (Exception e) {
             System.err.println("Error updating package: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            e.printStackTrace();  // Log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -73,7 +82,8 @@ public class PackageController {
             return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         } catch (Exception e) {
             System.err.println("Error deleting package: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            e.printStackTrace();  // Log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }

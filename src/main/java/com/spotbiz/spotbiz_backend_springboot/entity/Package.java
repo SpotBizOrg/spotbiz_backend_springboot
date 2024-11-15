@@ -2,7 +2,6 @@ package com.spotbiz.spotbiz_backend_springboot.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.Accessors;
 
 @Getter
 @Setter
@@ -26,7 +25,7 @@ public class Package {
     @Column(name = "analytics")
     private Boolean analytics;
 
-    @Column(name = "fake_reviews")
+    @Column(name = "fakereviews")
     private Boolean fakeReviews;
 
     @Column(name = "recommendation")
