@@ -3,6 +3,8 @@ package com.spotbiz.spotbiz_backend_springboot.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -42,5 +44,8 @@ public class Package {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @OneToMany(mappedBy = "pkg")
+    private List<Business> businesses;
 
 }
