@@ -45,12 +45,4 @@ public class EncryptionUtil {
         return codeToIdMap.get(couponCode);
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException {
-        String couponId = "12345";
-        String encoded = encodeCouponId(couponId);
-        System.out.println("Encoded Coupon ID: " + encoded);
-
-        String decoded = decodeCouponId(encoded);
-        System.out.println("Decoded Coupon ID: " + decoded);
-    }
 }
