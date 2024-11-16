@@ -1,7 +1,9 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.PackageDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Package;
 import com.spotbiz.spotbiz_backend_springboot.service.PackageService;
+import com.spotbiz.spotbiz_backend_springboot.service.impl.PackageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +15,11 @@ import java.util.List;
 @RequestMapping("/api/v1/packages")
 public class PackageController {
 
-    private final PackageService packageService;
+    private final PackageServiceImpl packageService;
 
     // Constructor injection (recommended over field injection)
     @Autowired
-    public PackageController(PackageService packageService) {
+    public PackageController(PackageServiceImpl packageService) {
         this.packageService = packageService;
     }
 
@@ -34,9 +36,9 @@ public class PackageController {
 
     // retrieve all packages
     @GetMapping("/get_all")
-    public ResponseEntity<List<Package>> getAllPackages() {
+    public ResponseEntity<List<PackageDto>> getAllPackages() {
         try {
-            List<Package> packages = packageService.getAllPackages();
+            List<PackageDto> packages = packageService.getAllPackages();
             return ResponseEntity.ok(packages);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
