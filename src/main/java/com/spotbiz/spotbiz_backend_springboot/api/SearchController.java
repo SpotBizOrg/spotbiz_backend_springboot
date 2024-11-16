@@ -31,11 +31,11 @@ public class SearchController {
 
 
   @GetMapping("{searchText}")
-  public ResponseEntity<?> searchBusinesses(@PathVariable String searchText, @RequestParam int page, @RequestParam int size) {
+  public ResponseEntity<?> searchBusinesses(@PathVariable String searchText, @RequestParam int page, @RequestParam int size, @RequestParam(defaultValue = "0") int userId) {
      try{
          System.out.println("searchText"+searchText);
 
-         String[] list = searchService.getKeywords(searchText).toArray(new String[0]);
+         String[] list = searchService.getKeywords(searchText, userId).toArray(new String[0]);
 
          // Use Page instead of List for paginated results
          Pageable pageable = PageRequest.of(page, size);
@@ -66,9 +66,10 @@ public class SearchController {
   public ResponseEntity<List<Business>> searchBusinessesByPost(
           @RequestBody String searchText,
           @RequestParam(defaultValue = "0") int page,
-          @RequestParam(defaultValue = "10") int size) {
+          @RequestParam(defaultValue = "10") int size,
+          @RequestParam(defaultValue = "0") int userId){
       try {
-          String[] keywords = searchService.getKeywords(searchText).toArray(new String[0]);
+          String[] keywords = searchService.getKeywords(searchText, userId).toArray(new String[0]);
           Pageable pageable = PageRequest.of(page, size);
           Page<Business> results = businessRepo.findByAnyTag(keywords, pageable);
           return new ResponseEntity<>(results.getContent(), HttpStatus.OK);

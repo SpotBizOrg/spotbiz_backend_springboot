@@ -35,8 +35,30 @@ public class SubscriptionBillingScheduler {
 
         for (SubscriptionBilling subscription : activeSubscriptions) {
             if (subscription.getBillingDate().plusDays(30).isBefore(now)) {
-                subscription.setIsActive(false);
-                subscriptionBillingRepo.save(subscription);
+
+                try {
+                    subscription.setIsActive(false);
+                    subscriptionBillingRepo.save(subscription);
+
+                    try{
+                        SubscriptionBilling newSubscription = new SubscriptionBilling();
+                        newSubscription.setSubscriptionBillingId(0);
+                        newSubscription.setBillingStatus("PAID");
+                        newSubscription.setIsActive(true);
+                        newSubscription.setBillingDate(LocalDateTime.now());
+                        newSubscription.setAmount(0.0);
+                        newSubscription.setBusiness(subscription.getBusiness());
+
+                        subscriptionBillingRepo.save(newSubscription);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+
             }
         }
 

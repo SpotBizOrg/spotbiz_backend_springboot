@@ -55,7 +55,7 @@ public class SearchServiceImpl implements SearchService {
 
 
     @Override
-    public List<String> getKeywords(String searchText) {
+    public List<String> getKeywords(String searchText, int userId) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             // Create the GET request and append the searchText as a query parameter
             String url = SEARCH_API_URL + "?keyword=" + URLEncoder.encode(searchText, "UTF-8");
@@ -69,12 +69,15 @@ public class SearchServiceImpl implements SearchService {
                 JSONObject jsonResponse = new JSONObject(responseBody);
                 System.out.println(jsonResponse);
 
-                SearchHistory newSearch = new SearchHistory(16, jsonResponse.toString());
-                ReccomondationServiceImpl searchHistory = new ReccomondationServiceImpl(searchHistoryRepo);
-                SearchHistory history = searchHistory.saveReccomondation(newSearch);
+                if (userId != 0) {
+                    // Save the search history
+                    SearchHistory newSearch = new SearchHistory(userId, jsonResponse.toString());
+                    ReccomondationServiceImpl searchHistory = new ReccomondationServiceImpl(searchHistoryRepo);
+                    SearchHistory history = searchHistory.saveReccomondation(newSearch);
 
-                if (history == null) {
-                    throw new RuntimeException("Failed to save search history");
+                    if (history == null) {
+                        throw new RuntimeException("Failed to save search history");
+                    }
                 }
 
                 // Extract the array from the JSON response
@@ -100,6 +103,10 @@ public class SearchServiceImpl implements SearchService {
     public Page<BusinessBoxDto> searchBusinesses(String[] keywords, Pageable pageable) {
         try {
             Page<Business> list = businessRepo.findByAnyTag(keywords, pageable);
+            for (Business buiness : list) {
+                System.out.println(buiness.getName());
+
+            }
             Page<BusinessBoxDto> newList = list.map(this::convertToBusinessBoxDto);
             return newList;
         } catch (Exception e) {
