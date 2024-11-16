@@ -39,10 +39,12 @@ public interface BusinessRepo extends JpaRepository<Business, Integer> {
     @Query(value = "SELECT b.business_id, b.business_reg_no, b.name, b.address, b.contact_no, b.description, b.location_url, b.logo, b.profile_cover, b.status, b.user_id " +
             "FROM business_category bc " +
             "JOIN business b ON b.business_id = bc.business_id " +
+            "JOIN subscription_billing s ON b.business_id = s.business_id " +
             "WHERE EXISTS ( " +
             "    SELECT 1 FROM jsonb_array_elements_text(bc.tags->'keywords') tag " +
-            "    WHERE tag = ANY (cast(:tags as text[])) " +
-            ")", nativeQuery = true)
+            "    WHERE tag = ANY (cast(:tags as text[])))" +
+            "AND s.billing_status = 'PAID' AND s.is_active = true "+
+            "ORDER BY s.id DESC", nativeQuery = true)
 //    List<Business> findByAnyTag(@Param("tags") String[] tags);
     Page<Business> findByAnyTag(@Param("tags") String[] tags, Pageable pageable);
 

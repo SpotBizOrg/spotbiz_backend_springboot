@@ -15,7 +15,7 @@ public interface SubscriptionBillingRepo extends JpaRepository<SubscriptionBilli
 
     void deleteBySubscriptionBillingId(int subscriptionBillingId);
 
-    List<SubscriptionBilling> findByIsActiveTrue();
+    List<SubscriptionBilling> findByIsActiveTrueAndBillingStatus(String billingStatus);
 
 //    @Query(value = "SELECT * FROM subscription_billings ORDER BY id ASC", nativeQuery = true)
 //    List<SubscriptionBilling> findAllOrderedBySubscriptionBillingIdAsc();

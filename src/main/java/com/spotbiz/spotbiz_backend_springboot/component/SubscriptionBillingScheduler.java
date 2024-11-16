@@ -30,7 +30,7 @@ public class SubscriptionBillingScheduler {
     }
 
     private void checkAndDeactivateExpiredSubscriptions() {
-        List<SubscriptionBilling> activeSubscriptions = subscriptionBillingRepo.findByIsActiveTrue();
+        List<SubscriptionBilling> activeSubscriptions = subscriptionBillingRepo.findByIsActiveTrueAndBillingStatus("PAID");
         LocalDateTime now = LocalDateTime.now();
 
         for (SubscriptionBilling subscription : activeSubscriptions) {
