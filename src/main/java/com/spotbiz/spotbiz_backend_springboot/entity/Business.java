@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -43,6 +45,8 @@ public class Business {
     @NaturalId
     private User user;
 
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubscriptionBilling> subscriptionBilling;
 
 
     public Business(String businessName, String businessRegNo, String status, User user){

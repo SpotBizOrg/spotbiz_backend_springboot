@@ -10,4 +10,6 @@ public interface ReviewService {
     List<Review> getAllReviews(String email);
     ReviewRequestDto setData(ReviewRequestDto review, String email);
     double getAverageRating(Integer businessId);
+    Review markReported(Integer reviewId);
+    List<Review> getReportedReviews();
 }

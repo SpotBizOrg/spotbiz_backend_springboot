@@ -18,7 +18,6 @@ public class BusinessBoxDto {
     private String address;
     private Double avgRating;
     private String status;
-//    private int categoryId;
     private List<String> tags;
     private WeeklyScheduleDto weeklySchedule;
 }

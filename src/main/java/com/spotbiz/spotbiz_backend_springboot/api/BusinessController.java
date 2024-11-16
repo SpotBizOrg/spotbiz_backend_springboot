@@ -37,9 +37,6 @@ public class BusinessController {
     @PutMapping("update/{email}")
     public ResponseEntity<?> updateBusiness(@RequestBody BusinessDto updatedBusiness, @PathVariable String email) {
         try {
-            System.out.println(updatedBusiness.getTags());
-            System.out.println(updatedBusiness.getUserId());
-            System.out.println(updatedBusiness.getBusinessId());
             Business updatedDto = businessService.updateBusiness(updatedBusiness, email);
             return ResponseEntity.ok(updatedDto);
         } catch (RuntimeException ex) {

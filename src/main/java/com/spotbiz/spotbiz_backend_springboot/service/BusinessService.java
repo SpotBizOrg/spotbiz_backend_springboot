@@ -3,10 +3,7 @@ package com.spotbiz.spotbiz_backend_springboot.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDto;
-import com.spotbiz.spotbiz_backend_springboot.entity.Business;
-import com.spotbiz.spotbiz_backend_springboot.entity.BusinessCategory;
-import com.spotbiz.spotbiz_backend_springboot.entity.Category;
-import com.spotbiz.spotbiz_backend_springboot.entity.User;
+import com.spotbiz.spotbiz_backend_springboot.entity.*;
 import com.spotbiz.spotbiz_backend_springboot.mapper.BusinessMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessCategoryRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
@@ -17,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -184,10 +178,14 @@ public class BusinessService {
             BusinessCategory newBusinessCategory = new BusinessCategory();
             newBusinessCategory.setBusiness(existingBusiness);
             newBusinessCategory.setCategory(newCategory);
-            newBusinessCategory.setTags(updatedBusinessDto.getTags().toString());
+            newBusinessCategory.setTags(createJsonString(updatedBusinessDto.getTags())); // changed here cuz cant save
+//            newBusinessCategory.setTags(updatedBusinessDto.getTags().toString());
+
             businessCategoryRepo.save(newBusinessCategory);
         } else {
-            existingCategory.setTags(updatedBusinessDto.getTags().toString());
+            existingCategory.setTags(createJsonString(updatedBusinessDto.getTags())); // changed here cuz cant save
+//            existingCategory.setTags(updatedBusinessDto.getTags().toString());
+
             businessCategoryRepo.save(existingCategory);
         }
     }
@@ -234,5 +232,38 @@ public class BusinessService {
             return null;
         }
     }
+
+    public List<Business> getAllBusinesses() {
+        List<Business> business = businessRepo.findAll();
+        List<Business> newBusinesses = new ArrayList<>();
+
+        for (Business businesss : business) {
+            if (businesss.getName() != null) {
+                newBusinesses.add(businesss);
+            }
+        }
+        return newBusinesses;
+
+    }
+
+    public Business updateBusinessStatus(Integer businessId, String status){
+        try {
+            Business business = businessRepo.findById(businessId).orElseThrow(() -> new RuntimeException("Business not found"));
+            business.setStatus(status);
+            return businessRepo.save(business);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update business status: " + e.getMessage());
+        }
+    }
+
+//    public Business updateBusinessSubscription(SubscriptionBilling subscriptionBilling){
+//        try {
+//            Business business = businessRepo.findById(subscriptionBilling.getBusiness().getBusinessId()).orElseThrow(() -> new RuntimeException("Business not found"));
+//            business.setSubscriptionBilling(subscriptionBilling);
+//            return businessRepo.save(business);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to update business subscription: " + e.getMessage());
+//        }
+//    }
 
 }

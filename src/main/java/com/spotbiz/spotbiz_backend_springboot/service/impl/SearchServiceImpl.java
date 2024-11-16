@@ -157,8 +157,6 @@ public class SearchServiceImpl implements SearchService {
 
             // Extract and return the list of keywords
             return keywordMap.get("keywords");
-
-
         } catch (Exception e) {
             throw new RuntimeException("Failed to get category name: " + e.getMessage());
         }

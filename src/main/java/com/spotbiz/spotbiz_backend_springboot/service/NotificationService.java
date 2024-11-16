@@ -8,5 +8,5 @@ import java.util.List;
 public interface NotificationService {
     List<Notification> getAllNotification(int userId);
     Notification insertNotification(Notification notification);
-    int sendNotification(String title, String body, NotificationType type, int id);
+    void sendNotification(String title, String body, NotificationType type, int id);
 }
