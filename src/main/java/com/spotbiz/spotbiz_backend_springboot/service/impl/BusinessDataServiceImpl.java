@@ -2,10 +2,9 @@ package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDataDto;
-import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
-import com.spotbiz.spotbiz_backend_springboot.dto.WeeklyScheduleDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.*;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
+import com.spotbiz.spotbiz_backend_springboot.entity.Package;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.BusinessDataService;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class BusinessDataServiceImpl implements BusinessDataService {
@@ -26,17 +26,29 @@ public class BusinessDataServiceImpl implements BusinessDataService {
 
     private final OpeningHoursServiceImpl openingHoursServiceImpl;
 
-    public BusinessDataServiceImpl(BusinessRepo businessRepository, ReviewServiceImpl reviewServiceImpl, OpeningHoursServiceImpl openingHoursServiceImpl) {
+    private final PackageServiceImpl packageServiceImpl;
+
+    public BusinessDataServiceImpl(BusinessRepo businessRepository, ReviewServiceImpl reviewServiceImpl, OpeningHoursServiceImpl openingHoursServiceImpl, PackageServiceImpl packageServiceImpl) {
         this.businessRepository = businessRepository;
         this.reviewServiceImpl = reviewServiceImpl;
         this.openingHoursServiceImpl = openingHoursServiceImpl;
+        this.packageServiceImpl = packageServiceImpl;
     }
 
 
     @Override
     public BusinessDataDto getBusinessData(Integer businessId) {
         try {
-            Business business = businessRepository.findById(businessId).get();
+
+
+            Optional<Business> optionalBusiness = businessRepository.findById(businessId);
+
+            if (optionalBusiness.isEmpty()) {
+                return null;
+            }
+
+            Business business = optionalBusiness.get();
+
             BusinessDataDto businessDataDto = setBusinessData(business);
             return businessDataDto;
 
@@ -59,8 +71,18 @@ public class BusinessDataServiceImpl implements BusinessDataService {
         businessDataDto.setWeeklySchedule(getOpeningHours(business.getUser().getEmail()));
         businessDataDto.setReviewCount(reviewCount(business.getBusinessId()));
         businessDataDto.setLatestReview(getLatestReview(business.getBusinessId()));
+        businessDataDto.setPkg(getSubscriptionPackage(business.getBusinessId()));
 
         return businessDataDto;
+    }
+
+    public PackageDto getSubscriptionPackage(Integer businessId) {
+        try {
+            PackageDto subscriptionPackage = packageServiceImpl.getPackageByBusinessId(businessId);
+            return subscriptionPackage;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get subscription billing: " + e.getMessage());
+        }
     }
 
     private Double getAvgRatings(Integer businessId) {

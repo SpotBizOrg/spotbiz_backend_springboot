@@ -27,7 +27,7 @@ public class Package {
     @Column(name = "analytics")
     private Boolean analytics;
 
-    @Column(name = "fakereviews")
+    @Column(name = "fake_reviews")
     private Boolean fakeReviews;
 
     @Column(name = "recommendation")

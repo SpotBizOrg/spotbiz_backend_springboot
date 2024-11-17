@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubscriptionBillingServiceImpl implements SubscriptionBillingService {
@@ -111,6 +112,20 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
                 throw new RuntimeException("Subscription billing not found");
             }
             return subscriptionBillingMapper.toSubscriptionBillingDto(subscriptionBilling);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while fetching subscription billing");
+        }
+    }
+
+    @Override
+    public SubscriptionBillingDto getSubscriptionBillingByBusiness(int businessId) {
+        try {
+            Optional<SubscriptionBilling> subscriptionBilling = subscritionBillingRepo.findFirstByBusinessBusinessIdAndIsActiveTrueAndBillingStatusOrderByBillingDateDesc(businessId, "PAID");
+
+            if (!subscriptionBilling.isPresent()) {
+                return null;
+            }
+            return subscriptionBillingMapper.toSubscriptionBillingDto(subscriptionBilling.get());
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while fetching subscription billing");
         }
