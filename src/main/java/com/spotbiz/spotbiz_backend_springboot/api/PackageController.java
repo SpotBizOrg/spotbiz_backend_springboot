@@ -13,64 +13,79 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/packages")
+@CrossOrigin(origins = "http://localhost:5173")  // Allow requests from frontend on port 5173
 public class PackageController {
 
     private final PackageServiceImpl packageService;
 
-    // Constructor injection (recommended over field injection)
     @Autowired
     public PackageController(PackageServiceImpl packageService) {
         this.packageService = packageService;
     }
 
-    // to create new packages
+    // Create new package
     @PostMapping("/add")
     public ResponseEntity<Package> createPackage(@RequestBody Package pkg) {
         try {
-            Package savedPackage = packageService.savePackage(pkg); // Corrected `savedPackage` variable
-            return ResponseEntity.ok(savedPackage);
+            System.out.println("Received package: " + pkg);  // Log the received package
+            Package savedPackage = packageService.savePackage(pkg);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedPackage);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            System.err.println("Error creating package: " + e.getMessage()); // Log error message
+            e.printStackTrace();  // Log full stack trace for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);  // Return null body for clarity
         }
     }
 
-    // retrieve all packages
+    // Retrieve all packages
     @GetMapping("/get_all")
     public ResponseEntity<List<PackageDto>> getAllPackages() {
         try {
             List<PackageDto> packages = packageService.getAllPackages();
             return ResponseEntity.ok(packages);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            System.err.println("Error fetching packages: " + e.getMessage());
+            e.printStackTrace();  // Log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
-    // get a specific package by its ID
+    // Get a package by ID
     @GetMapping("/get/{packageId}")
     public ResponseEntity<Package> getPackageById(@PathVariable int packageId) {
-        Package pkg = packageService.getPackageById(packageId);
-        return pkg != null ? ResponseEntity.ok(pkg) : ResponseEntity.notFound().build();
+        try {
+            Package pkg = packageService.getPackageById(packageId);
+            return pkg != null ? ResponseEntity.ok(pkg) : ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.err.println("Error fetching package by ID: " + e.getMessage());
+            e.printStackTrace();  // Log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
-    // update a specific package by its ID
+    // Update package
     @PutMapping("/update/{packageId}")
     public ResponseEntity<Package> updatePackage(@PathVariable int packageId, @RequestBody Package pkg) {
         try {
             Package updatedPackage = packageService.updatePackage(packageId, pkg);
             return updatedPackage != null ? ResponseEntity.ok(updatedPackage) : ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            System.err.println("Error updating package: " + e.getMessage());
+            e.printStackTrace();  // Log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
-    // delete a package by its ID
+    // Delete package
     @DeleteMapping("/delete/{packageId}")
     public ResponseEntity<Void> deletePackage(@PathVariable int packageId) {
         try {
-            boolean deleted = packageService.deletePackage(packageId); // Ensure `deletePackage` is defined in `PackageService`
+            boolean deleted = packageService.deletePackage(packageId);
             return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            System.err.println("Error deleting package: " + e.getMessage());
+            e.printStackTrace();  // Log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }
