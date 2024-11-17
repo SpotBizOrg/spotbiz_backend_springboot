@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.*;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
-import com.spotbiz.spotbiz_backend_springboot.entity.Package;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.BusinessDataService;
@@ -28,16 +27,19 @@ public class BusinessDataServiceImpl implements BusinessDataService {
 
     private final PackageServiceImpl packageServiceImpl;
 
-    public BusinessDataServiceImpl(BusinessRepo businessRepository, ReviewServiceImpl reviewServiceImpl, OpeningHoursServiceImpl openingHoursServiceImpl, PackageServiceImpl packageServiceImpl) {
+    private final SubscribeServiceImpl subscribeServiceImpl;
+
+    public BusinessDataServiceImpl(BusinessRepo businessRepository, ReviewServiceImpl reviewServiceImpl, OpeningHoursServiceImpl openingHoursServiceImpl, PackageServiceImpl packageServiceImpl, SubscribeServiceImpl subscribeServiceImpl) {
         this.businessRepository = businessRepository;
         this.reviewServiceImpl = reviewServiceImpl;
         this.openingHoursServiceImpl = openingHoursServiceImpl;
         this.packageServiceImpl = packageServiceImpl;
+        this.subscribeServiceImpl = subscribeServiceImpl;
     }
 
 
     @Override
-    public BusinessDataDto getBusinessData(Integer businessId) {
+    public BusinessDataDto getBusinessData(Integer businessId, Integer clientId) {
         try {
 
 
@@ -49,7 +51,7 @@ public class BusinessDataServiceImpl implements BusinessDataService {
 
             Business business = optionalBusiness.get();
 
-            BusinessDataDto businessDataDto = setBusinessData(business);
+            BusinessDataDto businessDataDto = setBusinessData(business, clientId);
             return businessDataDto;
 
         } catch (Exception e) {
@@ -57,7 +59,7 @@ public class BusinessDataServiceImpl implements BusinessDataService {
         }
     }
 
-    private BusinessDataDto setBusinessData(Business business){
+    private BusinessDataDto setBusinessData(Business business, Integer clientId) {
         BusinessDataDto businessDataDto = new BusinessDataDto();
         businessDataDto.setBusinessId(business.getBusinessId());
         businessDataDto.setName(business.getName());
@@ -72,11 +74,20 @@ public class BusinessDataServiceImpl implements BusinessDataService {
         businessDataDto.setReviewCount(reviewCount(business.getBusinessId()));
         businessDataDto.setLatestReview(getLatestReview(business.getBusinessId()));
         businessDataDto.setPkg(getSubscriptionPackage(business.getBusinessId()));
+        businessDataDto.setSubscribed(checkSubscribed(clientId, business.getBusinessId()));
 
         return businessDataDto;
     }
 
-    public PackageDto getSubscriptionPackage(Integer businessId) {
+    private boolean checkSubscribed(Integer userId, Integer businessId) {
+        try {
+            return subscribeServiceImpl.checkSubscription(userId, businessId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to check subscription: " + e.getMessage());
+        }
+    }
+
+    private PackageDto getSubscriptionPackage(Integer businessId) {
         try {
             PackageDto subscriptionPackage = packageServiceImpl.getPackageByBusinessId(businessId);
             return subscriptionPackage;

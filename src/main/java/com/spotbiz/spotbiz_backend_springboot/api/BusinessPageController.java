@@ -20,10 +20,10 @@ public class BusinessPageController {
 
 
     @GetMapping("/businessData")
-    public ResponseEntity<?> getBusinessData(@RequestParam int businessId) {
+    public ResponseEntity<?> getBusinessData(@RequestParam int businessId, @RequestParam int clientId) {
 
         try {
-            BusinessDataDto business = businessDataService.getBusinessData(businessId);
+            BusinessDataDto business = businessDataService.getBusinessData(businessId, clientId);
 
             if (business == null) {
                 return ResponseEntity.status(400).body(new CustomErrorDto("Business not found", "400"));

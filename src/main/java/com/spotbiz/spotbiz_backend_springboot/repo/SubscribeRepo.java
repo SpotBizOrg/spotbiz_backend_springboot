@@ -16,4 +16,5 @@ public interface SubscribeRepo extends JpaRepository<Subscribe, Integer> {
     List<Subscribe> findByUser(User user);
     List<Subscribe> findByBusiness(Business business);
     int countByBusiness(Business business);
+
 }

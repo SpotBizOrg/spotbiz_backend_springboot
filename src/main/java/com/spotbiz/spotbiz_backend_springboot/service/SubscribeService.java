@@ -10,4 +10,5 @@ public interface SubscribeService {
     List<SubscribeDto> getSubscribedBusinesses(int userId);
     List<SubscribeDto> getSubscribers(int businessId);
     int getSubscriberCount(int businessId);
+    boolean checkSubscription(int userId, int businessId);
 }

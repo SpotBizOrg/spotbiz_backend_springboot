@@ -26,4 +26,5 @@ public class BusinessDataDto {
     private WeeklyScheduleDto weeklySchedule;
     private ReviewRequestDto latestReview;
     private PackageDto pkg;
+    private boolean isSubscribed;
 }
