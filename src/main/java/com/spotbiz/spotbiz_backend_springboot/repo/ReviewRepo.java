@@ -23,5 +23,13 @@ public interface ReviewRepo extends JpaRepository<Review, Integer> {
     @Query(value = "SELECT COALESCE((SELECT AVG(r.rating) FROM review r WHERE r.business_id = :businessId), 0.0) AS avg_rating", nativeQuery = true)
     double getAverageRatingByBusiness(@Param("businessId") Integer businessId);
 
+    @Query(value = "SELECT COALESCE((SELECT COUNT(r.review_id) FROM review r WHERE r.business_id = :businessId GROUP BY business_id), 0) AS review_count", nativeQuery = true)
+    int countByBusiness(@Param("businessId") Integer businessId);
+
+    @Query(value = "SELECT * FROM review r WHERE r.business_id = :businessId ORDER BY r.date DESC LIMIT 1", nativeQuery = true)
+    Optional<Review> findLatestBusinessReview(@Param("businessId") Integer businessId);
+
+    List<Review> findReviewsByStatus(String status);
+
     List<Review> findByBusiness(Business business);
 }

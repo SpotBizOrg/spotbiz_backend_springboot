@@ -1,12 +1,10 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.CouponDto;
-import com.spotbiz.spotbiz_backend_springboot.entity.Coupon;
-import com.spotbiz.spotbiz_backend_springboot.entity.CouponStatus;
-import com.spotbiz.spotbiz_backend_springboot.entity.NotificationType;
-import com.spotbiz.spotbiz_backend_springboot.entity.User;
+import com.spotbiz.spotbiz_backend_springboot.entity.*;
 import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.CouponService;
+import com.spotbiz.spotbiz_backend_springboot.service.EncodedCouponService;
 import com.spotbiz.spotbiz_backend_springboot.service.MailService;
 import com.spotbiz.spotbiz_backend_springboot.service.NotificationService;
 import com.spotbiz.spotbiz_backend_springboot.templates.MailTemplate;
@@ -24,12 +22,14 @@ public class CouponController {
     private final NotificationService notificationService;
     private final MailService mailService;
     private final UserRepo userRepo;
+    private final EncodedCouponService encodedCouponService;
 
-    public CouponController(CouponService couponService, NotificationService notificationService, MailService mailService, UserRepo userRepo) {
+    public CouponController(CouponService couponService, NotificationService notificationService, MailService mailService, UserRepo userRepo, EncodedCouponService encodedCouponService) {
         this.couponService = couponService;
         this.notificationService = notificationService;
         this.mailService = mailService;
         this.userRepo = userRepo;
+        this.encodedCouponService = encodedCouponService;
     }
 
     @PostMapping("/insert")
@@ -50,11 +50,11 @@ public class CouponController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Check coupon failed");
     }
 
-    @GetMapping("/check/{coupon_id}")
-    public ResponseEntity<?> checkCoupon(@PathVariable int coupon_id) {
-        CouponStatus couponStatus = couponService.checkCoupon(coupon_id);
-        if(couponStatus != null) {
-            return ResponseEntity.ok().body(couponStatus);
+    @GetMapping("/check/{scannedText}")
+    public ResponseEntity<?> checkCoupon(@PathVariable String scannedText) {
+        EncodedCoupon encodedCoupon = encodedCouponService.getEncodedCouponById(scannedText);
+        if(encodedCoupon != null) {
+            return ResponseEntity.ok().body(encodedCoupon);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Check coupon failed");
     }
@@ -70,10 +70,11 @@ public class CouponController {
 
                 User user = userRepo.findByUserId(user_id);
                 Coupon coupon = couponService.findByCouponId(coupon_id);
-                String encryptedCouponId = EncryptionUtil.encodeCouponId(String.valueOf(coupon.getCouponId()));
+                String encryptedCouponId = encodedCouponService.insertEncodedCoupon(coupon);
                 String subject = "Discount Coupon!";
                 String htmlContent = MailTemplate.getCouponEmail(user.getName(), encryptedCouponId, coupon.getDiscount());
                 mailService.sendHtmlMail(user.getEmail(), subject, htmlContent);
+                System.out.println(issueCoupon);
                 return ResponseEntity.ok().body(issueCoupon);
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Issue coupon failed");

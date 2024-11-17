@@ -15,3 +15,4 @@ public interface CategoryRepo extends JpaRepository<Category, Integer> {
     Optional<Category> findById(Integer categoryId);
 
 }
+

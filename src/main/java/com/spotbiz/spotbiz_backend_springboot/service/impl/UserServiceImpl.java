@@ -155,4 +155,6 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllCustomers() {
         return userRepo.findAllByRole(Role.CUSTOMER);
     }
+
+
 }

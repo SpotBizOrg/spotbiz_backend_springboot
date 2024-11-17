@@ -33,3 +33,4 @@ build/
 .vscode/
 
 src/main/resources/application.properties
+src/main/resources/spotbiz-f3f10-firebase-adminsdk-8xcpc-d61b4011f6.json
