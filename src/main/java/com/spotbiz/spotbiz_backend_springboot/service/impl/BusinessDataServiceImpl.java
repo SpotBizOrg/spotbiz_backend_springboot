@@ -87,7 +87,7 @@ public class BusinessDataServiceImpl implements BusinessDataService {
         }
     }
 
-    private PackageDto getSubscriptionPackage(Integer businessId) {
+    public PackageDto getSubscriptionPackage(Integer businessId) {
         try {
             PackageDto subscriptionPackage = packageServiceImpl.getPackageByBusinessId(businessId);
             return subscriptionPackage;

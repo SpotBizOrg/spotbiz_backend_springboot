@@ -1,5 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.repo;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDashboardDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDataDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.BusinessCategory;
 import org.springframework.data.domain.Page;
@@ -62,4 +64,23 @@ public interface BusinessRepo extends JpaRepository<Business, Integer> {
             "AND b.status = 'APPROVED' "+
             "ORDER BY s.id DESC", nativeQuery = true)
     Page<Business> findByCategory(@Param("categoryId") Integer categoryId, Pageable pageable);
+
+//    @Query(value = "SELECT b.business_id AS businessId, b.logo AS logo, c.clicks AS clickCount, COUNT(s.user_id) AS subscriberCount, sp.id AS packageId FROM business b \n" +
+//            "JOIN business_clicks c ON b.business_id = c.business_id \n" +
+//            "JOIN subscribe s ON b.business_id = s.business_id\n" +
+//            "JOIN subscription_billing sp ON sp.business_id=b.business_id\n" +
+//            "WHERE b.business_id = :businessId \n" +
+//            "GROUP BY b.business_id, b.logo, c.clicks, sp.id", nativeQuery = true)
+//    BusinessDashboardDto getData(@Param("businessId") Integer businessId);
+
+    @Query(value = "SELECT b.business_id AS businessId, b.logo AS logo, c.clicks AS clickCount, COUNT(s.user_id) AS subscriberCount, sp.id AS packageId FROM business b \n" +
+            "JOIN business_clicks c ON b.business_id = c.business_id \n" +
+            "JOIN subscribe s ON b.business_id = s.business_id\n" +
+            "JOIN subscription_billing sp ON sp.business_id=b.business_id\n" +
+            "WHERE b.business_id = :businessId \n" +
+            "GROUP BY b.business_id, b.logo, c.clicks, sp.id", nativeQuery = true)
+    List<Object[]> getDataAsObjectArray(@Param("businessId") Integer businessId);
+
+    @Query(value = "SELECT logo FROM business WHERE business_id=:businessId", nativeQuery = true)
+    String getBusinessLogo(@Param("businessId") Integer businessId);
 }
