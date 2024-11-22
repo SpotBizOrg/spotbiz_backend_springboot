@@ -20,4 +20,8 @@ public interface SubscriptionBillingService {
     SubscriptionBillingDto getSubscriptionBillingById(int subscriptionBillingId);
 
     SubscriptionBillingDto getSubscriptionBillingByBusiness(int businessId);
+
+    double getTotalBillings();
+
+    List<SubscriptionBillingDto> getPastMonthBillings();
 }

@@ -7,9 +7,12 @@ import com.spotbiz.spotbiz_backend_springboot.repo.SubscriptionBillingRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.SubscriptionBillingService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SubscriptionBillingServiceImpl implements SubscriptionBillingService {
@@ -130,4 +133,40 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
             throw new RuntimeException("Error occurred while fetching subscription billing");
         }
     }
+
+
+
+    @Override
+    public double getTotalBillings() {
+        try {
+            Double totalBillings = subscritionBillingRepo.getTotalBillings("PAID");
+            return totalBillings;
+        } catch (Exception e){
+            throw new RuntimeException("Error occurred while fetching the billing data", e);
+        }
+    }
+
+    @Override
+    public List<SubscriptionBillingDto> getPastMonthBillings() {
+        try {
+            LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+            List<SubscriptionBilling> billings = subscritionBillingRepo.findAllByBillingStatusAndBillingDateAfter("PAID", thirtyDaysAgo);
+
+            List<SubscriptionBillingDto> subscriptionBillingDtoList = new ArrayList<>();
+
+            for (SubscriptionBilling billing: billings) {
+                SubscriptionBillingDto dto = subscriptionBillingMapper.toSubscriptionBillingDto(billing);
+                subscriptionBillingDtoList.add(dto);
+            }
+            return subscriptionBillingDtoList;
+
+        } catch (Exception e) {
+            // Handle exceptions
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
+
+
+
 }

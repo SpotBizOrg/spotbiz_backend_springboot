@@ -55,6 +55,24 @@ public class BusinessCategoryServiceImpl implements BusinessCategoryService {
         }
     }
 
+    @Override
+    public Map<String, Long> getBusinessCountByCategory() {
+        try {
+            List<Object[]> results = businessCategoryRepo.countBusinessesByCategory();
+            Map<String, Long> categoryBusinessCount = new HashMap<>();
+
+            for (Object[] result : results) {
+                String categoryName = (String) result[0];
+                Long businessCount = (Long) result[1];
+                categoryBusinessCount.put(categoryName, businessCount);
+            }
+
+            return categoryBusinessCount;
+        }catch (Exception e) {
+            throw new RuntimeException("Error occurred while fetching category data", e);
+        }
+    }
+
     private String convertToJson(List<String> tags) {
         try {
             Map<String, List<String>> tagsMap = new HashMap<>();
