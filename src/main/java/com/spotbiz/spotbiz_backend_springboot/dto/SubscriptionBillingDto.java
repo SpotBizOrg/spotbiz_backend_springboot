@@ -16,6 +16,13 @@ public class SubscriptionBillingDto {
     private int businessId;
     private LocalDateTime billingDate;
     private String billingStatus;
-    private Double amount;
-    private Boolean isActive;
+    private double amount;
+    private boolean isActive;
+
+    public SubscriptionBillingDto(int subscriptionBillingId, double amount, LocalDateTime billingDate, String billingStatus){
+        this.amount=amount;
+        this.billingDate=billingDate;
+        this.billingStatus=billingStatus;
+        this.subscriptionBillingId=subscriptionBillingId;
+    }
 }

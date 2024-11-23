@@ -16,6 +16,11 @@ public interface BusinessCategoryRepo extends JpaRepository<BusinessCategory, In
     @Query("SELECT bc FROM BusinessCategory bc WHERE bc.business.businessId = :businessId")
     Optional<BusinessCategory> findByBusinessId(Integer businessId);
 
+    @Query("SELECT bc.category.categoryName, COUNT(bc.business) " +
+            "FROM BusinessCategory bc " +
+            "GROUP BY bc.category.categoryName")
+    List<Object[]> countBusinessesByCategory();
+
 
 
 }

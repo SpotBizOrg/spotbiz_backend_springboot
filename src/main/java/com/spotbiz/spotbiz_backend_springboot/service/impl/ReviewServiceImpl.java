@@ -1,4 +1,5 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
+import com.spotbiz.spotbiz_backend_springboot.dto.ReviewReportResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
@@ -23,9 +24,10 @@ import org.springframework.stereotype.Service;
 
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 
 @Service
@@ -123,21 +125,25 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review markReported(Integer reviewId) {
+    public ReviewReportResponseDto markReported(Integer reviewId) {
         try {
             Review review = reviewRepo.findById(reviewId)
                     .orElseThrow(() -> new RuntimeException("Review not found for reviewId: " + reviewId));
             review.setStatus("REPORTED");
-            return reviewRepo.save(review);
+            Review updatedReview = reviewRepo.save(review);
+            return reviewMapper.toReviewReportResponseDto(updatedReview);
         } catch (Exception e) {
             throw new RuntimeException("Failed to mark review as reported", e);
         }
     }
 
     @Override
-    public List<Review> getReportedReviews() {
+    public List<ReviewReportResponseDto> getReportedReviews() {
         try {
-            return reviewRepo.findReviewsByStatus("REPORTED");
+            List<Review> reportedList = reviewRepo.findReviewsByStatus("REPORTED");
+            return reportedList.stream()
+                    .map(reviewMapper::toReviewReportResponseDto)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Failed to get reported reviews", e);
         }

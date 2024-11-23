@@ -88,4 +88,16 @@ public class PackageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/get_by_business_id")
+    public ResponseEntity<PackageDto> getPackageByBusinessId(@RequestParam int businessId) {
+        try {
+            PackageDto pkg = packageService.getPackageByBusinessId(businessId);
+            return pkg != null ? ResponseEntity.ok(pkg) : ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.err.println("Error fetching package by business ID: " + e.getMessage());
+            e.printStackTrace();  // Log stack trace
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }
