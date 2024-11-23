@@ -123,10 +123,13 @@ public class CategoryController {
 
 
 
-//    @PostMapping("/add")
+    @PostMapping("/add")
     public ResponseEntity<Map<String, String>> addCategoryWithTags(
             @RequestBody CategoryTagDto categoryTagDto) {
         try {
+            System.out.println(categoryTagDto.getCategoryName());
+            System.out.println(categoryTagDto.getCategoryName());
+            System.out.println(categoryTagDto.getTags());
             Category newCategory = categoryService.addCategoryWithTags(categoryTagDto);
             Map<String, String> response = new HashMap<>();
             response.put("message", "Category added successfully");

@@ -85,6 +85,8 @@ public class CategoryService {
 
 
     public Category addCategoryWithTags(CategoryTagDto categoryTagDto) {
+        System.out.println("Category Name: " + categoryTagDto.getCategoryName());
+        System.out.println("Tags: " + categoryTagDto.getTags());
         if (categoryTagDto.getCategoryName() == null || categoryTagDto.getCategoryName().trim().isEmpty()) {
             throw new RuntimeException("Category name cannot be empty");
         }
@@ -104,7 +106,11 @@ public class CategoryService {
         Category category = new Category();
         category.setCategoryName(categoryTagDto.getCategoryName());
         category.setTags(tagsJson); // Save as a JSON string
+//        category.setCategoryId(0);
 
+        System.out.println(category.getCategoryId());
+
+//        return null;
         return categoryRepository.save(category);
     }
 
