@@ -66,6 +66,16 @@ public class PackageServiceImpl implements  PackageService {
     }
 
     @Override
+    public PackageDto getPackageByBusinessId(int businessId) {
+        try {
+            Package pkg =  packageRepository.findPackageByBusiness(businessId);
+            return packageMapper.toPackageDto(pkg);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while fetching package by business id");
+        }
+    }
+
+    @Override
     public Package updatePackage(int packageId, Package pkg) {
         Package existingPackage = packageRepository.findByPackageId(packageId);
         if (existingPackage != null) {

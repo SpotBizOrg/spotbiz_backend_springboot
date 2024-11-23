@@ -5,5 +5,5 @@ import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 
 public interface BusinessDataService {
 
-    BusinessDataDto getBusinessData(Integer businessId);
+    BusinessDataDto getBusinessData(Integer businessId, Integer clientId);
 }

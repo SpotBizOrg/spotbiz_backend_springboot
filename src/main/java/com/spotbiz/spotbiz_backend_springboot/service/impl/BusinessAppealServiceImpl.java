@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessAppealDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessAppealResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.BusinessAppeal;
 import com.spotbiz.spotbiz_backend_springboot.entity.ReportedBusiness;
@@ -15,6 +16,7 @@ import com.spotbiz.spotbiz_backend_springboot.templates.MailTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BusinessAppealServiceImpl implements BusinessAppealService {
@@ -35,7 +37,7 @@ public class BusinessAppealServiceImpl implements BusinessAppealService {
     }
 
     @Override
-    public BusinessAppeal saveBusinessAppeal(BusinessAppealDto businessAppealDto) {
+    public BusinessAppealDto saveBusinessAppeal(BusinessAppealDto businessAppealDto) {
         try {
             // Find reported business by business ID
             ReportedBusiness reportedBusiness = reportedBusinessRepo.findByBusinessBusinessId(businessAppealDto.getBusinessId())
@@ -49,7 +51,8 @@ public class BusinessAppealServiceImpl implements BusinessAppealService {
             businessAppeal.setReportedBusiness(reportedBusiness);
 
             // Save and return the business appeal
-            return businessAppealRepo.save(businessAppeal);
+            BusinessAppeal appeal =  businessAppealRepo.save(businessAppeal);
+            return businessAppealMapper.toBusinessAppealDto(appeal);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to save business appeal: " + e.getMessage(), e);
@@ -58,9 +61,13 @@ public class BusinessAppealServiceImpl implements BusinessAppealService {
 
 
     @Override
-    public List<BusinessAppeal> getAllBusinessAppeal() {
+    public List<BusinessAppealResponseDto> getAllBusinessAppeal() {
         try{
-            return businessAppealRepo.findBusinessAppealsByStatus("PENDING");
+            List<BusinessAppeal> appealList =  businessAppealRepo.findBusinessAppealsByStatus("PENDING");
+            // Map to BusinessAppealDto using streams
+            return appealList.stream()
+                    .map(businessAppealMapper::toBusinessAppealResponseDto)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Failed to get all business appeals: " + e.getMessage(), e);
 
@@ -68,7 +75,7 @@ public class BusinessAppealServiceImpl implements BusinessAppealService {
     }
 
     @Override
-    public BusinessAppeal updateBusinessAppealStatus(Integer appealId, String status) {
+    public BusinessAppealDto updateBusinessAppealStatus(Integer appealId, String status) {
         try {
             if (!status.equals("APPROVED") && !status.equals("REJECTED")) {
                 throw new IllegalArgumentException("Invalid status: " + status);
@@ -86,14 +93,16 @@ public class BusinessAppealServiceImpl implements BusinessAppealService {
                 String mail = MailTemplate.appealApprovedTemplate(business.getUser().getName());
                 mailService.sendHtmlMail(business.getUser().getEmail(), "Update: Your Appeal Request Has Been Considered", mail);
 
-                return businessAppealRepo.save(businessAppeal);
+                BusinessAppeal businessAppeal1 = businessAppealRepo.save(businessAppeal);
+                return businessAppealMapper.toBusinessAppealDto(businessAppeal1);
             } else {
                 BusinessAppeal businessAppeal = businessAppealRepo.findById(appealId)
                         .orElseThrow(() -> new ResourceNotFoundException("Business Appeal not found for appealId: " + appealId));
 
                 businessAppeal.setStatus("REJECTED");
 
-                return businessAppealRepo.save(businessAppeal);
+                BusinessAppeal businessAppeal2 =  businessAppealRepo.save(businessAppeal);
+                return businessAppealMapper.toBusinessAppealDto(businessAppeal2);
             }
         } catch (IllegalArgumentException | ResourceNotFoundException e) {
             throw new RuntimeException("Failed to update business appeal status: " + e.getMessage(), e);

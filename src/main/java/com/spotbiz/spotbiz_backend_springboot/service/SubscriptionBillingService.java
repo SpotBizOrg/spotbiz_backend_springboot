@@ -18,4 +18,10 @@ public interface SubscriptionBillingService {
     SubscriptionBillingDto markDeleteSubscriptionBilling(int subscriptionBillingId);
 
     SubscriptionBillingDto getSubscriptionBillingById(int subscriptionBillingId);
+
+    SubscriptionBillingDto getSubscriptionBillingByBusiness(int businessId);
+
+    double getTotalBillings();
+
+    List<SubscriptionBillingDto> getPastMonthBillings();
 }

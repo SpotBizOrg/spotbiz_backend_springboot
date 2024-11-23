@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.repo;
 
+import com.spotbiz.spotbiz_backend_springboot.entity.Status;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,7 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 
     List<User> findAllByRole(Role role);
     User findByUserId(int userId);
+    User findByRoleAndStatus(Role role, Status status);
+
+    Integer countUsersByRoleAndStatus(Role role, Status status);
 }
