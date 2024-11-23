@@ -22,9 +22,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AdvertisementServiceImpl implements AdvertisementService {
@@ -59,7 +61,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         advertisement.setStatus(true);
 
         Optional<Business> optionalBusiness = businessRepository.findById(advertisementRequestDto.getBusinessId());
-System.out.println(advertisementRequestDto);
+        System.out.println(advertisementRequestDto);
         if (optionalBusiness.isEmpty()) {
             System.out.println(optionalBusiness.get().getBusinessId());
             throw new AdvertisementException.BusinessNotFoundException("Business not found");
@@ -210,6 +212,42 @@ System.out.println(advertisementRequestDto);
             return null;
         }
     }
+
+    public void updateStatusIfExpired(Advertisement ad) {
+        try {
+            JsonNode jsonData = objectMapper.readTree(ad.getData());
+            String endDateString = jsonData.get("endDate").asText();
+
+            LocalDateTime endDate = LocalDateTime.parse(endDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            if (endDate.isBefore(LocalDateTime.now()) && Boolean.TRUE.equals(ad.getStatus())) {
+                ad.setStatus(false);
+                advertisementRepository.save(ad);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to parse advertisement data: " + e.getMessage());
+        }
+    }
+
+    public List<Advertisement> filterAdvertisementsByDate(List<Advertisement> ads, int daysAgo) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime thresholdDate = now.minusDays(daysAgo);
+
+        return ads.stream()
+                .filter(ad -> {
+                    try {
+                        JsonNode jsonNode = objectMapper.readTree(ad.getData());
+                        String startDateStr = jsonNode.get("startDate").asText();
+                        LocalDateTime startDate = LocalDateTime.parse(startDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                        return startDate.isAfter(thresholdDate) && startDate.isBefore(now);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
 
 
 

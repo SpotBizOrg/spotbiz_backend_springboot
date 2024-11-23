@@ -10,7 +10,8 @@ import com.spotbiz.spotbiz_backend_springboot.entity.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.spotbiz.spotbiz_backend_springboot.mapper.AdvertisementMapper;
 import com.spotbiz.spotbiz_backend_springboot.mapper.BusinessMapper;
 import com.spotbiz.spotbiz_backend_springboot.mapper.UserMapper;
@@ -19,6 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 @Service
 public class BusinessOwnerService {
@@ -39,6 +43,8 @@ public class BusinessOwnerService {
     private UserRepo userRepo;
     @Autowired
     private CategoryRepo categoryRepo;
+    @Autowired
+    private AdvertisementService advertisementService;
 
     public BusinessOwnerDto getDetails(User user) {
         return userMapper.toBusinessOwnerDto(user);
@@ -65,13 +71,16 @@ public class BusinessOwnerService {
 
     }
 
-    public List<AdvertisementDto> getAdvertisements(User user){
-
+    public List<AdvertisementDto> getAdvertisements(User user) {
         Integer userId = user.getUserId();
         Business business = businessRepo.findByUserUserId(userId);
+
         if (business != null) {
-            List<Advertisement> ads = advertisementRepo.findByBusinessBusinessId(business.getBusinessId());
-            return advertisementMapper.mapToAdvertisementDtos(ads);
+            List<Advertisement> ads = advertisementRepo.findByBusinessIdSorted(business.getBusinessId());
+            ads.forEach(advertisementService::updateStatusIfExpired);
+            List<Advertisement> filteredAds = advertisementService.filterAdvertisementsByDate(ads, 30);
+
+            return advertisementMapper.mapToAdvertisementDtos(filteredAds);
         }
 
         return null;
@@ -122,17 +131,12 @@ public class BusinessOwnerService {
         }
     }
 
-    // this function is used to extract the category list from the keywords json string
     private List<String> parseJsonString (String jsonString){
         try {
-            // Use ObjectMapper to parse the JSON string into a map
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, List<String>> keywordMap = objectMapper.readValue(jsonString, new TypeReference<Map<String, List<String>>>() {
             });
-
-            // Extract and return the list of keywords
             return keywordMap.get("keywords");
-
         } catch (Exception e) {
             e.printStackTrace();
             return null;

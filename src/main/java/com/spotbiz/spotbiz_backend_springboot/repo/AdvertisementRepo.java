@@ -19,6 +19,8 @@ import java.util.List;
 @Repository
 public interface AdvertisementRepo extends JpaRepository<Advertisement, Integer> {
     List<Advertisement> findByBusinessBusinessId(Integer businessId);
+    @Query("SELECT a FROM Advertisement a WHERE a.business.businessId = :businessId ORDER BY CAST(JSONB_EXTRACT_PATH_TEXT(a.data, 'endDate') AS timestamp) DESC")
+    List<Advertisement> findByBusinessIdSorted(@Param("businessId") Integer businessId);
 
 
     @Query(value = "SELECT a.ads_id, a.status, a.data, a.business_id, ak.tags FROM advertisement a " +
