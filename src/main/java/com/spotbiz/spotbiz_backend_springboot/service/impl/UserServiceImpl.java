@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -163,15 +164,15 @@ public class UserServiceImpl implements UserService {
     // New method to get all customers
     public List<CustomerAdminResponseDto> getAllCustomers() {
        try{
+           DecimalFormat df = new DecimalFormat("0.00");
            List<User> customerList = userRepo.findAllByRole(Role.CUSTOMER);
            List<CustomerAdminResponseDto> dtoList = customerList.stream()
                    .map(userMapper::toCustomerAdminResponseDto)
                    .toList();
 
            for (CustomerAdminResponseDto dto : dtoList) {
-//               int userId = 16;
                double score = playedGameRepo.getCustomerScore(dto.getUserId());
-               dto.setScore(score);
+               dto.setScore(Double.parseDouble(df.format(score)));
            }
 
            return dtoList;
