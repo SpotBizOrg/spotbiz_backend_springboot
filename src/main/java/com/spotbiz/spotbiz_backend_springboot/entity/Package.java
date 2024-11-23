@@ -2,7 +2,6 @@ package com.spotbiz.spotbiz_backend_springboot.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import java.util.List;
 
@@ -17,13 +16,13 @@ public class Package {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int packageId;
+    private Integer packageId;
 
     @Column(name = "feature", nullable = false)
     private String feature;
 
     @Column(name = "ads_per_week")
-    private int adsPerWeek;
+    private Integer adsPerWeek;
 
     @Column(name = "analytics")
     private Boolean analytics;
@@ -46,7 +45,5 @@ public class Package {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @OneToMany(mappedBy = "pkg")
-    private List<Business> businesses;
 
 }

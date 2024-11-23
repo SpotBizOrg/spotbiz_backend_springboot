@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface SearchService {
 
-    List<String> getKeywords(String searchText);
+    List<String> getKeywords(String searchText, int userId);
 
     Page<BusinessBoxDto> searchBusinesses(String[] keywords, Pageable pageable);
 

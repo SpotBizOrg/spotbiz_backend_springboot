@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.mapper;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.ReviewReportResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import org.mapstruct.Mapper;
@@ -15,4 +16,8 @@ public interface ReviewMapper {
     Review toReviewEntity(ReviewRequestDto dto);
 
     ReviewRequestDto toReviewRequestDto(Review entity);
+
+    @Mapping(source = "user.userId", target = "userId")
+    @Mapping(source = "business.name", target = "businessName")
+    ReviewReportResponseDto toReviewReportResponseDto(Review review);
 }
