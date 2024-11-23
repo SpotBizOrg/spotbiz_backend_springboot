@@ -1,7 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service;
 
-import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerRegDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.CustomerAdminResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UpdateUserRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.AuthenticationResponse;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
@@ -19,5 +19,5 @@ public interface UserService {
     User getUserByEmail(String email);
     Page<User> getAllUsers(Pageable pageable);
 
-    List<User> getAllCustomers();
+    List<CustomerAdminResponseDto> getAllCustomers();
 }
