@@ -13,4 +13,8 @@ public interface AdvertisementService {
 
     List<AdvertisementRecommendationDto> getAdvertisementRecommeondation(String tags);
 
+    void updateStatusIfExpired(Advertisement ad);
+
+    List<Advertisement> filterAdvertisementsByDate(List<Advertisement> ads, int daysAgo);
+
 }
