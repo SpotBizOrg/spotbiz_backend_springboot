@@ -25,7 +25,7 @@ public class PackageController {
     @PostMapping("/add")
     public ResponseEntity<Package> createPackage(@RequestBody Package pkg) {
         try {
-            System.out.println("Received package: " + pkg);  // Log the received package
+            System.out.println(pkg.getPackageId());
             Package savedPackage = packageService.savePackage(pkg);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPackage);
         } catch (Exception e) {
@@ -76,14 +76,19 @@ public class PackageController {
 
     // Delete package
     @DeleteMapping("/delete/{packageId}")
-    public ResponseEntity<Void> deletePackage(@PathVariable int packageId) {
+    public ResponseEntity<String> deletePackage(@PathVariable int packageId) {
         try {
             boolean deleted = packageService.deletePackage(packageId);
-            return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            if (deleted) {
+                return ResponseEntity.ok("Package deleted successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Package not found.");
+            }
         } catch (Exception e) {
             System.err.println("Error deleting package: " + e.getMessage());
             e.printStackTrace();  // Log stack trace
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the package.");
         }
     }
+
 }

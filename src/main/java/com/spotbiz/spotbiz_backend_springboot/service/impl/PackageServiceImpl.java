@@ -37,6 +37,7 @@ public class PackageServiceImpl implements  PackageService {
     @Override
     public boolean deletePackage(int packageId) {
         if (packageRepository.existsByPackageId(packageId)) {
+            System.out.println("Delete package");
             packageRepository.deleteByPackageId(packageId);
             return true;
         }
