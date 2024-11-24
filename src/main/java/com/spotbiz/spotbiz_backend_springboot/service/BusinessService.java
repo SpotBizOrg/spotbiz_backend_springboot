@@ -2,6 +2,7 @@ package com.spotbiz.spotbiz_backend_springboot.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessAdminResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.*;
 import com.spotbiz.spotbiz_backend_springboot.mapper.BusinessMapper;
@@ -233,13 +234,14 @@ public class BusinessService {
         }
     }
 
-    public List<Business> getAllBusinesses() {
+    public List<BusinessAdminResponseDto> getAllBusinesses() {
         List<Business> business = businessRepo.findAll();
-        List<Business> newBusinesses = new ArrayList<>();
+        List<BusinessAdminResponseDto> newBusinesses = new ArrayList<>();
 
         for (Business businesss : business) {
             if (businesss.getName() != null) {
-                newBusinesses.add(businesss);
+                BusinessAdminResponseDto dto = businessMapper.toBusinessAdminDto(businesss);
+                newBusinesses.add(dto);
             }
         }
         return newBusinesses;

@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.repo;
 
+import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.SubscriptionBilling;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -36,5 +37,7 @@ public interface SubscriptionBillingRepo extends JpaRepository<SubscriptionBilli
     Double getTotalBillings(@Param("billingStatus") String billingStatus);
 
     List<SubscriptionBilling> findAllByBillingStatusAndBillingDateAfter(String billingStatus, LocalDateTime billingDate);
+
+    Optional<SubscriptionBilling> findByBusinessAndBillingStatusAndIsActive(Business business, String status, Boolean isActive);
 
 }
