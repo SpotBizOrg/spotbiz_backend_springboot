@@ -159,26 +159,12 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private String convertToJson(AdvertisementRequestDto dto) {
         Map<String, Object> dataMap = new HashMap<>();
 
-        // Extracting the image type from the base64 string
-        String base64Image = dto.getImg();
-        String imageType = base64Image.substring(base64Image.indexOf("/") + 1, base64Image.indexOf(";"));
-        String uniqueFileName = "ad_" + UUID.randomUUID().toString() + "." + imageType;
-
-        String filePath = "../spotbiz_frontend/src/assets/uploaded_ads/" + uniqueFileName;
-        String simplifiedPath = "/src/assets/uploaded_ads/" + uniqueFileName;
-
-        try {
-            saveImage(base64Image, filePath);
-        } catch (IOException e) {
-            throw new RuntimeException("Error saving image to file", e);
-        }
-
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedNow = now.format(formatter);
         String endDate = now.plusDays(7).format(formatter);
 
-        dataMap.put("img", simplifiedPath);
+        dataMap.put("img", dto.getImg());
         dataMap.put("startDate", formattedNow);
         dataMap.put("endDate", endDate);
         dataMap.put("description", dto.getDescription());
