@@ -1,9 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
-import com.spotbiz.spotbiz_backend_springboot.dto.PackageDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Package;
 import com.spotbiz.spotbiz_backend_springboot.service.PackageService;
-import com.spotbiz.spotbiz_backend_springboot.service.impl.PackageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +14,10 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")  // Allow requests from frontend on port 5173
 public class PackageController {
 
-    private final PackageServiceImpl packageService;
+    private final PackageService packageService;
 
     @Autowired
-    public PackageController(PackageServiceImpl packageService) {
+    public PackageController(PackageService packageService) {
         this.packageService = packageService;
     }
 
@@ -27,7 +25,7 @@ public class PackageController {
     @PostMapping("/add")
     public ResponseEntity<Package> createPackage(@RequestBody Package pkg) {
         try {
-            System.out.println("Received package: " + pkg);  // Log the received package
+            System.out.println(pkg.getPackageId());
             Package savedPackage = packageService.savePackage(pkg);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedPackage);
         } catch (Exception e) {
@@ -39,9 +37,9 @@ public class PackageController {
 
     // Retrieve all packages
     @GetMapping("/get_all")
-    public ResponseEntity<List<PackageDto>> getAllPackages() {
+    public ResponseEntity<List<Package>> getAllPackages() {
         try {
-            List<PackageDto> packages = packageService.getAllPackages();
+            List<Package> packages = packageService.getAllPackages();
             return ResponseEntity.ok(packages);
         } catch (Exception e) {
             System.err.println("Error fetching packages: " + e.getMessage());
@@ -78,26 +76,19 @@ public class PackageController {
 
     // Delete package
     @DeleteMapping("/delete/{packageId}")
-    public ResponseEntity<Void> deletePackage(@PathVariable int packageId) {
+    public ResponseEntity<String> deletePackage(@PathVariable int packageId) {
         try {
             boolean deleted = packageService.deletePackage(packageId);
-            return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+            if (deleted) {
+                return ResponseEntity.ok("Package deleted successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Package not found.");
+            }
         } catch (Exception e) {
             System.err.println("Error deleting package: " + e.getMessage());
             e.printStackTrace();  // Log stack trace
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the package.");
         }
     }
 
-    @GetMapping("/get_by_business_id")
-    public ResponseEntity<PackageDto> getPackageByBusinessId(@RequestParam int businessId) {
-        try {
-            PackageDto pkg = packageService.getPackageByBusinessId(businessId);
-            return pkg != null ? ResponseEntity.ok(pkg) : ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            System.err.println("Error fetching package by business ID: " + e.getMessage());
-            e.printStackTrace();  // Log stack trace
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
 }
