@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.PackageDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Package;
 import com.spotbiz.spotbiz_backend_springboot.service.PackageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,9 @@ public class PackageController {
 
     // Retrieve all packages
     @GetMapping("/get_all")
-    public ResponseEntity<List<Package>> getAllPackages() {
+    public ResponseEntity<List<PackageDto>> getAllPackages() {
         try {
-            List<Package> packages = packageService.getAllPackages();
+            List<PackageDto> packages = packageService.getAllPackages();
             return ResponseEntity.ok(packages);
         } catch (Exception e) {
             System.err.println("Error fetching packages: " + e.getMessage());
