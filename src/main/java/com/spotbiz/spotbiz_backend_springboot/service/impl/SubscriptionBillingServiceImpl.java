@@ -30,7 +30,23 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
         try {
             System.out.println(subscriptionBillingDto.getSubscriptionId());
             SubscriptionBilling subscriptionBilling = subscriptionBillingMapper.toSubscriptionBilling(subscriptionBillingDto);
-            SubscriptionBilling savedBilling =  subscritionBillingRepo.save(subscriptionBilling);
+            SubscriptionBilling savedBilling = new SubscriptionBilling();
+            Optional<SubscriptionBilling> optionalSubscriptionBilling = subscritionBillingRepo.findByBusinessAndBillingStatusAndIsActive(subscriptionBilling.getBusiness(), "PAID", true);
+
+            if (optionalSubscriptionBilling.isEmpty()){
+                savedBilling =  subscritionBillingRepo.save(subscriptionBilling);
+            } else {
+                SubscriptionBilling subscriptionBilling1 = optionalSubscriptionBilling.get();
+                subscriptionBilling1.setIsActive(false);
+
+                try {
+                    SubscriptionBilling subscriptionBilling2 = subscritionBillingRepo.save(subscriptionBilling1);
+                    savedBilling = subscritionBillingRepo.save(subscriptionBilling);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error occurred while updating the current package");
+                }
+            }
+
             SubscriptionBillingDto optimized = subscriptionBillingMapper.toSubscriptionBillingDto(savedBilling);
 
             if (savedBilling == null) {
@@ -114,7 +130,8 @@ public class SubscriptionBillingServiceImpl implements SubscriptionBillingServic
             if (subscriptionBilling == null) {
                 throw new RuntimeException("Subscription billing not found");
             }
-            return subscriptionBillingMapper.toSubscriptionBillingDto(subscriptionBilling);
+            SubscriptionBillingDto subscriptionBillingDto =  subscriptionBillingMapper.toSubscriptionBillingDto(subscriptionBilling);
+            return subscriptionBillingDto;
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while fetching subscription billing");
         }

@@ -87,4 +87,6 @@ public class CustomerChosenPicServiceImpl implements CustomerChosenPicService {
         }
 
     }
+
+
 }

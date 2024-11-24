@@ -33,4 +33,9 @@ public class CustomerChosenPicController {
             return ResponseEntity.status(500).body("Failed to get data: " + ex.getMessage());
         }
     }
+
+    @GetMapping("all/{userId}")
+    public ResponseEntity<?> getChosenOneWithAll(@PathVariable int userId){
+        return null;
+    }
 }
