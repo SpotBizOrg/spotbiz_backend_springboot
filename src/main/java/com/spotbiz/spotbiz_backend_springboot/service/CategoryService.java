@@ -12,9 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CategoryService {
@@ -103,9 +101,12 @@ public class CategoryService {
             throw new RuntimeException("Error serializing tags to JSON", e);
         }
 
+        // Serialize tagsList into a JSON string in the "keywords" format
+        String tagJson = createJsonString(tagsList);
+
         Category category = new Category();
         category.setCategoryName(categoryTagDto.getCategoryName());
-        category.setTags(tagsJson); // Save as a JSON string
+        category.setTags(tagJson); // Save as a JSON string
 //        category.setCategoryId(0);
 
         System.out.println(category.getCategoryId());
@@ -148,6 +149,18 @@ public class CategoryService {
 
         return keywordsList;
 
+    }
+
+    private String createJsonString(List<String> keywords) {
+        try {
+            Map<String, List<String>> keywordMap = new HashMap<>();
+            keywordMap.put("keywords", keywords);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(keywordMap); // Convert to JSON
+        } catch (Exception e) {
+            throw new RuntimeException("Error serializing tags to JSON", e);
+        }
     }
 
     public JSONObject createJsonWithKeywords(List<String> keywords) {
