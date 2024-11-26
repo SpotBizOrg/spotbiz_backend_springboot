@@ -9,6 +9,7 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SubscriptionBillingMapper {
 
+    @Mapping(source = "isActive", target = "isActive")
     @Mapping(source = "pkg.packageId", target = "subscriptionId")
     @Mapping(source = "business.businessId", target = "businessId")
     SubscriptionBillingDto toSubscriptionBillingDto(SubscriptionBilling subscriptionBilling);

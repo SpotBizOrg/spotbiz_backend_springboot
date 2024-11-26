@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.repo;
 
+import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.BusinessClicks;
 import com.spotbiz.spotbiz_backend_springboot.entity.SubscriptionBilling;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,5 +41,7 @@ public interface SubscriptionBillingRepo extends JpaRepository<SubscriptionBilli
 
     @Query("SELECT bc FROM SubscriptionBilling bc WHERE bc.business.businessId = :businessId")
     SubscriptionBilling findByBusinessId(Integer businessId);
+
+    Optional<SubscriptionBilling> findByBusinessAndBillingStatusAndIsActive(Business business, String status, Boolean isActive);
 
 }

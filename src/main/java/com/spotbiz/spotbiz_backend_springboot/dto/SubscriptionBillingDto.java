@@ -17,12 +17,12 @@ public class SubscriptionBillingDto {
     private LocalDateTime billingDate;
     private String billingStatus;
     private double amount;
-    private boolean isActive;
+    private Boolean isActive;
 
-    public SubscriptionBillingDto(int subscriptionBillingId, double amount, LocalDateTime billingDate, String billingStatus){
-        this.amount=amount;
-        this.billingDate=billingDate;
-        this.billingStatus=billingStatus;
-        this.subscriptionBillingId=subscriptionBillingId;
-    }
+//    public SubscriptionBillingDto(int subscriptionBillingId, double amount, LocalDateTime billingDate, String billingStatus){
+//        this.amount=amount;
+//        this.billingDate=billingDate;
+//        this.billingStatus=billingStatus;
+//        this.subscriptionBillingId=subscriptionBillingId;
+//    }
 }

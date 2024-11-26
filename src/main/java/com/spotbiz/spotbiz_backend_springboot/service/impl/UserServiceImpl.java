@@ -1,9 +1,12 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessOwnerRegDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.CustomerAdminResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UpdateUserRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.*;
+import com.spotbiz.spotbiz_backend_springboot.mapper.UserMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
+import com.spotbiz.spotbiz_backend_springboot.repo.PlayedGameRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.JwtService;
 import com.spotbiz.spotbiz_backend_springboot.service.UserService;
@@ -17,7 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,14 +32,18 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final PlayedGameRepo playedGameRepo;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepo userRepo, PasswordEncoder encoder, JwtService jwtService, AuthenticationManager authenticationManager, BusinessRepo businessRepo) {
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder encoder, JwtService jwtService, AuthenticationManager authenticationManager, BusinessRepo businessRepo, PlayedGameRepo playedGameRepo, UserMapper userMapper) {
         this.userRepo = userRepo;
         this.encoder = encoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.businessRepo = businessRepo;
+        this.playedGameRepo = playedGameRepo;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -152,8 +162,25 @@ public class UserServiceImpl implements UserService {
     }
 
     // New method to get all customers
-    public List<User> getAllCustomers() {
-        return userRepo.findAllByRole(Role.CUSTOMER);
+    public List<CustomerAdminResponseDto> getAllCustomers() {
+       try{
+           DecimalFormat df = new DecimalFormat("0.00");
+           List<User> customerList = userRepo.findAllByRole(Role.CUSTOMER);
+           List<CustomerAdminResponseDto> dtoList = customerList.stream()
+                   .map(userMapper::toCustomerAdminResponseDto)
+                   .toList();
+
+           for (CustomerAdminResponseDto dto : dtoList) {
+               double score = playedGameRepo.getCustomerScore(dto.getUserId());
+               dto.setScore(Double.parseDouble(df.format(score)));
+           }
+
+           return dtoList;
+       } catch (Exception e) {
+           throw new RuntimeException("Error occurred while fetching user data", e);
+       }
+
+
     }
 
 
