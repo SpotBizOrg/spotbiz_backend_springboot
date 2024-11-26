@@ -31,4 +31,9 @@ public interface AdvertisementRepo extends JpaRepository<Advertisement, Integer>
             "    WHERE tag = ANY (:keywords))", nativeQuery = true)
 //    @SqlResultSetMapping(name = "AdvertisementRecommendationMapping")
     List<Object[]> findByKeywords(@Param("keywords") String[] keywords);
+
+    @Query("SELECT a FROM Advertisement a WHERE a.business.businessId = :businessId")
+    List<Advertisement> AdvertisementsByBusinessId(Integer businessId);
+
+
 }
