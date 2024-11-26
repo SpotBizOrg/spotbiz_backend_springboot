@@ -15,4 +15,6 @@ public class BusinessBadgeDto {
     private int businessId;
     private String businessName;
     private LocalDateTime issuedDate;
+    private double rating;
+
 }

@@ -9,6 +9,7 @@ import com.spotbiz.spotbiz_backend_springboot.service.BusinessBadgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -30,20 +31,23 @@ public class BusinessBadgeServiceImpl implements BusinessBadgeService {
             if (resultList != null && !resultList.isEmpty()) {
                 Object[] result = resultList.get(0); // Get the first row
                 Integer businessId = (Integer) result[0]; // Extract the business_id
+                BigDecimal avgRatingBigDecimal = (BigDecimal) result[1]; // Extract as BigDecimal
+                Double avgRating = avgRatingBigDecimal.doubleValue(); // Convert to Double
 
                 // Fetch the business entity
                 Business chosenBusiness = businessRepo.findById(businessId)
                         .orElseThrow(() -> new IllegalArgumentException("Business not found"));
 
-                // Create and save a new badge
-                BusinessBadge newBusinessBadge = new BusinessBadge(0, chosenBusiness, LocalDateTime.now());
-                newBusinessBadge = businessBadgeRepo.save(newBusinessBadge);
+//                // Create and save a new badge
+//                BusinessBadge newBusinessBadge = new BusinessBadge(0, chosenBusiness, LocalDateTime.now(), avg_rating);
+//                newBusinessBadge = businessBadgeRepo.save(newBusinessBadge);
 
                 // Construct and return the DTO
                 BusinessBadgeDto badgeDto = new BusinessBadgeDto();
                 badgeDto.setBusinessId(chosenBusiness.getBusinessId());
                 badgeDto.setBusinessName(chosenBusiness.getName());
-                badgeDto.setIssuedDate(newBusinessBadge.getIssuedDate());
+                badgeDto.setIssuedDate(LocalDateTime.now());
+                badgeDto.setRating(avgRating);
                 return badgeDto;
             } else {
                 throw new IllegalStateException("No business found for badge allocation");
@@ -52,6 +56,33 @@ public class BusinessBadgeServiceImpl implements BusinessBadgeService {
             // Handle exceptions and log errors
             e.printStackTrace();
             throw new RuntimeException("Error fetching business for badge", e);
+        }
+    }
+
+    public BusinessBadgeDto saveNewBadge(BusinessBadgeDto businessBadgeDto){
+        int businessId = businessBadgeDto.getBusinessId();
+        double avgRating = businessBadgeDto.getRating();
+//        System.out.println(businessId);
+        // Fetch the business entity
+        Business chosenBusiness = businessRepo.findById(businessId)
+                .orElseThrow(() -> new IllegalArgumentException("Business not found"));
+
+        System.out.println(chosenBusiness.getBusinessId());
+        BusinessBadge newBusinessBadge = new BusinessBadge(0, chosenBusiness, LocalDateTime.now(), avgRating);
+
+        try {
+            BusinessBadge savedBadge = businessBadgeRepo.save(newBusinessBadge);
+            return new BusinessBadgeDto(
+                    savedBadge.getBadgeId(),
+                    savedBadge.getBusiness().getBusinessId(),
+                    savedBadge.getBusiness().getName(),
+                    savedBadge.getIssuedDate(),
+                    savedBadge.getAvgRating()
+            );
+        }catch (Exception e) {
+            // Handle exceptions and log errors
+            e.printStackTrace();
+            throw new RuntimeException("Error saving business badge", e);
         }
     }
 
@@ -67,7 +98,7 @@ public class BusinessBadgeServiceImpl implements BusinessBadgeService {
             List<BusinessBadgeDto> businessBadgeDtoList = new ArrayList<>();
 
             for (BusinessBadge businessBadge: pastSixBadges) {
-                BusinessBadgeDto businessBadgeDto = new BusinessBadgeDto(businessBadge.getBadgeId(), businessBadge.getBusiness().getBusinessId(), businessBadge.getBusiness().getName(), businessBadge.getIssuedDate());
+                BusinessBadgeDto businessBadgeDto = new BusinessBadgeDto(businessBadge.getBadgeId(), businessBadge.getBusiness().getBusinessId(), businessBadge.getBusiness().getName(), businessBadge.getIssuedDate(), businessBadge.getAvgRating());
                 businessBadgeDtoList.add(businessBadgeDto);
             }
 

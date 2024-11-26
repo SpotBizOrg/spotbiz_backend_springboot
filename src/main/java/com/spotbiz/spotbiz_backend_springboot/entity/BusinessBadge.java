@@ -28,4 +28,7 @@ public class BusinessBadge {
     @Column(name = "issued_date")
     private LocalDateTime issuedDate;
 
+    @Column(name = "avg_rating")
+    private Double avgRating;
+
 }

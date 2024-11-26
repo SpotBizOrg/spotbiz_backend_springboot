@@ -4,9 +4,7 @@ import com.spotbiz.spotbiz_backend_springboot.dto.BusinessBadgeDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.BusinessBadge;
 import com.spotbiz.spotbiz_backend_springboot.service.impl.BusinessBadgeServiceImpl;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,7 +35,19 @@ public class BusinessBadgeController {
             List<BusinessBadgeDto> pastSixBadges = businessBadgeService.getPastBadges();
             return ResponseEntity.ok(pastSixBadges);
         }catch (Exception e) {
-            return ResponseEntity.status(500).body("Error occurred");
+            return ResponseEntity.status(500).body("Error occurred while fetching the business badge data");
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createNewBadge(@RequestBody BusinessBadgeDto businessBadgeDto){
+        try {
+            System.out.println(businessBadgeDto.getBusinessId());
+            System.out.println(businessBadgeDto.getIssuedDate());
+            BusinessBadgeDto newBusinessBadge = businessBadgeService.saveNewBadge(businessBadgeDto);
+            return ResponseEntity.ok(newBusinessBadge);
+        }catch (Exception e) {
+            return ResponseEntity.status(500).body("Error occurred while saving the business badge");
         }
     }
 }
