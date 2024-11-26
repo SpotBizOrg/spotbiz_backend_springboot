@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.ReviewDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
@@ -30,9 +31,10 @@ public class ReviewController {
     }
 
     @GetMapping("/all/{email}")
-    public ResponseEntity<List<Review>> getAllReviews(@PathVariable String email) {
+    public ResponseEntity<List<ReviewDto>> getAllReviews(@PathVariable String email) {
         try {
-            List<Review> reviews = reviewService.getAllReviews(email);
+            List<ReviewDto> reviews = reviewService.getAllReviews(email);
+            System.out.println(reviews);
             return new ResponseEntity<>(reviews, HttpStatus.OK);
         } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

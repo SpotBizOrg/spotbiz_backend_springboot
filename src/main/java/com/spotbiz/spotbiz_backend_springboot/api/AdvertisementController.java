@@ -2,8 +2,10 @@ package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementRequestDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.SubscriptionBillingDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Advertisement;
 import com.spotbiz.spotbiz_backend_springboot.entity.AdvertisementKeyword;
+import com.spotbiz.spotbiz_backend_springboot.entity.SubscriptionBilling;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.repo.AdvertisementKeywordRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.AdvertisementService;
@@ -40,6 +42,14 @@ public class AdvertisementController {
             return ResponseEntity.ok(keys);
 
     }
+
+    @GetMapping("/add_validation/{email}")
+    public ResponseEntity<?> checkAdvertisementLimit(@PathVariable String email){
+        Boolean canAdd = advertisementService.checkAdvertisementLimit(email);
+        return ResponseEntity.ok(canAdd);
+    }
+
+
 
 
 
