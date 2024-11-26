@@ -1,4 +1,5 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
+import com.spotbiz.spotbiz_backend_springboot.dto.ReviewDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewReportResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,14 +70,15 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public List<Review> getAllReviews(String email) {
+    public List<ReviewDto> getAllReviews(String email) {
 
         User user = userService.getUserByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
         Business business = businessRepo.findByUserUserId(user.getUserId());
-        return reviewRepo.findByBusiness(business);
+        List<Review> reviews = reviewRepo.findByBusiness(business);
+        return reviewMapper.toReviewRequestDtoList(reviews);
     }
 
     public ReviewRequestDto setData(ReviewRequestDto review, String email) {
