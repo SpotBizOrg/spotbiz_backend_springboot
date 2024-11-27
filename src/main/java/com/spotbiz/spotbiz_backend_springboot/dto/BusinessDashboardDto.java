@@ -19,6 +19,7 @@ public class BusinessDashboardDto {
     private PackageDto pkg;
     private String logo;
     private List<SubscribeDto> subscribeList;
+    private BusinessBadgeDto businessBadgeDto;
 
 
 }

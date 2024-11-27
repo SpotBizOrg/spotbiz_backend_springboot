@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessBadgeDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessDashboardDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.PackageDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.SubscribeDto;
@@ -31,6 +32,9 @@ public class BusinessDashboardServiceImpl implements BusinessDashboardService {
     @Autowired
     private PackageServiceImpl packageService;
 
+    @Autowired
+    private BusinessBadgeServiceImpl businessBadgeService;
+
 
     @Override
     public BusinessDashboardDto getBusinessDashboardData(User user) {
@@ -46,12 +50,21 @@ public class BusinessDashboardServiceImpl implements BusinessDashboardService {
             businessDashboardDto.setSubscriberCount(countSubscribers(business.getBusinessId()));
             businessDashboardDto.setPkg(getSubscriptionPackage(business.getBusinessId()));
             businessDashboardDto.setSubscribeList(getSubscriberList(business.getBusinessId()));
+            businessDashboardDto.setBusinessBadgeDto(getLatestBadge(business));
             return businessDashboardDto;
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve business dashboard data");
         }
 
 
+    }
+
+    private BusinessBadgeDto getLatestBadge(Business business){
+        try {
+            return businessBadgeService.getLatestBadge(business);
+        }catch (Exception e) {
+            throw new RuntimeException("Failed to get business badge: " + e.getMessage());
+        }
     }
 
     private PackageDto getSubscriptionPackage(int businessId){
