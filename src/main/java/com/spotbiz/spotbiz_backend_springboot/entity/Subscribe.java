@@ -22,7 +22,7 @@ public class Subscribe {
 
     @Column(name="date_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime dateTime;
+    private LocalDateTime dateTime = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name="business_id", referencedColumnName = "business_id")

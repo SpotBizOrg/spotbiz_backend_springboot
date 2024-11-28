@@ -1,9 +1,13 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
+import com.spotbiz.spotbiz_backend_springboot.dto.ReviewDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.ReviewReportResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
+import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.exception.DuplicateReviewException;
 import com.spotbiz.spotbiz_backend_springboot.mapper.ReviewMapper;
+import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.ReviewRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.ReviewService;
@@ -21,9 +25,11 @@ import org.springframework.stereotype.Service;
 
 
 import java.io.IOException;
-import java.sql.ResultSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 
 @Service
@@ -41,6 +47,8 @@ public class ReviewServiceImpl implements ReviewService {
     private UserService userService;
 
     private static final String SENTIMENT_GET_API_URL = "http://localhost:8000/sentiment";
+    @Autowired
+    private BusinessRepo businessRepo;
 
     @Override
     public Review saveReview(ReviewRequestDto reviewDto) {
@@ -62,13 +70,15 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public List<Review> getAllReviews(String email) {
+    public List<ReviewDto> getAllReviews(String email) {
 
         User user = userService.getUserByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return reviewRepo.findAll();
+        Business business = businessRepo.findByUserUserId(user.getUserId());
+        List<Review> reviews = reviewRepo.findByBusiness(business);
+        return reviewMapper.toReviewRequestDtoList(reviews);
     }
 
     public ReviewRequestDto setData(ReviewRequestDto review, String email) {
@@ -118,21 +128,25 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review markReported(Integer reviewId) {
+    public ReviewReportResponseDto markReported(Integer reviewId) {
         try {
             Review review = reviewRepo.findById(reviewId)
                     .orElseThrow(() -> new RuntimeException("Review not found for reviewId: " + reviewId));
             review.setStatus("REPORTED");
-            return reviewRepo.save(review);
+            Review updatedReview = reviewRepo.save(review);
+            return reviewMapper.toReviewReportResponseDto(updatedReview);
         } catch (Exception e) {
             throw new RuntimeException("Failed to mark review as reported", e);
         }
     }
 
     @Override
-    public List<Review> getReportedReviews() {
+    public List<ReviewReportResponseDto> getReportedReviews() {
         try {
-            return reviewRepo.findReviewsByStatus("REPORTED");
+            List<Review> reportedList = reviewRepo.findReviewsByStatus("REPORTED");
+            return reportedList.stream()
+                    .map(reviewMapper::toReviewReportResponseDto)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Failed to get reported reviews", e);
         }

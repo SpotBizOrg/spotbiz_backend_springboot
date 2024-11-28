@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.repo;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
@@ -29,4 +30,6 @@ public interface ReviewRepo extends JpaRepository<Review, Integer> {
     Optional<Review> findLatestBusinessReview(@Param("businessId") Integer businessId);
 
     List<Review> findReviewsByStatus(String status);
+
+    List<Review> findByBusiness(Business business);
 }

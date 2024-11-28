@@ -129,4 +129,22 @@ public class SubscribeServiceImpl implements SubscribeService {
             throw new UsernameNotFoundException("Something went wrong");
         }
     }
+
+    @Override
+    public boolean checkSubscription(int userId, int businessId) {
+        try{
+            User user = userRepo.findById(userId).orElse(null);
+            Business business = businessRepo.findByBusinessId(businessId);
+            if(user != null && business != null) {
+                Subscribe subscribe = subscribeRepo.findOneByUserAndBusiness(user, business);
+                if(subscribe != null) {
+                    return true;
+                }
+                return false;
+            }
+            throw new UsernameNotFoundException("User or Business not found");
+        } catch (Exception e){
+            throw new UsernameNotFoundException("Something went wrong");
+        }
+    }
 }

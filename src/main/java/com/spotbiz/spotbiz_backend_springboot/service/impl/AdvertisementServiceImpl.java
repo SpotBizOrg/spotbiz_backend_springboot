@@ -1,30 +1,32 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementRecommendationDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementRequestDto;
-import com.spotbiz.spotbiz_backend_springboot.entity.Advertisement;
-import com.spotbiz.spotbiz_backend_springboot.entity.AdvertisementKeyword;
-import com.spotbiz.spotbiz_backend_springboot.entity.Business;
+import com.spotbiz.spotbiz_backend_springboot.dto.SubscriptionBillingDto;
+import com.spotbiz.spotbiz_backend_springboot.entity.*;
 import com.spotbiz.spotbiz_backend_springboot.exception.AdvertisementException;
 import com.spotbiz.spotbiz_backend_springboot.mapper.AdvertisementMapper;
-import com.spotbiz.spotbiz_backend_springboot.repo.AdvertisementKeywordRepo;
-import com.spotbiz.spotbiz_backend_springboot.repo.AdvertisementRepo;
-import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
+import com.spotbiz.spotbiz_backend_springboot.mapper.SubscriptionBillingMapper;
+import com.spotbiz.spotbiz_backend_springboot.repo.*;
 import com.spotbiz.spotbiz_backend_springboot.service.AdvertisementService;
-import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AdvertisementServiceImpl implements AdvertisementService {
@@ -44,6 +46,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Autowired
     private AdvertisementMapper advertisementMapper;
 
+    @Autowired
+    private SubscriptionBillingRepo billingRepo;
+
+    @Autowired
+    private SubscriptionBillingMapper billingMapper;
+
+    @Autowired
+    private UserRepo userRepo;
+
 
 
     @Override
@@ -59,7 +70,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         advertisement.setStatus(true);
 
         Optional<Business> optionalBusiness = businessRepository.findById(advertisementRequestDto.getBusinessId());
-System.out.println(advertisementRequestDto);
+        System.out.println(advertisementRequestDto);
         if (optionalBusiness.isEmpty()) {
             System.out.println(optionalBusiness.get().getBusinessId());
             throw new AdvertisementException.BusinessNotFoundException("Business not found");
@@ -157,26 +168,12 @@ System.out.println(advertisementRequestDto);
     private String convertToJson(AdvertisementRequestDto dto) {
         Map<String, Object> dataMap = new HashMap<>();
 
-        // Extracting the image type from the base64 string
-        String base64Image = dto.getImg();
-        String imageType = base64Image.substring(base64Image.indexOf("/") + 1, base64Image.indexOf(";"));
-        String uniqueFileName = "ad_" + UUID.randomUUID().toString() + "." + imageType;
-
-        String filePath = "../spotbiz_frontend/src/assets/uploaded_ads/" + uniqueFileName;
-        String simplifiedPath = "/src/assets/uploaded_ads/" + uniqueFileName;
-
-        try {
-            saveImage(base64Image, filePath);
-        } catch (IOException e) {
-            throw new RuntimeException("Error saving image to file", e);
-        }
-
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedNow = now.format(formatter);
         String endDate = now.plusDays(7).format(formatter);
 
-        dataMap.put("img", simplifiedPath);
+        dataMap.put("img", dto.getImg());
         dataMap.put("startDate", formattedNow);
         dataMap.put("endDate", endDate);
         dataMap.put("description", dto.getDescription());
@@ -209,6 +206,91 @@ System.out.println(advertisementRequestDto);
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void updateStatusIfExpired(Advertisement ad) {
+        try {
+            JsonNode jsonData = objectMapper.readTree(ad.getData());
+            String endDateString = jsonData.get("endDate").asText();
+
+            LocalDateTime endDate = LocalDateTime.parse(endDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            if (endDate.isBefore(LocalDateTime.now()) && Boolean.TRUE.equals(ad.getStatus())) {
+                ad.setStatus(false);
+                advertisementRepository.save(ad);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to parse advertisement data: " + e.getMessage());
+        }
+    }
+
+    public List<Advertisement> filterAdvertisementsByDate(List<Advertisement> ads, int daysAgo) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime thresholdDate = now.minusDays(daysAgo);
+
+        return ads.stream()
+                .filter(ad -> {
+                    try {
+                        JsonNode jsonNode = objectMapper.readTree(ad.getData());
+                        String startDateStr = jsonNode.get("startDate").asText();
+                        LocalDateTime startDate = LocalDateTime.parse(startDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                        return startDate.isAfter(thresholdDate) && startDate.isBefore(now);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+    @Override
+    public Boolean checkAdvertisementLimit(String email) {
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Business owner with the given email does not exist"));
+
+        Business business = businessRepository.findByUserUserId(user.getUserId());
+        if (business == null) {
+            throw new RuntimeException("No business found for the given user");
+        }
+
+        SubscriptionBilling billing = billingRepo.findByBusinessId(business.getBusinessId());
+        if (billing == null || !billing.getIsActive() || !"PAID".equals(billing.getBillingStatus()) || !billing.getPkg().getIsActive()) {
+            return false;
+        }
+
+        LocalDateTime weekStart = getCurrentWeekStart();
+        LocalDateTime weekEnd = weekStart.plusWeeks(1);
+
+        int adsPostedInCurrentWeek = countAdvertisementsThisWeek(business.getBusinessId(), weekStart, weekEnd);
+
+        // Print debug information (optional)
+        System.out.println("Advertisements posted this week: " + adsPostedInCurrentWeek);
+        System.out.println("Allowed advertisements per week: " + billing.getPkg().getAdsPerWeek());
+
+        return adsPostedInCurrentWeek < billing.getPkg().getAdsPerWeek();
+    }
+
+    private LocalDateTime getCurrentWeekStart() {
+        // start of the current week (Monday)
+        return LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    }
+
+    private int countAdvertisementsThisWeek(Integer businessId, LocalDateTime weekStart, LocalDateTime weekEnd) {
+        List<Advertisement> ads = advertisementRepository.AdvertisementsByBusinessId(businessId);
+        int count = 0;
+
+        for (Advertisement ad : ads) {
+            try {
+                JsonNode jsonData = objectMapper.readTree(ad.getData());
+                String startDateString = jsonData.get("startDate").asText();
+                LocalDateTime startDate = LocalDateTime.parse(startDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                if (!startDate.isBefore(weekStart) && startDate.isBefore(weekEnd)) {
+                    count++;
+                }
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Error parsing advertisement data for advertisement ID: " + ad.getAdsId(), e);
+            }
+        }
+        return count;
     }
 
 

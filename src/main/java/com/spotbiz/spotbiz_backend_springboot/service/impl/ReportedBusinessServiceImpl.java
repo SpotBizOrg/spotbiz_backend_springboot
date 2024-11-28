@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.ReportedBusinessDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.ReportedBusinessResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.ReportedBusiness;
 import com.spotbiz.spotbiz_backend_springboot.entity.Role;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportedBusinessServiceImpl implements ReportedBusinessService {
@@ -47,16 +49,19 @@ public class ReportedBusinessServiceImpl implements ReportedBusinessService {
     }
 
     @Override
-    public List<ReportedBusiness> getAllReportedBusiness() {
+    public List<ReportedBusinessResponseDto> getAllReportedBusiness() {
         try {
-            return reportedBusinessRepo.findReportedBusinessesByStatus("NO ACTION");
+            List<ReportedBusiness> reportedBusinesses = reportedBusinessRepo.findReportedBusinessesByStatus("NO ACTION");
+            return reportedBusinesses.stream()
+                    .map(reportedBusinessMappr::toReportedBusinessResponseDto)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Failed to get reported businesses: " + e.getMessage());
         }
     }
 
     @Override
-    public ReportedBusiness BanReportedBusiness(Integer reportId) {
+    public ReportedBusinessDto BanReportedBusiness(Integer reportId) {
         try {
             ReportedBusiness reportedBusiness = reportedBusinessRepo.findById(reportId).orElseThrow(() -> new RuntimeException("Reported business not found"));
             reportedBusiness.setStatus("BANNED");
@@ -69,7 +74,7 @@ public class ReportedBusinessServiceImpl implements ReportedBusinessService {
                 if (updatedBusiness.getStatus().equals("BANNED")) {
                     String mail = MailTemplate.banBusinessTemplate(updatedBusiness.getUser().getName(), updatedReportRequest.getReason(), updatedBusiness.getBusinessId());
                     mailService.sendHtmlMail(updatedBusiness.getUser().getEmail(), "Important: Your Account Has Been Banned", mail);
-                    return updatedReportRequest;
+                    return reportedBusinessMappr.toReportedBusinessDto(updatedReportRequest);
                 } else {
                     throw new RuntimeException("Failed to ban reported business");
                 }
@@ -82,12 +87,13 @@ public class ReportedBusinessServiceImpl implements ReportedBusinessService {
     }
 
     @Override
-    public ReportedBusiness RemoveReportRequest(Integer reportId) {
+    public ReportedBusinessDto RemoveReportRequest(Integer reportId) {
         try {
             ReportedBusiness reportedBusiness = reportedBusinessRepo.findById(reportId).orElseThrow(() -> new RuntimeException("Reported business not found"));
             reportedBusiness.setStatus("REMOVED");
 
-            return reportedBusinessRepo.save(reportedBusiness);
+            ReportedBusiness updatedReportedBusiness = reportedBusinessRepo.save(reportedBusiness);
+            return reportedBusinessMappr.toReportedBusinessDto(updatedReportedBusiness);
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove report request: " + e.getMessage());
         }

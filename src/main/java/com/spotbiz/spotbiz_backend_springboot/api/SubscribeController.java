@@ -83,4 +83,16 @@ public class SubscribeController {
         }
     }
 
+    @GetMapping("/check_subscription/{user_id}/{business_id}")
+    public ResponseEntity<?> checkSubscription(@PathVariable int user_id, @PathVariable int business_id) {
+        try{
+            boolean isSubscribed = subscribeService.checkSubscription(user_id, business_id);
+            return ResponseEntity.ok().body(isSubscribed);
+        } catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Something went wrong");
+        }
+    }
+
+
+
 }

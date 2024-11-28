@@ -1,5 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessAdminResponseDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.CustomerAdminResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.service.BusinessService;
@@ -47,15 +49,15 @@ public class AdminController {
     }
 
     @GetMapping("/customers")
-    public ResponseEntity<List<User>> getAllCustomers() {
-        List<User> customers = userService.getAllCustomers();
+    public ResponseEntity<?> getAllCustomers() {
+        List<CustomerAdminResponseDto> customers = userService.getAllCustomers();
 
         return ResponseEntity.ok(customers);
     }
 
     @GetMapping("/business")
     public ResponseEntity<?>getAllBusinesses() {
-        List<Business> businesses = businessService.getAllBusinesses();
+        List<BusinessAdminResponseDto> businesses = businessService.getAllBusinesses();
 
         return ResponseEntity.ok(businesses);
     }
