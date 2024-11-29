@@ -117,7 +117,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     @Override
-    public List<AdvertisementRecommendationDto> getAdvertisementRecommeondation(String tags) {
+    public Set<AdvertisementRecommendationDto> getAdvertisementRecommeondation(String tags, Set<AdvertisementRecommendationDto> list) {
 
         String [] keywords = extractKeywords(tags);
 
@@ -126,15 +126,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             return null;
         }
 
-        List<AdvertisementRecommendationDto> dtos = new ArrayList<>();
         for (Object[] row : recommendations) {
             AdvertisementRecommendationDto dto = getAdvertisementRecommendationDto(row);
-            dtos.add(dto);
+            list.add(dto);
         }
 
 
 
-        return dtos;
+        return list;
 
     }
 

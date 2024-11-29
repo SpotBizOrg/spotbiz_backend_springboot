@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/recommendation")
@@ -32,7 +35,6 @@ public class RecommendationController {
     @GetMapping
     public ResponseEntity<?> getRecommendations(@RequestParam Integer userId, @RequestParam String email) {
         try {
-
             // Fetch the user by email
             User user = userService.getUserByEmail(email);
             if (user == null) {
@@ -41,25 +43,26 @@ public class RecommendationController {
 
             // Fetch the recommendation list
             String[] list = reccomondationService.getReccomondation(userId);
+            System.out.println(list.length);
 
-            // Check if the list is null
-            if (list == null) {
+            // Check if the list is empty
+            if (list == null || list.length == 0) {
                 return ResponseEntity.status(404).body("No recommendations found for the user");
             }
 
-            // Log and fetch the latest search
-            String latestSearch = list[0];
-            System.out.println("Latest search: " + latestSearch);
-
-
-            // Fetch advertisement recommendations based on the latest search
-            List<AdvertisementRecommendationDto> advertisementRecommendationDtoList = advertisementService.getAdvertisementRecommeondation(latestSearch);
-
-            // Check if the recommendation list is null
-            if (advertisementRecommendationDtoList == null || advertisementRecommendationDtoList.isEmpty()) {
-                return ResponseEntity.status(404).body("No advertisements found for the search: " + latestSearch);
+            // Use a Set to ensure distinct AdvertisementRecommendationDto values
+            Set<AdvertisementRecommendationDto> uniqueRecommendations = new HashSet<>();
+            for (String tag : list) {
+                advertisementService.getAdvertisementRecommeondation(tag, uniqueRecommendations);
             }
 
+            // Convert Set back to List for response
+            List<AdvertisementRecommendationDto> advertisementRecommendationDtoList = new ArrayList<>(uniqueRecommendations);
+
+            // Check if the recommendation list is empty
+            if (advertisementRecommendationDtoList.isEmpty()) {
+                return ResponseEntity.status(404).body("No advertisements found for the given tags");
+            }
             // Return the successful response with recommendations
             return ResponseEntity.ok(advertisementRecommendationDtoList);
 
@@ -71,4 +74,5 @@ public class RecommendationController {
             return ResponseEntity.status(500).body("An unexpected error occurred: " + ex.getMessage());
         }
     }
+
 }

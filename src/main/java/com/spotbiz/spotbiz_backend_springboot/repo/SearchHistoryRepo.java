@@ -13,8 +13,11 @@ import java.util.List;
 @Repository
 public interface SearchHistoryRepo extends JpaRepository<SearchHistory, Integer> {
 
-    @Query("SELECT u.generatedKeywords FROM SearchHistory u WHERE u.userId = :userId ORDER BY u.updatedAt DESC")
+    @Query("SELECT DISTINCT u.generatedKeywords FROM SearchHistory u WHERE u.userId = :userId")
     String [] findGeneratedKeywordsByUserIdOrderByUpdatedAtDesc(@Param("userId") Integer userId);
+
+//    @Query("SELECT DISTINCT u.generatedKeywords FROM SearchHistory u WHERE u.userId = :userId ORDER BY u.updatedAt DESC LIMIT 10")
+//    String [] findGeneratedKeywordsByUserIdOrderByUpdatedAtDesc(@Param("userId") Integer userId);
 
     @Modifying
     @Transactional

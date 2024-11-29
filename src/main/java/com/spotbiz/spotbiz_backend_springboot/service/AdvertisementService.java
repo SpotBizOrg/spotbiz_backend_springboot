@@ -7,13 +7,14 @@ import com.spotbiz.spotbiz_backend_springboot.entity.Advertisement;
 import com.spotbiz.spotbiz_backend_springboot.entity.SubscriptionBilling;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AdvertisementService {
     Advertisement saveAdvertisement(AdvertisementRequestDto advertisementRequestDto);
 
     String getKeywords(Integer id);
 
-    List<AdvertisementRecommendationDto> getAdvertisementRecommeondation(String tags);
+    Set<AdvertisementRecommendationDto> getAdvertisementRecommeondation(String tags, Set<AdvertisementRecommendationDto> list);
 
     void updateStatusIfExpired(Advertisement ad);
 
