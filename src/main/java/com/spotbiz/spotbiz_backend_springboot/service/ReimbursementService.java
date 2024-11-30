@@ -7,5 +7,6 @@ import java.util.List;
 public interface ReimbursementService {
     int insertReimbursement(Reimbursements reimbursements);
     List<Reimbursements> getReimbursementByBusinessIdAndStatus(int businessId);
+    List<Reimbursements> getAllReimbursementsByStatus();
     int changeStatus(int id, ReimbursementStatus reimbursementStatus);
 }

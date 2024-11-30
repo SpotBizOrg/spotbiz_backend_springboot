@@ -1,9 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
-import com.spotbiz.spotbiz_backend_springboot.entity.Coupon;
-import com.spotbiz.spotbiz_backend_springboot.entity.CouponStatus;
-import com.spotbiz.spotbiz_backend_springboot.entity.Reimbursements;
-import com.spotbiz.spotbiz_backend_springboot.entity.ScannedCoupon;
+import com.spotbiz.spotbiz_backend_springboot.entity.*;
 import com.spotbiz.spotbiz_backend_springboot.repo.CouponRepo;
 import com.spotbiz.spotbiz_backend_springboot.repo.ScannedCouponRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.ScannedCouponService;
@@ -24,7 +21,7 @@ public class ScannedCouponServiceImpl implements ScannedCouponService {
 
     @Override
     public int insertScannedCoupon(ScannedCoupon scannedCoupon) {
-        if(scannedCoupon.getCouponId() <= 0 || scannedCoupon.getDateTime() == null || scannedCoupon.getBusinessId() <= 0 || scannedCoupon.getDiscount() <= 0) {
+        if(scannedCoupon.getCouponId() <= 0 || scannedCoupon.getBusinessId() <= 0 || scannedCoupon.getDiscount() <= 0) {
             throw new RuntimeException("Request is incomplete");
         }
         if(couponRepo.findByCouponId(scannedCoupon.getCouponId()) == null) {
@@ -61,12 +58,26 @@ public class ScannedCouponServiceImpl implements ScannedCouponService {
         if(businessId <= 0) {
             throw new RuntimeException("Business id is null");
         }
-        return scannedCouponRepo.findByBusinessId(businessId);
+        return scannedCouponRepo.findByBusinessIdAndStatus(businessId, ScannedCouponStatus.PENDING);
     }
 
     @Override
     public Reimbursements payScannedCouponAmount(List<ScannedCoupon> scannedCoupons) {
         return null;
+    }
+
+    @Override
+    public float findAmountById(int id){
+        ScannedCoupon scannedCoupon = scannedCouponRepo.findByScannedCouponId(id);
+        return  scannedCoupon.getDiscount() ;
+    }
+
+    @Override
+    public void changeStatus(int id, ScannedCouponStatus status) {
+        ScannedCoupon scannedCoupon =  scannedCouponRepo.getReferenceById(id);
+        scannedCoupon.setStatus(status);
+
+        scannedCouponRepo.save(scannedCoupon);
     }
 
 
