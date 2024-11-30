@@ -35,5 +35,4 @@ public class ScannedCouponController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insert coupon failed");
     }
-
 }

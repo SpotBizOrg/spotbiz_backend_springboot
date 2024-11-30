@@ -41,6 +41,15 @@ public class ReimbursementServiceImpl implements ReimbursementService {
     }
 
     @Override
+    public List<Reimbursements> getAllReimbursementsByStatus() {
+        try{
+            return reimbursementRepo.findAllByStatus(ReimbursementStatus.PENDING);
+        } catch(Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public int changeStatus(int id, ReimbursementStatus reimbursementStatus) {
         try{
             Reimbursements reimbursement = reimbursementRepo.getReferenceById(id);

@@ -13,4 +13,5 @@ import java.util.List;
 @EnableJpaRepositories
 public interface ReimbursementRepo extends JpaRepository<Reimbursements, Integer> {
     List<Reimbursements> getAllByBusinessAndStatus(Business business, ReimbursementStatus reimbursementStatus);
+    List<Reimbursements> findAllByStatus(ReimbursementStatus reimbursementStatus);
 }
