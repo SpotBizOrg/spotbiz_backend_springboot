@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BusinessBadgeServiceImpl implements BusinessBadgeService {
@@ -103,6 +104,32 @@ public class BusinessBadgeServiceImpl implements BusinessBadgeService {
             }
 
             return businessBadgeDtoList;
+        }catch (Exception e) {
+            // Handle exceptions and log errors
+            e.printStackTrace();
+            throw new RuntimeException("Error fetching issued badges details", e);
+        }
+    }
+
+    @Override
+    public BusinessBadgeDto getLatestBadge(Business business) {
+        try {
+            Optional<BusinessBadge> optionalBusinessBadge = businessBadgeRepo.getLatestBadge(business.getBusinessId());
+
+            if (optionalBusinessBadge.isEmpty()){
+                return null;
+            }
+
+            BusinessBadge businessBadge = optionalBusinessBadge.get();
+            BusinessBadgeDto businessBadgeDto = new BusinessBadgeDto(
+                    businessBadge.getBadgeId(),
+                    businessBadge.getBusiness().getBusinessId(),
+                    businessBadge.getBusiness().getName(),
+                    businessBadge.getIssuedDate(),
+                    businessBadge.getAvgRating()
+            );
+            return businessBadgeDto;
+
         }catch (Exception e) {
             // Handle exceptions and log errors
             e.printStackTrace();

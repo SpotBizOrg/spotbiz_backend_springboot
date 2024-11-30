@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BusinessBadgeRepo extends JpaRepository<BusinessBadge, Integer> {
@@ -24,4 +25,7 @@ public interface BusinessBadgeRepo extends JpaRepository<BusinessBadge, Integer>
     List<Object[]> getBusinessForBadge();
 
     List<BusinessBadge> findBusinessBadgesByIssuedDateBetweenOrderByIssuedDateAsc(LocalDateTime sixMonthsAgo, LocalDateTime now);
+
+    @Query(value = "SELECT * FROM business_badge WHERE business_id =:businessId ORDER BY issued_date DESC LIMIT 1", nativeQuery = true)
+    Optional<BusinessBadge> getLatestBadge(@Param("businessId") Integer businessId);
 }
