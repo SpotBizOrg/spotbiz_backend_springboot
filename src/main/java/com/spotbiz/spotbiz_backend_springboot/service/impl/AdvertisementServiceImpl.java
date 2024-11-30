@@ -252,7 +252,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
 
         SubscriptionBilling billing = billingRepo.findByBusinessId(business.getBusinessId());
-        if (billing == null || !billing.getIsActive() || !"PAID".equals(billing.getBillingStatus()) || !billing.getPkg().getIsActive()) {
+        if (billing == null  || !"PAID".equals(billing.getBillingStatus()) || !billing.getPkg().getIsActive()) {
             return false;
         }
 
