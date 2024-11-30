@@ -29,12 +29,15 @@ public class BusinessDataServiceImpl implements BusinessDataService {
 
     private final SubscribeServiceImpl subscribeServiceImpl;
 
-    public BusinessDataServiceImpl(BusinessRepo businessRepository, ReviewServiceImpl reviewServiceImpl, OpeningHoursServiceImpl openingHoursServiceImpl, PackageServiceImpl packageServiceImpl, SubscribeServiceImpl subscribeServiceImpl) {
+    private final BusinessBadgeServiceImpl businessBadgeServiceImpl;
+
+    public BusinessDataServiceImpl(BusinessRepo businessRepository, ReviewServiceImpl reviewServiceImpl, OpeningHoursServiceImpl openingHoursServiceImpl, PackageServiceImpl packageServiceImpl, SubscribeServiceImpl subscribeServiceImpl, BusinessBadgeServiceImpl businessBadgeServiceImpl) {
         this.businessRepository = businessRepository;
         this.reviewServiceImpl = reviewServiceImpl;
         this.openingHoursServiceImpl = openingHoursServiceImpl;
         this.packageServiceImpl = packageServiceImpl;
         this.subscribeServiceImpl = subscribeServiceImpl;
+        this.businessBadgeServiceImpl = businessBadgeServiceImpl;
     }
 
 
@@ -75,8 +78,18 @@ public class BusinessDataServiceImpl implements BusinessDataService {
         businessDataDto.setLatestReview(getLatestReview(business.getBusinessId()));
         businessDataDto.setPkg(getSubscriptionPackage(business.getBusinessId()));
         businessDataDto.setSubscribed(checkSubscribed(clientId, business.getBusinessId()));
+        businessDataDto.setBusinessBadgeDto(getLatestBadge(business));
 
         return businessDataDto;
+    }
+
+    private BusinessBadgeDto getLatestBadge(Business business) {
+        try {
+           BusinessBadgeDto businessBadgeDto = businessBadgeServiceImpl.getLatestBadge(business);
+           return businessBadgeDto;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get latest badge: " + e.getMessage());
+        }
     }
 
     private boolean checkSubscribed(Integer userId, Integer businessId) {
