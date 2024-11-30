@@ -23,10 +23,10 @@ public class SearchHistoryManager {
 //    }
 
     // Runs on application startup
-    @PostConstruct
-    public void runOnStartup() {
-        cleanupOldSearchHistory();
-    }
+//    @PostConstruct
+//    public void runOnStartup() {
+//        cleanupOldSearchHistory();
+//    }
 
     public void cleanupOldSearchHistory() {
         try {
