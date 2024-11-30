@@ -27,4 +27,5 @@ public class BusinessDataDto {
     private ReviewRequestDto latestReview;
     private PackageDto pkg;
     private boolean isSubscribed;
+    private BusinessBadgeDto businessBadgeDto;
 }
