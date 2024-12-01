@@ -23,7 +23,7 @@ public class BusinessAccountDetails {
     private Business business;
 
     @Column(name="account_no")
-    private int accountNo;
+    private String accountNo;
 
     @Column(name="account_holder_name")
     private String accountHolderName;

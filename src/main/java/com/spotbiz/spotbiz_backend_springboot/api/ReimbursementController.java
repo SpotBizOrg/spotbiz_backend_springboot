@@ -35,13 +35,25 @@ public class ReimbursementController {
             reimbursement.setBusiness(businessRepo.getReferenceById(reimbursementDto.getBusinessId()));
             reimbursement.setDateTime(reimbursementDto.getDateTime());
 
+            StringBuilder imageUrlsWithDiscount = new StringBuilder(); 
             float amount = 0;
 
             for (int id : reimbursementDto.getScannedCouponIds()) {
                 amount += scannedCouponService.findAmountById(id);
+
+                String imageUrl = scannedCouponService.findImageUrlById(id);
+                float discountRate = scannedCouponService.findDiscountRateById(id);
+
+                if (imageUrl != null && !imageUrl.isEmpty()) {
+                    if (!imageUrlsWithDiscount.isEmpty()) {
+                        imageUrlsWithDiscount.append(",");
+                    }
+                    imageUrlsWithDiscount.append(imageUrl).append(",").append(discountRate);
+                }
             }
 
             reimbursement.setAmount(amount);
+            reimbursement.setImages(imageUrlsWithDiscount.toString());
             reimbursement.setStatus(ReimbursementStatus.PENDING);
 
             int insertionStatus = reimbursementService.insertReimbursement(reimbursement);
