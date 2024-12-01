@@ -234,19 +234,6 @@ public class BusinessService {
         }
     }
 
-//
-//    public List<Business> getAllBusinesses() {
-//        List<Business> business = businessRepo.findAll();
-//        List<Business> newBusinesses = new ArrayList<>();
-//
-//        for (Business businesss : business) {
-//            if (businesss.getName() != null) {
-//                newBusinesses.add(businesss);
-//            }
-//        }
-//        return newBusinesses;
-//    }
-
     public List<BusinessAdminResponseDto> getAllBusinesses() {
         List<Business> business = businessRepo.findAll();
         List<BusinessAdminResponseDto> newBusinesses = new ArrayList<>();

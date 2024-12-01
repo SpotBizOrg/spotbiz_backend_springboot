@@ -42,7 +42,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         }
     }
 
-    private int getCustomerCount(){
+    public int getCustomerCount(){
         try{
             int customerCount = userRepo.countUsersByRoleAndStatus(Role.CUSTOMER, Status.APPROVED);
             return customerCount;
@@ -52,7 +52,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         }
     }
 
-    private int getBusinessCount(){
+    public int getBusinessCount(){
         try{
             int businessCount = userRepo.countUsersByRoleAndStatus(Role.BUSINESS_OWNER, Status.APPROVED);
             return businessCount;
@@ -62,7 +62,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         }
     }
 
-    private double getRevenue(){
+    public double getRevenue(){
         try {
             double totalRevenue = subscriptionBillingService.getTotalBillings();
             return totalRevenue;
@@ -80,7 +80,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         }
     }
 
-    private Map<String, Long> getBusinessCategories(){
+    public Map<String, Long> getBusinessCategories(){
         try {
             Map<String, Long> businessCategoryData = businessCategoryService.getBusinessCountByCategory();
             return businessCategoryData;
