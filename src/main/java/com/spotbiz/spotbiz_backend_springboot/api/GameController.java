@@ -84,4 +84,10 @@ public class GameController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/details/{userId}")
+    public List<UserPointDto> getUserGameScores(@PathVariable int userId) {
+        return gameService.getUserGameScores(userId);
+    }
+
+
 }

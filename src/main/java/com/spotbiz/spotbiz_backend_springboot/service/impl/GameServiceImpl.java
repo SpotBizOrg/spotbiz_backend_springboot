@@ -110,4 +110,11 @@ public class GameServiceImpl implements GameService {
         Pageable topTen = PageRequest.of(0, 10);
         return gameRepo.findTopUsersByPointsWithin30Days(startDate, topTen);
     }
+
+    @Override
+    public List<UserPointDto> getUserGameScores(int userId) {
+        return List.of();
+    }
+
+
 }

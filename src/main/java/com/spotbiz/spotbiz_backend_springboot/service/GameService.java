@@ -7,6 +7,7 @@ import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GameService {
     int insertGame(GameDto gameDto);
@@ -14,4 +15,5 @@ public interface GameService {
     GameDto updateGame(int gameId, GameDto gameDto);
     int deleteGame(int gameId);
     List<UserPointDto> getTopCustomers();
+    List<UserPointDto> getUserGameScores(int userId);
 }
