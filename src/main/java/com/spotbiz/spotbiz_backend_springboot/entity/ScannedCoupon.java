@@ -34,6 +34,9 @@ public class ScannedCoupon {
     @Column(name="discount")
     private float discount;
 
+    @Column(name="bill_image")
+    private String billImage;
+
     @Enumerated(EnumType.STRING)
     @Column(name="status")
     private ScannedCouponStatus status = ScannedCouponStatus.PENDING;
