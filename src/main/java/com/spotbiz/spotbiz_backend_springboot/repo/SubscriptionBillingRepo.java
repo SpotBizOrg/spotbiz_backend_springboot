@@ -44,4 +44,5 @@ public interface SubscriptionBillingRepo extends JpaRepository<SubscriptionBilli
 
     Optional<SubscriptionBilling> findByBusinessAndBillingStatusAndIsActive(Business business, String status, Boolean isActive);
 
+    List<SubscriptionBilling> findAllByBillingDateAfter(LocalDateTime billingDate);
 }
