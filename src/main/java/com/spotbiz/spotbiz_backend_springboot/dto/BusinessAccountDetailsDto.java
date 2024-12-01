@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class BusinessAccountDetailsDto {
     private int businessId;
-    private int accountNo;
+    private String accountNo;
     private String accountHolderName;
     private String bankName;
     private String branchName;

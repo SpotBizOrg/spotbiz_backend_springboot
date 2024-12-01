@@ -77,6 +77,18 @@ public class ScannedCouponServiceImpl implements ScannedCouponService {
     }
 
     @Override
+    public String findImageUrlById(int id) {
+        ScannedCoupon scannedCoupon = scannedCouponRepo.findByScannedCouponId(id);
+        return  scannedCoupon.getBillImage();
+    }
+
+    @Override
+    public float findDiscountRateById(int id) {
+        ScannedCoupon scannedCoupon = scannedCouponRepo.findByScannedCouponId(id);
+        return couponRepo.findByCouponId(scannedCoupon.getCouponId()).getDiscount();
+    }
+
+    @Override
     public void changeStatus(int id, ScannedCouponStatus status) {
         ScannedCoupon scannedCoupon =  scannedCouponRepo.getReferenceById(id);
         scannedCoupon.setStatus(status);

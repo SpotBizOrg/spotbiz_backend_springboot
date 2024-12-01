@@ -11,5 +11,7 @@ public interface ScannedCouponService {
     List<ScannedCoupon> getScannedCouponsForBusiness(int businessId);
     Reimbursements payScannedCouponAmount(List<ScannedCoupon> scannedCoupons);
     float findAmountById(int id);
+    String findImageUrlById(int id);
+    float findDiscountRateById(int id);
     void changeStatus(int id, ScannedCouponStatus status);
 }
