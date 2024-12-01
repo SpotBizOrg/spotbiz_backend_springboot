@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spotbiz.spotbiz_backend_springboot.dto.AdvertisementRecommendationDto;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 
@@ -25,6 +26,7 @@ public class Advertisement {
     private String data;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "business_id")
     private Business business;
 
