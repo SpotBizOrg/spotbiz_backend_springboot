@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.SubscribeDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.SubscribedBusinessWithEmailDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.Subscribe;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
@@ -78,6 +79,35 @@ public class SubscribeServiceImpl implements SubscribeService {
                     for (Subscribe subscribe : subscribedList) {
                         SubscribeDto subscribeDto = subscribeMapper.toSubscribeDto(subscribe);
                         subscribeDtos.add(subscribeDto);
+                    }
+                    return subscribeDtos;
+                }
+                throw new UsernameNotFoundException("Subscribe list is empty");
+            }
+            throw new UsernameNotFoundException("User not found");
+
+        } catch (Exception e){
+            throw new UsernameNotFoundException("Something went wrong");
+        }
+    }
+
+    @Override
+    public List<SubscribedBusinessWithEmailDto> getSubscribedBusinessesWithEmail(int userId) {
+        try{
+            User user = userRepo.findById(userId).orElse(null);
+            if(user != null) {
+                List<Subscribe> subscribedList = subscribeRepo.findByUser(user);
+                if(subscribedList != null) {
+                    List<SubscribedBusinessWithEmailDto> subscribeDtos = new ArrayList<>();
+                    for (Subscribe subscribe : subscribedList) {
+                        System.out.println(subscribe.getBusiness().getUser().getEmail());
+                        SubscribedBusinessWithEmailDto dto = new SubscribedBusinessWithEmailDto();
+                        dto.setBusinessEmail(subscribe.getBusiness().getUser().getEmail());
+                        dto.setBusinessId(subscribe.getBusiness().getBusinessId());
+                        dto.setSubscribeId(subscribe.getSubscribeId());
+                        dto.setDateTime(subscribe.getDateTime());
+                        dto.setUserId(subscribe.getUser().getUserId());
+                        subscribeDtos.add(dto);
                     }
                     return subscribeDtos;
                 }
