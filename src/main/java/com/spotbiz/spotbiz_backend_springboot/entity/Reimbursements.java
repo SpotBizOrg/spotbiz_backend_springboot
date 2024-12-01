@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -35,5 +36,8 @@ public class Reimbursements {
     @Enumerated(EnumType.STRING)
     @Column(name="status")
     private ReimbursementStatus status = ReimbursementStatus.PENDING;
+
+    @Column(name="images")
+    private String images;
 
 }
