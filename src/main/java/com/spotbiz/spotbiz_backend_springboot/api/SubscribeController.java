@@ -31,6 +31,19 @@ public class SubscribeController {
         }
     }
 
+    @GetMapping("/subscribed/email/{user_id}")
+    public ResponseEntity<?> getSubscribedBusinessWithEmail(@PathVariable int user_id) {
+        try{
+            List<SubscribeDto> subscribedBusinesses = subscribeService.getSubscribedBusinesses(user_id);
+            if(subscribedBusinesses != null) {
+                return ResponseEntity.ok().body(subscribedBusinesses);
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subscribed businesses are not found");
+        } catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Something went wrong");
+        }
+    }
+
     @GetMapping("/subscribers/{business_id}")
     public ResponseEntity<?> getSubscribers(@PathVariable int business_id) {
         try{
