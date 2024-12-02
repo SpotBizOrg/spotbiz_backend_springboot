@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.GameDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.UserDetailsDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UserPointDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Game;
 import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
@@ -8,6 +9,7 @@ import com.spotbiz.spotbiz_backend_springboot.entity.Status;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.mapper.GameMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.GameRepo;
+import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -28,11 +30,13 @@ public class GameServiceImpl implements GameService {
 
     private final GameRepo gameRepo;
     private final GameMapper gameMapper;
+    //private final UserRepo userRepo;
 
     @Autowired
-    public GameServiceImpl(GameRepo gameRepo, GameMapper gameMapper) {
+    public GameServiceImpl(GameRepo gameRepo, GameMapper gameMapper, UserRepo userRepo) {
         this.gameRepo = gameRepo;
         this.gameMapper = gameMapper;
+        //this.userRepo = userRepo;
     }
 
     @Override
@@ -110,4 +114,16 @@ public class GameServiceImpl implements GameService {
         Pageable topTen = PageRequest.of(0, 10);
         return gameRepo.findTopUsersByPointsWithin30Days(startDate, topTen);
     }
+
+    //@Override
+    /*public UserDetailsDto getUserGameScores(int userId) {
+        optional<User> userOpt =  userRepository.findById(userId);
+        if (userOpt.isPresent()){
+            User user = userOpt.get();
+            return new UserDetailsDto(user.getUserId(), user.getName());
+        }
+        return null;
+    }
+*/
+
 }
