@@ -60,4 +60,13 @@ public class ReimbursementServiceImpl implements ReimbursementService {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public double getTotalPaidReimbursements() {
+        try {
+            return reimbursementRepo.getTotalPaidReimbursements();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get the total reimbursements", e);
+        }
+    }
 }
