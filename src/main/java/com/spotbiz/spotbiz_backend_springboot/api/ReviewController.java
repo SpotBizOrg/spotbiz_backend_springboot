@@ -54,6 +54,16 @@ public class ReviewController {
         }
     }
 
+    @GetMapping("rating/statistics/{business_id}")
+    public ResponseEntity<?> fetchRatingDetails(@PathVariable Integer business_id) {
+        try {
+            return ResponseEntity.ok(reviewService.getAllStatistics(business_id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to retrieve rating statistics: " + e.getMessage());
+        }
+    }
+
 
 
 }
