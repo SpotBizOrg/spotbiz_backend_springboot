@@ -1,10 +1,8 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.GameDto;
-import com.spotbiz.spotbiz_backend_springboot.dto.UserDetailsDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UserPointDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
-import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.service.GameService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -86,7 +84,7 @@ public class GameController {
     }
 
     @GetMapping("/details/{userId}")
-    public UserDetailsDto getUserGameScores(@PathVariable int userId) {
+    public UserPointDto getUserGameScores(@PathVariable int userId) {
         return gameService.getUserGameScores(userId);
     }
 
