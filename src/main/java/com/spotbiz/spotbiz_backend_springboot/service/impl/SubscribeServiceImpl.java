@@ -100,13 +100,14 @@ public class SubscribeServiceImpl implements SubscribeService {
                 if(subscribedList != null) {
                     List<SubscribedBusinessWithEmailDto> subscribeDtos = new ArrayList<>();
                     for (Subscribe subscribe : subscribedList) {
-                        System.out.println(subscribe.getBusiness().getUser().getEmail());
+                        System.out.println(subscribe.getBusiness().getUser().getName());
                         SubscribedBusinessWithEmailDto dto = new SubscribedBusinessWithEmailDto();
-                        dto.setBusinessEmail(subscribe.getBusiness().getUser().getEmail());
                         dto.setBusinessId(subscribe.getBusiness().getBusinessId());
                         dto.setSubscribeId(subscribe.getSubscribeId());
                         dto.setDateTime(subscribe.getDateTime());
                         dto.setUserId(subscribe.getUser().getUserId());
+                        dto.setBusinessName(subscribe.getBusiness().getName());
+                        dto.setLogo(subscribe.getBusiness().getLogo());
                         subscribeDtos.add(dto);
                     }
                     return subscribeDtos;
