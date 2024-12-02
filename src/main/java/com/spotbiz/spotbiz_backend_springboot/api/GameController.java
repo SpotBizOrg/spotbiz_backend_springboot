@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.GameDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.UserDetailsDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UserPointDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
@@ -85,9 +86,10 @@ public class GameController {
     }
 
     @GetMapping("/details/{userId}")
-    public List<UserPointDto> getUserGameScores(@PathVariable int userId) {
+    public UserDetailsDto getUserGameScores(@PathVariable int userId) {
         return gameService.getUserGameScores(userId);
     }
 
 
 }
+

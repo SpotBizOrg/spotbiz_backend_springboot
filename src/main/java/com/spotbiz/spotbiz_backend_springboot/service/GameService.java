@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.GameDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.UserDetailsDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UserPointDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Game;
 import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
@@ -15,5 +16,7 @@ public interface GameService {
     GameDto updateGame(int gameId, GameDto gameDto);
     int deleteGame(int gameId);
     List<UserPointDto> getTopCustomers();
-    List<UserPointDto> getUserGameScores(int userId);
+    UserDetailsDto getUserGameScores(int userId);
 }
+
+
