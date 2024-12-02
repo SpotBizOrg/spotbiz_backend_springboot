@@ -27,4 +27,10 @@ public interface GameRepo extends JpaRepository<Game, Integer> {
             "GROUP BY u.userId " +
             "ORDER BY SUM(pg.points) DESC")
     List<UserPointDto> findTopUsersByPointsWithin30Days(@Param("startDate") LocalDateTime startDate, Pageable pageable);
+
+    @Query("SELECT SUM(pg.points) " +
+            "FROM PlayedGames pg " +
+            "WHERE pg.userId = :userId " +
+            "AND pg.dateTime >= :startDate")
+    Double findTotalPointsByPlayerIdWithin30Days(int userId, LocalDateTime startDate);
 }
