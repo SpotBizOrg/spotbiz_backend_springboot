@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerPicsDto {
-
     private int picId;
     private String imageUrl;
 }

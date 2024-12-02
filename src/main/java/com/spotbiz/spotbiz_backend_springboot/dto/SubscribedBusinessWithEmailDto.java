@@ -19,5 +19,7 @@ public class SubscribedBusinessWithEmailDto {
     private LocalDateTime dateTime;
     private int businessId;
     private int userId;
-    private String businessEmail;
+    private String businessName;
+    private String logo
+            ;
 }
