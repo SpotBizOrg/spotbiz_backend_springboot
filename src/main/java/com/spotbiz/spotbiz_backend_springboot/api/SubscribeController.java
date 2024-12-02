@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.SubscribeDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.SubscribedBusinessWithEmailDto;
 import com.spotbiz.spotbiz_backend_springboot.service.SubscribeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class SubscribeController {
     @GetMapping("/subscribed/email/{user_id}")
     public ResponseEntity<?> getSubscribedBusinessWithEmail(@PathVariable int user_id) {
         try{
-            List<SubscribeDto> subscribedBusinesses = subscribeService.getSubscribedBusinesses(user_id);
+            List<SubscribedBusinessWithEmailDto> subscribedBusinesses = subscribeService.getSubscribedBusinessesWithEmail(user_id);
             if(subscribedBusinesses != null) {
                 return ResponseEntity.ok().body(subscribedBusinesses);
             }

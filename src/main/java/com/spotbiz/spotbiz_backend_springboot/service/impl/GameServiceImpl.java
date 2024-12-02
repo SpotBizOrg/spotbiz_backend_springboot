@@ -4,35 +4,33 @@ import com.spotbiz.spotbiz_backend_springboot.dto.GameDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.UserPointDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Game;
 import com.spotbiz.spotbiz_backend_springboot.entity.GameType;
-import com.spotbiz.spotbiz_backend_springboot.entity.Status;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
 import com.spotbiz.spotbiz_backend_springboot.mapper.GameMapper;
 import com.spotbiz.spotbiz_backend_springboot.repo.GameRepo;
+import com.spotbiz.spotbiz_backend_springboot.repo.UserRepo;
 import com.spotbiz.spotbiz_backend_springboot.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GameServiceImpl implements GameService {
 
     private final GameRepo gameRepo;
     private final GameMapper gameMapper;
+    private final UserRepo userRepo;
 
     @Autowired
-    public GameServiceImpl(GameRepo gameRepo, GameMapper gameMapper) {
+    public GameServiceImpl(GameRepo gameRepo, GameMapper gameMapper, UserRepo userRepo) {
         this.gameRepo = gameRepo;
         this.gameMapper = gameMapper;
+        this.userRepo = userRepo;
     }
 
     @Override
@@ -110,4 +108,26 @@ public class GameServiceImpl implements GameService {
         Pageable topTen = PageRequest.of(0, 10);
         return gameRepo.findTopUsersByPointsWithin30Days(startDate, topTen);
     }
+
+    @Override
+    public UserPointDto getUserGameScores(int userId) {
+        LocalDateTime startDate = LocalDateTime.now().minusDays(30);
+        try {
+            Optional<User> userOpt =  userRepo.findById(userId);
+            if (userOpt.isPresent()){
+                User user = userOpt.get();
+
+                Double totalPoints = gameRepo.findTotalPointsByPlayerIdWithin30Days(userId, startDate);
+                if (totalPoints != null) {
+                    return new UserPointDto(user.getUserId(), user.getName(), user.getEmail(), user.getPhoneNo(), user.getStatus(), user.getRole(), totalPoints);
+                }
+                return new UserPointDto(user.getUserId(), user.getName(), user.getEmail(), user.getPhoneNo(), user.getStatus(), user.getRole(), 0);
+            }
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get user game scores");
+        }
+    }
+
+
 }
