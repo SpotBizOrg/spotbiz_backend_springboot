@@ -24,4 +24,13 @@ public class TransactionHistoryController {
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
+
+    @GetMapping("/reimbursements")
+    public ResponseEntity<?> getAllPaidReimbursements() {
+        try {
+            return ResponseEntity.ok(transacrionHistoryService.getAllPaidReimbursements());
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
+    }
 }
