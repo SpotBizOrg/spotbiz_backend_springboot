@@ -1,4 +1,5 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
+import com.spotbiz.spotbiz_backend_springboot.dto.RatingStatsDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewReportResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
@@ -150,6 +151,14 @@ public class ReviewServiceImpl implements ReviewService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to get reported reviews", e);
         }
+    }
+
+    @Override
+    public RatingStatsDto getStatistics(Integer businessId) {
+        RatingStatsDto stats = new RatingStatsDto();
+        stats.setNumberOfRatings(businessReviewCount(businessId));
+        stats.setAverageRating(getAverageRating(businessId));
+        return stats;
     }
 
     public int businessReviewCount(Integer businessId) {

@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.RatingStatsDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
@@ -40,6 +41,16 @@ public class ReviewController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/statistics/{business_id}")
+    public ResponseEntity<?> getRatingStatistics(@PathVariable Integer business_id) {
+        try {
+            return ResponseEntity.ok(reviewService.getStatistics(business_id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to retrieve rating statistics: " + e.getMessage());
         }
     }
 
