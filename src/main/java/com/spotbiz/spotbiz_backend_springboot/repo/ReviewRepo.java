@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.repo;
 
 import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.ReviewStatsDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
@@ -32,4 +33,16 @@ public interface ReviewRepo extends JpaRepository<Review, Integer> {
     List<Review> findReviewsByStatus(String status);
 
     List<Review> findByBusiness(Business business);
+
+    @Query("SELECT new com.spotbiz.spotbiz_backend_springboot.dto.ReviewStatsDto(" +
+            "AVG(r.rating), " +
+            "SUM(CASE WHEN r.rating = 1 THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN r.rating = 2 THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN r.rating = 3 THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN r.rating = 4 THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN r.rating = 5 THEN 1 ELSE 0 END), " +
+            "COUNT(r)) " +
+            "FROM Review r WHERE r.business.businessId = :businessId")
+    ReviewStatsDto getRatingStatistics(int businessId);
+
 }

@@ -1,9 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.service;
 
-import com.spotbiz.spotbiz_backend_springboot.dto.RatingStatsDto;
-import com.spotbiz.spotbiz_backend_springboot.dto.ReviewDto;
-import com.spotbiz.spotbiz_backend_springboot.dto.ReviewReportResponseDto;
-import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.*;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 
 import java.util.List;
@@ -16,4 +13,5 @@ public interface ReviewService {
     ReviewReportResponseDto markReported(Integer reviewId);
     List<ReviewReportResponseDto> getReportedReviews();
     RatingStatsDto getStatistics(Integer businessId);
+    ReviewStatsDto getAllStatistics(Integer businessId);
 }
