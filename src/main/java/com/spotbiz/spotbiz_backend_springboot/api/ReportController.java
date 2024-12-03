@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 @RestController
-@RequestMapping("/api/reports")
+@RequestMapping("/api/v1/transaction-report")
 public class ReportController {
 
     private final ReportService reportService;
@@ -21,7 +21,7 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    @GetMapping("/api/reports/subscription-billing")
+    @GetMapping()
     public ResponseEntity<byte[]> getSubscriptionBillingReport() throws IOException, MalformedURLException {
         byte[] pdfContent = reportService.generateReport();
 
