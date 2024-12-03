@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.ReimburementResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Reimbursements;
 import com.spotbiz.spotbiz_backend_springboot.entity.ReimbursementStatus;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
@@ -8,6 +9,7 @@ import com.spotbiz.spotbiz_backend_springboot.service.ReimbursementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,18 +34,46 @@ public class ReimbursementServiceImpl implements ReimbursementService {
     }
 
     @Override
-    public List<Reimbursements> getReimbursementByBusinessIdAndStatus(int businessId) {
+    public List<ReimburementResponseDto> getReimbursementByBusinessIdAndStatus(int businessId) {
         try{
-            return reimbursementRepo.getAllByBusinessAndStatus(businessRepo.findByBusinessId(businessId), ReimbursementStatus.PENDING);
+            List<Reimbursements> list = reimbursementRepo.getAllByBusinessAndStatus(businessRepo.findByBusinessId(businessId), ReimbursementStatus.PENDING);
+            List<ReimburementResponseDto> responseList = new ArrayList<>();
+
+            for ( Reimbursements reiburement: list) {
+                ReimburementResponseDto response = new ReimburementResponseDto();
+                response.setAmount(reiburement.getAmount());
+                response.setDateTime(reiburement.getDateTime());
+                response.setId(reiburement.getId());
+                response.setBusinessName(reiburement.getBusiness().getName());
+                response.setImages(reiburement.getImages());
+                response.setStatus(reiburement.getStatus());
+                responseList.add(response);
+
+            }
+            return responseList;
+
         } catch(Exception e){
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<Reimbursements> getAllReimbursementsByStatus() {
+    public List<ReimburementResponseDto> getAllReimbursementsByStatus() {
         try{
-            return reimbursementRepo.findAllByStatus(ReimbursementStatus.PENDING);
+            List<Reimbursements> list = reimbursementRepo.findAllByStatus(ReimbursementStatus.PENDING);
+            List<ReimburementResponseDto> responseList = new ArrayList<>();
+
+            for ( Reimbursements reiburement: list) {
+                ReimburementResponseDto response = new ReimburementResponseDto();
+                response.setId(reiburement.getId());
+                response.setAmount(reiburement.getAmount());
+                response.setDateTime(reiburement.getDateTime());
+                response.setImages(reiburement.getImages());
+                response.setStatus(reiburement.getStatus());
+                response.setBusinessName(reiburement.getBusiness().getName());
+                responseList.add(response);
+            }
+            return responseList;
         } catch(Exception e){
             throw new RuntimeException(e);
         }

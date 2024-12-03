@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.BusinessAccDetailsResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.BusinessAccountDetailsDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.*;
 import com.spotbiz.spotbiz_backend_springboot.repo.BusinessRepo;
@@ -57,7 +58,7 @@ public class BusinessAccountDetailsController {
     public ResponseEntity<?> getBusinessAccountDetails(@PathVariable int id) {
         try {
             System.out.println("id: " + id);
-            BusinessAccountDetails businessAccountDetails = businessAccountDetailsService.getBusinessAccountDetails(id);
+            BusinessAccDetailsResponseDto businessAccountDetails = businessAccountDetailsService.getBusinessAccountDetails(id);
             if(businessAccountDetails == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No account details found");
             }
@@ -71,7 +72,7 @@ public class BusinessAccountDetailsController {
     public ResponseEntity<?> getBusinessAccountDetailsByReimburseId(@PathVariable int id) {
         try {
             System.out.println("id: " + id);
-            BusinessAccountDetails businessAccountDetails = businessAccountDetailsService.getBusinessAccountDetailsByReimburseId(id);
+            BusinessAccDetailsResponseDto businessAccountDetails = businessAccountDetailsService.getBusinessAccountDetailsByReimburseId(id);
             if(businessAccountDetails == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No account details found");
             }
