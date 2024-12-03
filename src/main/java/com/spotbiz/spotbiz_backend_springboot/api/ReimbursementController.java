@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.api;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.ReimburementResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.ReimbursementDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.ReimbursementStatus;
 import com.spotbiz.spotbiz_backend_springboot.entity.Reimbursements;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -76,7 +78,8 @@ public class ReimbursementController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getReimbursementsByBusinessId(@PathVariable int id) {
         try {
-            List<Reimbursements> reimbursements = reimbursementService.getReimbursementByBusinessIdAndStatus(id);
+            List<ReimburementResponseDto> reimbursements = reimbursementService.getReimbursementByBusinessIdAndStatus(id);
+
             if(reimbursements.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No reimbursements found");
             }
@@ -89,7 +92,7 @@ public class ReimbursementController {
     @GetMapping
     public ResponseEntity<?> getAllReimbursements() {
         try {
-            List<Reimbursements> reimbursements = reimbursementService.getAllReimbursementsByStatus();
+            List<ReimburementResponseDto> reimbursements = reimbursementService.getAllReimbursementsByStatus();
             if(reimbursements.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No reimbursements found");
             }
