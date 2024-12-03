@@ -1,8 +1,5 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
-import com.spotbiz.spotbiz_backend_springboot.dto.RatingStatsDto;
-import com.spotbiz.spotbiz_backend_springboot.dto.ReviewDto;
-import com.spotbiz.spotbiz_backend_springboot.dto.ReviewReportResponseDto;
-import com.spotbiz.spotbiz_backend_springboot.dto.ReviewRequestDto;
+import com.spotbiz.spotbiz_backend_springboot.dto.*;
 import com.spotbiz.spotbiz_backend_springboot.entity.Business;
 import com.spotbiz.spotbiz_backend_springboot.entity.Review;
 import com.spotbiz.spotbiz_backend_springboot.entity.User;
@@ -159,6 +156,15 @@ public class ReviewServiceImpl implements ReviewService {
         stats.setNumberOfRatings(businessReviewCount(businessId));
         stats.setAverageRating(getAverageRating(businessId));
         return stats;
+    }
+
+    @Override
+    public ReviewStatsDto getAllStatistics(Integer businessId) {
+        try {
+            return reviewRepo.getRatingStatistics(businessId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed fetch to review statistics", e);
+        }
     }
 
     public int businessReviewCount(Integer businessId) {
