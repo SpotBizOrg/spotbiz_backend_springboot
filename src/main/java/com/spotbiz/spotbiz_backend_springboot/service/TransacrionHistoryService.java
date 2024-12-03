@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.service;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.ReimburementResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.SubscriptionTransactionHistoryDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.Reimbursements;
 
@@ -9,5 +10,5 @@ public interface TransacrionHistoryService {
 
     List<SubscriptionTransactionHistoryDto> getPastMonthBillings();
 
-    List<Reimbursements> getAllPaidReimbursements();
+    List<ReimburementResponseDto> getAllPaidReimbursements();
 }

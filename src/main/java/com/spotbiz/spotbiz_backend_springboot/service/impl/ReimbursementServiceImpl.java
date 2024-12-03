@@ -46,6 +46,7 @@ public class ReimbursementServiceImpl implements ReimbursementService {
                 response.setId(reiburement.getId());
                 response.setBusinessName(reiburement.getBusiness().getName());
                 response.setImages(reiburement.getImages());
+                response.setStatus(reiburement.getStatus());
                 responseList.add(response);
 
             }
@@ -68,6 +69,7 @@ public class ReimbursementServiceImpl implements ReimbursementService {
                 response.setAmount(reiburement.getAmount());
                 response.setDateTime(reiburement.getDateTime());
                 response.setImages(reiburement.getImages());
+                response.setStatus(reiburement.getStatus());
                 response.setBusinessName(reiburement.getBusiness().getName());
                 responseList.add(response);
             }

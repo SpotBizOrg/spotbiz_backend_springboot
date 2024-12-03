@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
+import com.spotbiz.spotbiz_backend_springboot.dto.ReimburementResponseDto;
 import com.spotbiz.spotbiz_backend_springboot.dto.SubscriptionTransactionHistoryDto;
 import com.spotbiz.spotbiz_backend_springboot.entity.ReimbursementStatus;
 import com.spotbiz.spotbiz_backend_springboot.entity.Reimbursements;
@@ -59,9 +60,22 @@ public class TransactionHistoryServiceImpl implements TransacrionHistoryService 
     }
 
     @Override
-    public List<Reimbursements> getAllPaidReimbursements() {
+    public List<ReimburementResponseDto> getAllPaidReimbursements() {
         try{
-            return reimbursementRepo.findAllByStatus(ReimbursementStatus.PAYED);
+            List<Reimbursements> list= reimbursementRepo.findAllByStatus(ReimbursementStatus.PAYED);
+            List<ReimburementResponseDto> responseList = new ArrayList<>();
+
+            for ( Reimbursements reiburement: list) {
+                ReimburementResponseDto response = new ReimburementResponseDto();
+                response.setId(reiburement.getId());
+                response.setAmount(reiburement.getAmount());
+                response.setDateTime(reiburement.getDateTime());
+                response.setImages(reiburement.getImages());
+                response.setStatus(reiburement.getStatus());
+                response.setBusinessName(reiburement.getBusiness().getName());
+                responseList.add(response);
+            }
+            return responseList;
         } catch(Exception e){
             throw new RuntimeException(e);
         }
