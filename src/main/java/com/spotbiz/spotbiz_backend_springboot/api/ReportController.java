@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 @RestController
 @RequestMapping("/api/reports")
 public class ReportController {
@@ -19,7 +22,7 @@ public class ReportController {
     }
 
     @GetMapping("/api/reports/subscription-billing")
-    public ResponseEntity<byte[]> getSubscriptionBillingReport() {
+    public ResponseEntity<byte[]> getSubscriptionBillingReport() throws IOException, MalformedURLException {
         byte[] pdfContent = reportService.generateReport();
 
         HttpHeaders headers = new HttpHeaders();
