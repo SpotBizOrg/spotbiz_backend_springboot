@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.StreamWriteConstraints;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -175,9 +176,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         dataMap.put("img", dto.getImg());
         dataMap.put("startDate", formattedNow);
         dataMap.put("endDate", endDate);
-        dataMap.put("description", dto.getDescription());
+        String cleanedDescription = dto.getDescription().replaceAll("\\p{C}", "").trim();
+        dataMap.put("description", cleanedDescription);
+
+        System.out.println("Data Map: " + dataMap);
 
         try {
+            objectMapper.getFactory().setStreamWriteConstraints(
+                    StreamWriteConstraints.builder().maxNestingDepth(2000).build()
+            );
             return objectMapper.writeValueAsString(dataMap);
         } catch (Exception e) {
             throw new RuntimeException("Error converting data to JSON", e);
@@ -203,6 +210,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Error converting data to JSON");
             return null;
         }
     }
@@ -252,7 +260,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
 
         SubscriptionBilling billing = billingRepo.findByBusinessId(business.getBusinessId());
-        if (billing == null  || !"PAID".equals(billing.getBillingStatus()) || !billing.getPkg().getIsActive()) {
+        System.out.println(billing);
+
+        if (billing == null  || !"PAID".equals(billing.getBillingStatus())) {
             return false;
         }
 

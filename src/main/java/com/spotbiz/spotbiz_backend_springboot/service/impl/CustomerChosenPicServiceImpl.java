@@ -59,6 +59,10 @@ public class CustomerChosenPicServiceImpl implements CustomerChosenPicService {
         // Save the chosenPics and return the result
         ChosenPics savedChosenPics = chosenPicsRepo.save(chosenPics);
 
+        if (savedChosenPics == null) {
+            throw new RuntimeException("Failed to save ChosenPics");
+        }
+
         return new CustomerDto(savedChosenPics.getUser().getUserId(), savedChosenPics.getCustomerPics().getPicId());
     }
 
@@ -69,7 +73,7 @@ public class CustomerChosenPicServiceImpl implements CustomerChosenPicService {
             Optional<User> optionalUser = userRepo.findById(customerId);
 
             if (optionalUser.isEmpty()){
-                throw new RuntimeException("User not found");
+                return null;
             }
 
             System.out.println("user found");

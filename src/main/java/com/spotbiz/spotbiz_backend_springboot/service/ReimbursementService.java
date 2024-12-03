@@ -9,4 +9,5 @@ public interface ReimbursementService {
     List<Reimbursements> getReimbursementByBusinessIdAndStatus(int businessId);
     List<Reimbursements> getAllReimbursementsByStatus();
     int changeStatus(int id, ReimbursementStatus reimbursementStatus);
+    double getTotalPaidReimbursements();
 }

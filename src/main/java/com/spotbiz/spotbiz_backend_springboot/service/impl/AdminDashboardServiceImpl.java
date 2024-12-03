@@ -25,6 +25,9 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 
     @Autowired
     private BusinessCategoryServiceImpl businessCategoryService;
+
+    @Autowired
+    private ReimbursementServiceImpl reimbursementService;
     @Override
     public AdminDashboardDataDto getDashboardData() {
         try{
@@ -64,8 +67,10 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 
     public double getRevenue(){
         try {
-            double totalRevenue = subscriptionBillingService.getTotalBillings();
-            return totalRevenue;
+            double totalBillings = subscriptionBillingService.getTotalBillings();
+            double totalReimbursements = reimbursementService.getTotalPaidReimbursements();
+
+            return totalBillings - totalReimbursements;
         }catch (Exception e) {
             throw new RuntimeException("Failed to retrieve billing data", e);
         }
