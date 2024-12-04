@@ -1,5 +1,6 @@
 package com.spotbiz.spotbiz_backend_springboot.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,8 +44,10 @@ public class Business {
     @OneToOne
     @JoinColumn(name = "user_id")
     @NaturalId
+    @JsonIgnore
     private User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubscriptionBilling> subscriptionBilling;
 
