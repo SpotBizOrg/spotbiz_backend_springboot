@@ -1,6 +1,7 @@
 package com.spotbiz.spotbiz_backend_springboot.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +36,7 @@ public class Coupon {
     private CouponStatus status = CouponStatus.PENDING;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="business_id", referencedColumnName = "business_id")
     private Business business;
 

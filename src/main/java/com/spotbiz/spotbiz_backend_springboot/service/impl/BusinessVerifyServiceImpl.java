@@ -33,6 +33,7 @@ public class BusinessVerifyServiceImpl implements BusinessVerifyService {
         try {
             Business business = businessRepo.findById(businessId).orElseThrow(() -> new Exception("Business not found"));
             business.setStatus("VERIFIED");
+            System.out.println(business.getUser().getUserId());
             User user = userRepo.findById(business.getUser().getUserId()).orElseThrow(() -> new Exception("User not found"));
             user.setStatus(Status.APPROVED);
 
